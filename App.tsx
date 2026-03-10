@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your </Text>
+      <Text>show your temp component here </Text>
       <StatusBar style="auto" />
     </View>
   );
