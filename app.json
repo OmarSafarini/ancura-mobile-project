@@ -26,6 +26,29 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./src/assets/fonts/FoundersGrotesk-Bold.otf",
+            "./src/assets/fonts/FoundersGrotesk-BoldItalic.otf",
+            "./src/assets/fonts/FoundersGrotesk-Light.otf",
+            "./src/assets/fonts/FoundersGrotesk-LightItalic.otf",
+            "./src/assets/fonts/FoundersGrotesk-Medium.otf",
+            "./src/assets/fonts/FoundersGrotesk-MediumItalic.otf",
+            "./src/assets/fonts/FoundersGrotesk-Regular.otf",
+            "./src/assets/fonts/FoundersGrotesk-RegularItalic.otf",
+            "./src/assets/fonts/FoundersGrotesk-Semibold.otf",
+            "./src/assets/fonts/FoundersGrotesk-SemiboldItalic.otf",
+            "./src/assets/fonts/FoundersGroteskCond-Lt.otf",
+            "./src/assets/fonts/FoundersGroteskXCond-Bold.otf",
+            "./src/assets/fonts/Helvetica-Bold.ttf",
+            "./src/assets/fonts/Helvetica.ttf"
+          ]
+        }
+      ]
+    ]
   }
 }
