@@ -23,7 +23,7 @@ export default function DoctorBNB() {
                 tabs={TABS}
                 activeTab={activeTab}
                 onTabPress={setActiveTab}
-                showFab={true}
+                showFab={false}
                 fabIcon={FabAddIcon}
             />
         </View>
