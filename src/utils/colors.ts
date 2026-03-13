@@ -20,6 +20,7 @@ export const palette = {
 
   orange: '#E87000',
   red: '#F8545D',
+  
 
 };
 
