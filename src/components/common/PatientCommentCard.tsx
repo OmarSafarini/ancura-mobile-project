@@ -42,7 +42,7 @@ const styles  = StyleSheet.create({
     Card:{
      borderRadius: Card_Radius ,
      backgroundColor:palette.white,
-     padding: scale(12),
+     padding: scale(18),
      borderWidth: 0.1, 
      borderColor:palette.darkGray2,
      gap:scale(10),
