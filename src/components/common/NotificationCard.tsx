@@ -2,7 +2,7 @@ import React from "react";
 import { palette, Colors as colors } from "../../utils/colors";
 import { Family } from "../../utils/typography";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
-import NotificationsIcon from "@/assets/icons/NotificationsIcon";
+import ClockIcon from "@/assets/icons/ClockIcon";
 
 // _____________ Responsive _____________________
 const { width: Screen_Width } = Dimensions.get("window");
@@ -33,8 +33,7 @@ export default function NotificationCard({
   {!isRead && <View style={styles.Dot} />}
 </View>
       <View style={styles.TimeContainer}>
-          {/*this notification is temproray added until i make the clock icon*/}
-        <NotificationsIcon color={'gray'} size={13}/>
+        <ClockIcon color={'gray'} size={16}/>
         <Text style={styles.Time}>{time}</Text>
       </View>
     </View>
