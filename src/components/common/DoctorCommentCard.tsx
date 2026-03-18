@@ -2,7 +2,7 @@ import React from "react";
 import { palette, Colors as colors } from "../../utils/colors";
 import { Family } from "../../utils/typography";
 import { View, Text, StyleSheet, Dimensions, Image } from "react-native";
-import VerificationIcon from "@/assets/icons/VerificationIcon";
+import VerificationIcon from "../../assets/icons/VerificationIcon"
 
 // _____________ Responsive _____________________
 const { width: Screen_Width } = Dimensions.get("window");
