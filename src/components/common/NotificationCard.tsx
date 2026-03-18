@@ -2,7 +2,7 @@ import React from "react";
 import { palette, Colors as colors } from "../../utils/colors";
 import { Family } from "../../utils/typography";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
-import ClockIcon from "@/assets/icons/ClockIcon";
+import ClockIcon from "@/features/doctor/components/Icons/ClockIcon";
 
 // _____________ Responsive _____________________
 const { width: Screen_Width } = Dimensions.get("window");
@@ -29,11 +29,11 @@ export default function NotificationCard({
   return (
     <View style={[styles.Card, isRead ? styles.ReadCard : styles.UnReadCard]}>
       <View style={styles.CardHeader}>
-  <Text style={styles.Title}>{title}</Text>
-  {!isRead && <View style={styles.Dot} />}
-</View>
+        <Text style={styles.Title}>{title}</Text>
+        {!isRead && <View style={styles.Dot} />}
+      </View>
       <View style={styles.TimeContainer}>
-        <ClockIcon color={'gray'} size={16}/>
+        <ClockIcon color={"gray"} size={16} />
         <Text style={styles.Time}>{time}</Text>
       </View>
     </View>
@@ -63,31 +63,31 @@ const styles = StyleSheet.create({
     borderColor: palette.darkGray3,
   },
   Dot: {
-  width: scale(8),
-  height: scale(8),
-  borderRadius: scale(4),
-  backgroundColor: colors.primary,
-  right:0,
-  top:0
+    width: scale(8),
+    height: scale(8),
+    borderRadius: scale(4),
+    backgroundColor: colors.primary,
+    right: 0,
+    top: 0,
   },
   CardHeader: {
-    flexDirection:'row',
-    justifyContent:'space-between'
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
-Title:{
-  color: colors.primary,
-  fontSize: scale(16),
-  fontWeight:'500',
-  flex:1
-},
-Time:{
-  color:'#00000056',
-  fontSize:scale(12),
-  fontWeight:'500',
-},
-TimeContainer:{
-  flexDirection:'row',
-  alignItems:'center',
-  gap:scale(4)
-}
+  Title: {
+    color: colors.primary,
+    fontSize: scale(16),
+    fontWeight: "500",
+    flex: 1,
+  },
+  Time: {
+    color: "#00000056",
+    fontSize: scale(12),
+    fontWeight: "500",
+  },
+  TimeContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: scale(4),
+  },
 });
