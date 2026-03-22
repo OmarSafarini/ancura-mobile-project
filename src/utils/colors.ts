@@ -17,6 +17,7 @@ export const palette = {
   darkGray: '#666666',
   darkGray2: '#DBE6ED',
   darkGray3: '#E4E0EB',
+  darkGray4: '#C2C2C2',
 
   orange: '#E87000',
   red: '#F8545D',
@@ -48,6 +49,7 @@ export const Colors = {
   textDark: palette.dark,
   textBlue: palette.darkBlue,
   textGreen: palette.darkGreen,
+  textGray: palette.darkGray4,
 
   buttonActive: palette.darkBlue,
 
