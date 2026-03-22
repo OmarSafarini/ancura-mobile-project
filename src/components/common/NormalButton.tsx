@@ -1,0 +1,30 @@
+import React from "react";
+import {Text, StyleSheet, TouchableOpacity } from "react-native";
+
+export default function NormalButton({ title, onPress, bgColor, textColor }: any) {
+    return (
+        <TouchableOpacity 
+            onPress={onPress} 
+            style={[styles.container, bgColor ? { backgroundColor: bgColor } : {backgroundColor: "#6D7EB5"}]}
+        >
+            <Text style={[styles.title, textColor ? { color: textColor } : {color: "#FFFFFF"}]}> {title ? title : "There is no title"}</Text>
+        </TouchableOpacity>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        width: 370,
+        height: 50,
+        borderRadius: 8,
+    },
+    title: {
+        fontWeight: "500",
+        fontSize: 16,
+        textAlign: "center",
+    },
+});
