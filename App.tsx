@@ -7,6 +7,7 @@ import TrashIcon from "@/assets/icons/TrashIcon";
 import { View } from 'react-native';
 import PencilIcon from "@/assets/icons/PencilIcon";
 import SelfHelpResource from "@/components/common/SelfHelpResource";
+import FileIcon from "@/assets/icons/FileIcon";
 
 export default function App() {
     return (
@@ -18,6 +19,7 @@ export default function App() {
         <NormalButton></NormalButton>
         <ToggleButton title="Toggle" Icon={TrashIcon} bgColor="#E97072" textColor="#FFFFFF"></ToggleButton>
         <ToggleButton title="Toggle" Icon={PencilIcon} bgColor="#FFFFFF" textColor="#6D7EB5"></ToggleButton>
+        <SelfHelpResource title="Understanding Anxiety: A Beginner’s Guide" tag="Static Read" Icon={TrashIcon}></SelfHelpResource>
         <SelfHelpResource title="Understanding Anxiety: A Beginner’s Guide" tag="Static Read"></SelfHelpResource>
         </View>
     </>
