@@ -15,8 +15,8 @@ export default function App() {
         <NormalButton title="Continue" bgColor="#6D7EB5" textColor="#FFFFFF"></NormalButton>
         <NormalButton title="Generate Random ID" bgColor="#DBE6ED" textColor="#000000"></NormalButton>
         <NormalButton></NormalButton>
-        <ToggleButton title="Toggle" Icon={TrashIcon} bgColor="#E97072" textColor="#FFFFFF" onPress={() => {alert("Toggle")}}></ToggleButton>
-        <ToggleButton title="Toggle" Icon={PencilIcon} bgColor="#FFFFFF" textColor="#6D7EB5" borderColor="#6D7EB5" onPress={() => {alert("Toggle")}}></ToggleButton>
+        <ToggleButton title="Toggle" Icon={TrashIcon} bgColor="#E97072" textColor="#FFFFFF"></ToggleButton>
+        <ToggleButton title="Toggle" Icon={PencilIcon} bgColor="#FFFFFF" textColor="#6D7EB5"></ToggleButton>
         </View>
     </>
 

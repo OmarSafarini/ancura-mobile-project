@@ -1,35 +1,40 @@
-import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
+import React from 'react';
+import { Pressable, Text, StyleSheet, View } from 'react-native';
 
 interface ToggleButtonProps {
   Icon: any;
   title: string;
   bgColor?: string;
   textColor?: string;
-  borderColor?: string;
   onPress?: () => void;
 }
 
-const ToggleButton: React.FC<ToggleButtonProps> = ({ title, Icon, bgColor, textColor, borderColor, onPress }) => {
-  const activeColor = textColor || '#6D7EB5';
-  const activeBgColor = bgColor || '#FFFFFF';
-  const activeBorderColor = borderColor || bgColor;
-
-
+const ToggleButton: React.FC<ToggleButtonProps> = ({ title, Icon, bgColor = '#FFFFFF', textColor = '#6D7EB5', onPress }) => {
   return (
-    <TouchableOpacity 
-      style={[styles.container, { backgroundColor: activeBgColor, borderColor: activeBorderColor }]} 
-      onPress={onPress} 
-      activeOpacity={0.7}
+    <Pressable 
+      style={({ pressed }) => [
+        styles.container, 
+        { 
+          backgroundColor: pressed ? textColor : bgColor, 
+          borderColor: pressed ? bgColor : textColor,
+        }
+      ]} 
+      onPress={onPress}
     >
-      <View style={styles.content}>
-        {Icon && (
-          <View style={styles.iconContainer}>
-            <Icon color={activeColor} />
+      {({ pressed }) => {
+        const activeColor = pressed ? bgColor : textColor;
+        return (
+          <View style={styles.content}>
+            {Icon && (
+              <View style={styles.iconContainer}>
+                <Icon color={activeColor} />
+              </View>
+            )}
+            <Text style={[styles.text, { color: activeColor }]}>{title}</Text>
           </View>
-        )}
-        <Text style={[styles.text, { color: activeColor }]}>{title}</Text>
-      </View>
-    </TouchableOpacity>
+        );
+      }}
+    </Pressable>
   );
 };
 
