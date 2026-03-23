@@ -3,16 +3,17 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import FileIcon from "../../assets/icons/FileIcon";
 
 interface SelfHelpResourceProps {
+    Icon:any
     title: string;
     tag: string;
     onPress?: () => void;
 }
 
-export default function SelfHelpResource({ title, tag, onPress }: SelfHelpResourceProps) {
+export default function SelfHelpResource({ title, tag, Icon, onPress }: SelfHelpResourceProps) {
     return (
         <TouchableOpacity onPress={onPress} style={styles.container}>
             <View style={styles.iconBackground}>
-                <FileIcon size={40} color="#6D93B5" />
+                {Icon ? <Icon size={40} color="#6D93B5" /> : <FileIcon size={40} color="#6D93B5" />}
             </View>
             <View style={styles.textContainer}>
                 <Text style={styles.title} numberOfLines={2}>
