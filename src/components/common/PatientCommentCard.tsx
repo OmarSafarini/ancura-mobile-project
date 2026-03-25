@@ -12,6 +12,7 @@ export interface PatientCommentCardProps {
   title: string;
   discreption: string;
   time: string;
+  
 }
 
 // _____________ Patient Comment Card _____________________
