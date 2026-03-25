@@ -26,6 +26,7 @@ export default function DoctorCommentCard({
   time,
   avatar,
   major,
+  
 }: DoctorCommentCardProps) {
   return (
     <View style={styles.Card}>
