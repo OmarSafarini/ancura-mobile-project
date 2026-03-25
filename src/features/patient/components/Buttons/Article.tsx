@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
+  Pressable,
 } from "react-native";
 import { Colors as colors, palette } from "../../../../utils/colors";
 import DocumentIcon from "../Icons/DoucmentIcon";
@@ -26,10 +27,13 @@ type ArticleProps = {
 // ================= COMPONENT =================
 export default function Article({ title, onPress }: ArticleProps) {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}  activeOpacity={0.7}>
+    <Pressable
+      style={styles.button}
+      onPress={onPress}
+    >
       <DocumentIcon size={16} color={colors.primary} />
-      <Text style={styles.text}>{title}</Text>
-    </TouchableOpacity>
+      <Text style={styles.text}>{title}</Text> 
+    </Pressable>
   );
 }
 
