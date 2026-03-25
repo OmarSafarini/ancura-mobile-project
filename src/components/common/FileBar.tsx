@@ -4,13 +4,13 @@ import FileIcon from '../../assets/icons/FileIcon';
 
 interface FileBarProps {
   title: string;
+  icon?: React.ReactNode;
 }
-
-const FileBar: React.FC<FileBarProps> = ({ title }) => {
+export const FileBar: React.FC<FileBarProps> = ({ title ,icon}) => {
   return (
     <View style={styles.container}>
       <Text style={styles.text} numberOfLines={1}>{title}</Text>
-      <FileIcon size={10} color="#6D7EB5" />
+      {icon&&icon}
     </View>
   );
 };
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     height: 23,
     backgroundColor: '#F5F5F5',
     borderWidth: 0.4,
-    borderColor: '#6D7EB5',
+    borderColor: '#6d7eb5f8',
     borderRadius: 11,
   },
   text: {
@@ -38,4 +38,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FileBar;
+
