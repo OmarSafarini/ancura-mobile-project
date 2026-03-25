@@ -9,35 +9,33 @@ import {
 } from "react-native";
 import { Colors as colors, palette } from "../../../../utils/colors";
 import DocumentIcon from "../Icons/DoucmentIcon";
+import { scale } from "@/utils/responsive";
+import { Family } from "@/utils/typography";
 
-// ================= RESPONSIVE =================
-const { width: Screen_Width } = Dimensions.get("window");
-const Base_Width = 432;
-const scale = (size: number) => (Screen_Width / Base_Width) * size;
 
-// ================= CONSTANTS =================
+// __________________ CONSTANTS __________________ 
 const Card_Radius = scale(11);
 
-// ================= TYPES =================
+// __________________  TYPES __________________ 
 type ArticleProps = {
   title: string;
   onPress?: () => void;
 };
 
-// ================= COMPONENT =================
+// ________________ COMPONENT __________________
 export default function Article({ title, onPress }: ArticleProps) {
   return (
     <Pressable
       style={styles.button}
       onPress={onPress}
     >
-      <DocumentIcon size={16} color={colors.primary} />
+      <DocumentIcon size={12} color={colors.primary} />
       <Text style={styles.text}>{title}</Text> 
     </Pressable>
   );
 }
 
-// ================= STYLES =================
+// __________________  STYLES __________________ 
 const styles = StyleSheet.create({
   button: {
     flexDirection: "row",
@@ -45,8 +43,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.primary,
     borderRadius: Card_Radius,
-    paddingHorizontal: scale(16),
-    paddingVertical: scale(10),
+    paddingHorizontal: scale(21),
+    paddingVertical: scale(8),
     gap: scale(6),
     backgroundColor: palette.white,
   },
@@ -57,7 +55,8 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    fontSize: scale(13),
+    fontSize: scale(10),
     color: palette.dark,
+    fontFamily:Family.FG_Regular
   },
 });
