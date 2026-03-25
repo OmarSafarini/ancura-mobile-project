@@ -27,6 +27,7 @@ export default function DoctorReplyCard({
   message,
   time,
   avatar,
+  
 }: DoctorReplyCardProps) {
   return (
     <View style={styles.container}>
