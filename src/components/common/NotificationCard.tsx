@@ -25,6 +25,8 @@ export default function NotificationCard({
   isRead,
   status
 }: NotificationCardProps) {
+
+  
   return (
     <View style={[styles.Card, isRead ? styles.ReadCard : styles.UnReadCard]}>
       <View style={styles.CardHeader}>
