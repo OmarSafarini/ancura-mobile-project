@@ -6,16 +6,13 @@ import React from "react";
 import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
 import VerificationIcon from "@/assets/icons/VerificationIcon";
 import DisLikeIcon from "@/assets/icons/DisLikeIcon";
+import { scale } from "@/utils/responsive";
 
-// ================= RESPONSIVE =================
-const { width: Screen_Width } = Dimensions.get("window");
-const Base_Width = 432;
-const scale = (size: number) => (Screen_Width / Base_Width) * size;
 
-// ================= CONSTANTS =================
+// ________________ CONSTANTS ________________
 const AVATAR_SIZE = scale(47);
 const Card_Radius = scale(11);
-// ================= TYPES =================
+// ________________ TYPES ________________
 type DoctorReplyCardProps = {
   title: string;
   major: string;
@@ -23,7 +20,7 @@ type DoctorReplyCardProps = {
   time: string;
   avatar?: string;
 };
-// ================= COMPONENT =================
+// ________________ COMPONENT ________________
 export default function DoctorReplyCard({
   title,
   major,
@@ -46,7 +43,7 @@ export default function DoctorReplyCard({
             <VerificationIcon
               color={palette.white}
               bgColor={colors.primaryLight}
-              size={14}
+              size={12}
             />
           </View>
           <Text style={styles.major}>{major}</Text>
@@ -58,13 +55,12 @@ export default function DoctorReplyCard({
 
       <View style={styles.footer}>
         <View style={styles.actions}>
-          {/**needs the dislike*/}
-          <HandLikeIcon size={25} color="#cdcdcd" />
-          <DisLikeIcon size={25} color="#cdcdcd"/>
+          <HandLikeIcon size={18} color="#707070" />
+          <DisLikeIcon size={18} color="#707070" />
         </View>
 
         <View style={styles.ReplyContainer}>
-          <ChatIcon size={25} color="#cdcdcd" />
+          <ChatIcon size={18} color="#707070" />
           <Text style={styles.reply}>Reply</Text>
         </View>
       </View>
@@ -72,13 +68,13 @@ export default function DoctorReplyCard({
   );
 }
 
-// ================= STYLES =================
+// ________________ STYLES ________________
 const styles = StyleSheet.create({
   container: {
     alignSelf: "center",
-    backgroundColor: "rgba(228, 224, 235, 0.7)",
+    backgroundColor: "#e4e0ebad",
     borderRadius: Card_Radius,
-    padding: scale(30),
+    padding: scale(18),
     gap: scale(20),
   },
   header: {
@@ -102,21 +98,25 @@ const styles = StyleSheet.create({
     fontSize: scale(16),
     fontWeight: "600",
     marginRight: scale(6),
+    fontFamily:Family.FG_Bold
   },
   major: {
-    fontSize: scale(12),
-    color: palette.darkGray,
+     fontFamily: Family.HV_Regular,
+    fontSize: scale(8),
+    color: "#9F9DA1",
     marginTop: scale(2),
   },
   time: {
-    fontSize: scale(12),
-    color: palette.darkGray,
+    fontFamily: Family.HV_Regular,
+    fontSize: scale(8),
+    color: "#6666668c",
   },
   message: {
-    marginTop: scale(14),
+    marginBottom: scale(14),
     fontSize: scale(14),
     lineHeight: scale(20),
     color: palette.dark,
+    fontFamily:Family.FG_Regular
   },
   footer: {
     flexDirection: "row",
@@ -129,14 +129,16 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexDirection: "row",
-    gap: 12,
+    gap:scale(10),
   },
   ReplyContainer: {
     flexDirection: "row",
+    gap:scale(5),
     alignItems: "center",
   },
   reply: {
-    fontSize: scale(16),
-    color: "#cdcdcd",
+    fontSize: scale(10),
+    color: "#707070",
+    fontFamily:Family.FG_Medium
   },
 });
