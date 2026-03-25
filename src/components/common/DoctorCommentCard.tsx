@@ -2,16 +2,12 @@ import React from "react";
 import { palette, Colors as colors } from "../../utils/colors";
 import { Family } from "../../utils/typography";
 import { View, Text, StyleSheet, Dimensions, Image } from "react-native";
-import VerificationIcon from "../../assets/icons/VerificationIcon"
-
-// _____________ Responsive _____________________
-const { width: Screen_Width } = Dimensions.get("window");
-const Base_Width = 432;
-const scale = (size: number) => (Screen_Width / Base_Width) * size;
+import VerificationIcon from "../../assets/icons/VerificationIcon";
+import { scale } from "@/utils/responsive";
 
 // _____________ Constants _____________________
-const Card_Radius = scale(16);
-const Avatar_Size = scale(42);
+const Card_Radius = scale(11);
+const Avatar_Size = scale(37);
 
 // _____________ Types _____________________
 export interface DoctorCommentCardProps {
@@ -47,7 +43,7 @@ export default function DoctorCommentCard({
               <VerificationIcon
                 color={palette.white}
                 bgColor={colors.primaryLight}
-                size={16}
+                size={10}
               />
             </View>
             <Text style={styles.Sub_Title}>{major}</Text>
@@ -67,15 +63,17 @@ const styles = StyleSheet.create({
     borderRadius: Card_Radius,
     backgroundColor: palette.white,
     padding: scale(18),
-    borderWidth: 0.1,
-    borderColor: palette.darkGray2,
-    gap: scale(10),
+    borderWidth: 1,
+    borderColor: "#66666649",
+    gap: scale(15),
+    maxHeight: "25%",
   },
   Card_Header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    gap:scale(5)
+    gap: scale(5),
+    flexWrap:'wrap'
   },
 
   Card_Img: {
@@ -85,28 +83,27 @@ const styles = StyleSheet.create({
   },
   Card_Sup_Header: {
     gap: scale(2),
-    paddingLeft: scale(10),
+    paddingLeft: scale(5),
   },
   Title: {
-    //fontFamily:Family.FG_Regular,
-    fontSize: scale(16),
+    fontFamily: Family.FG_Bold,
+    fontSize: scale(11),
     fontWeight: "bold",
   },
   Sub_Title: {
-    //fontFamily:Family.FG_Regular,
-    fontSize: scale(10),
-    fontWeight: "bold",
-    color: palette.darkGray,
+    fontFamily: Family.FG_Regular,
+    fontSize: scale(7),
+    color: "#6666668c",
   },
   Time: {
-    //fontFamily:Family.FG_Regular,
-    fontSize: scale(12),
-    color: palette.darkGray,
+    fontFamily: Family.HV_Regular,
+    fontSize: scale(8),
+    color: "#6666668c",
   },
   Discreption: {
-    // fontFamily:Family.FG_Regular,
-    fontSize: scale(14),
+    fontFamily: Family.FG_Regular,
+    fontSize: scale(12),
     color: palette.dark,
-   
+    lineHeight: scale(17),
   },
 });
