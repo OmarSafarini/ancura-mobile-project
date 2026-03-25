@@ -20,6 +20,7 @@ const Card_Radius = scale(11);
 type ArticleProps = {
   title: string;
   onPress?: () => void;
+  
 };
 
 // __________________ COMPONENT __________________
