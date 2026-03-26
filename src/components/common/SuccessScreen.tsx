@@ -11,8 +11,7 @@ import Svg, { Path, Defs, ClipPath, G, Rect, Circle } from 'react-native-svg';
 import { palette } from '../../utils/colors';
 import { Family } from '../../utils/typography';
 import TickIcon from '../../assets/icons/TickIcon';
-
-const DESIGN_WIDTH = 430;
+import { scale } from '../../utils/responsive';
 
 const CONFETTI_RECTS: [number, number, number, number, number, string][] = [
   [309, 4, 17, 8, -25, 'rgba(86,184,165,0.75)'],
@@ -52,10 +51,9 @@ interface SuccessScreenProps {
 
 export default function SuccessScreen({ subtitle, onPress }: SuccessScreenProps) {
   const { width, height } = useWindowDimensions();
-  const scale = width / DESIGN_WIDTH;
-  const archHeight = 45 * scale;
+  const archHeight = scale(45);
 
-  const boxHeight = Math.max(355 * scale, 335);
+  const boxHeight = Math.max(scale(355), 335);
   const archApexY = height - boxHeight;
   const archCornerY = archApexY + archHeight;
 
@@ -134,20 +132,20 @@ export default function SuccessScreen({ subtitle, onPress }: SuccessScreenProps)
               {CONFETTI_RECTS.map(([left, top, w, h, rot, color], i) => (
                 <Rect
                   key={`rect-${i}`}
-                  x={left * scale}
-                  y={archApexY + top * scale + 30 * scale}
+                  x={scale(left)}
+                  y={archApexY + scale(top) + scale(30)}
                   width={w}
                   height={h}
                   fill={color}
                   rx={2}
-                  transform={`rotate(${rot}, ${left * scale + w / 2}, ${archApexY + top * scale + 30 * scale + h / 2})`}
+                  transform={`rotate(${rot}, ${scale(left) + w / 2}, ${archApexY + scale(top) + scale(30) + h / 2})`}
                 />
               ))}
               {CONFETTI_CIRCLES.map(([left, top, r, color], i) => (
                 <Circle
                   key={`circle-${i}`}
-                  cx={left * scale + r}
-                  cy={archApexY + top * scale + 30 * scale + r}
+                  cx={scale(left) + r}
+                  cy={archApexY + scale(top) + scale(30) + r}
                   r={r}
                   fill={color}
                 />
@@ -163,18 +161,18 @@ export default function SuccessScreen({ subtitle, onPress }: SuccessScreenProps)
           {
             opacity: contentOpacity,
             transform: [{ translateY: contentTranslateY }],
-            paddingTop: archApexY + 40 * scale,
+            paddingTop: archApexY + scale(40),
           },
         ]}
         pointerEvents="box-none"
       >
-        <TickIcon size={Math.round(85 * scale)} />
+        <TickIcon size={Math.round(scale(85))} />
 
-        <Text style={[styles.title, { fontSize: Math.round(32 * scale) }]}>
+        <Text style={[styles.title, { fontSize: Math.round(scale(32)) }]}>
           Successful!
         </Text>
 
-        <Text style={[styles.subtitle, { fontSize: Math.round(12.8 * scale) }]}>
+        <Text style={[styles.subtitle, { fontSize: Math.round(scale(12.8)) }]}>
           {subtitle}
         </Text>
 
@@ -183,7 +181,7 @@ export default function SuccessScreen({ subtitle, onPress }: SuccessScreenProps)
           onPress={handlePress}
           activeOpacity={0.8}
         >
-          <Text style={[styles.buttonText, { fontSize: Math.round(16 * scale) }]}>
+          <Text style={[styles.buttonText, { fontSize: Math.round(scale(16)) }]}>
             Browse Home
           </Text>
         </TouchableOpacity>
@@ -227,6 +225,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontFamily: Family.FG_Medium,
-    color: '#FFFFFF',
+    color: palette.white,
   },
 });
