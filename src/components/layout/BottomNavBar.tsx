@@ -4,17 +4,11 @@ import {
     Text,
     TouchableOpacity,
     StyleSheet,
-    Dimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors as colors } from '../../utils/colors';
 import { Family } from '../../utils/typography';
-
-// ─── responsive ──────────────────────────────────────────────────────────────
-
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const BASE_WIDTH = 432;
-const scale = (size: number) => (SCREEN_WIDTH / BASE_WIDTH) * size;
+import { scale } from '../../utils/responsive';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
