@@ -12,11 +12,12 @@ import Svg, { Path } from 'react-native-svg';
 import { Colors } from '../../utils/colors';
 import { palette } from '../../utils/colors';
 import { Family } from '../../utils/typography';
+import { scale } from '../../utils/responsive';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-const THUMB_SIZE = 67;
-const CONTAINER_HEIGHT = 83;
-const EDGE_PADDING = 8;
+const THUMB_SIZE = scale(67);
+const CONTAINER_HEIGHT = scale(83);
+const EDGE_PADDING = scale(8);
 const SLIDE_THRESHOLD = 0.8; 
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -37,7 +38,7 @@ const SlideButton: React.FC<SlideButtonProps> = ({
   style,
 }) => {
   const { width: screenWidth } = useWindowDimensions();
-  const buttonWidth = width ?? Math.min(screenWidth - 48, 335);
+  const buttonWidth = width ?? Math.min(screenWidth - scale(48), scale(335));
   const trackWidth = buttonWidth - THUMB_SIZE - EDGE_PADDING * 2;
 
   const thumbX = useRef(new Animated.Value(0)).current;
@@ -141,7 +142,7 @@ const SlideButton: React.FC<SlideButtonProps> = ({
 
    
       <Animated.View style={[styles.chevronWrap, { opacity: chevronOpacity }]}>
-        <Svg width={30} height={26} viewBox="-2 -2 30 26" fill="none">
+        <Svg width={scale(30)} height={scale(26)} viewBox="-2 -2 30 26" fill="none">
           <Path
             opacity={0.7}
             d="M0 0L11 11L0 22"
@@ -188,25 +189,21 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   labelWrap: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
+    ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1,
   },
   label: {
     color: palette.white,
-    fontSize: 24,
+    fontSize: scale(21),
     fontFamily: Family.FG_Regular,
     textAlign: 'center',
-    marginTop: 6, 
+    marginTop: scale(6), 
   },
   chevronWrap: {
     position: 'absolute',
-    right: 41,
+    right: scale(41),
     top: 0,
     bottom: 0,
     justifyContent: 'center',
