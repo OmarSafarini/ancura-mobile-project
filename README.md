@@ -63,7 +63,7 @@ npm install -D typescript @types/react @types/react-native
 npx expo start
 ```
 
-Scan the QR code with **Expo Go** on your phone.
+Scan the QR code with **Expo Go** on your phone
 
 ---
 
