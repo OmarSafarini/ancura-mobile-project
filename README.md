@@ -31,11 +31,12 @@ git clone https://github.com/OmarSafarini/ancura-mobile-project.git
 cd ancura-mobile-project
 ```
 
-### 2. Install dependencies
+### 2. Install dependencies or install packages
 
 ```bash
 npm install
 ```
+or install packages:
 
 ### 3. Install all packages
 
@@ -72,18 +73,18 @@ Scan the QR code with **Expo Go** on your phone.
 | Command | Description |
 |---|---|
 | `Shift + /` | Show all commands |
-| `Shift + a` | Open Android |
-| `Shift + i` | Open iOS simulator |
-| `Shift + m` | Open Metro Bundler |
-| `Shift + r` | Reload the app |
-| `Shift + d` | Open debugger |
-| `Shift + h` | Open help menu |
-| `Shift + w` | Open web browser |
-| `Shift + s` | Open settings |
-| `Shift + p` | Open performance monitor |
-| `Shift + t` | Open terminal |
-| `Shift + l` | Open logs |
-| `Shift + c` | Clear cache |
-| `Shift + b` | Open build menu |
-| `Shift + e` | Open dev menu |
+| `a` | Open Android |
+| `i` | Open iOS simulator |
+| `m` | Open Metro Bundler |
+| `r` | Reload the app |
+| `d` | Open debugger |
+| `h` | Open help menu |
+| `w` | Open web browser |
+| `s` | Open settings |
+| `p` | Open performance monitor |
+| `t` | Open terminal |
+| `l` | Open logs |
+| `c` | Clear cache |
+| `b` | Open build menu |
+| `e` | Open dev menu |
 
