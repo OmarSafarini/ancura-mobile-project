@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import ExitIcon from '../../assets/icons/ExitIcon';
+import { scale } from '@/utils/responsive';
+import ExitIcon from '@/assets/icons/ExitIcon';
 
 interface LogoutButtonProps {
   onPress?: () => void;
@@ -20,19 +21,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    width: 370,
-    height: 49,
+    width: scale(370),
+    height: scale(49),
     borderWidth: 1,
     borderColor: '#FF0000',
-    borderRadius: 11,
-    gap: 18,
+    borderRadius: scale(11),
+    gap: scale(18),
   },
   text: {
     fontFamily: 'Founders Grotesk',
     fontStyle: 'normal',
     fontWeight: '500',
-    fontSize: 16,
-    lineHeight: 16,
+    fontSize: scale(16),
+    lineHeight: scale(16),
     textAlign: 'center',
     color: '#FF0000',
   },

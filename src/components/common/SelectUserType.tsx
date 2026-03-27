@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, Pressable} from "react-native";
+import { scale } from "@/utils/responsive";
 
 export default function SelectUserType({ Icon, title, userType, onPress }: any) {
     return (
@@ -19,12 +20,12 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: "row",
         alignItems: "center",
-        paddingRight: 147,
-        paddingLeft: 30,
-        gap: 22,
+        paddingRight: scale(147),
+        paddingLeft: scale(30),
+        gap: scale(22),
         width: "100%",
-        maxWidth: 370,
-        height: 114,
+        maxWidth: scale(370),
+        height: scale(114),
         borderWidth: 1,
         borderColor: "#7B7C8F",
         borderRadius: 30,
@@ -32,22 +33,22 @@ const styles = StyleSheet.create({
     iconContainer: {
         justifyContent: "center",
         alignItems: "center",
-        width: 68,
-        height: 68,
+        width: scale(68),
+        height: scale(68),
         backgroundColor: "#B6C0F9",
-        borderRadius: 34,
+        borderRadius: scale(34),
     },
     texts: {
         flexDirection: "column",
         justifyContent: "center",
     },
     title: {
-        fontSize: 24,
+        fontSize: scale(24),
         color: "#08070E",
         marginBottom: 4,
     },
     userType: {
-        fontSize: 14,
+        fontSize: scale(14),
         color: "#7B7C8F",
     }
 });

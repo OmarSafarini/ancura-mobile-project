@@ -1,7 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import CaseCard from './src/components/common/CaseCard';
-import FileBar from './src/components/common/FileBar';
+import ActivityLogButton from './src/features/doctor/components/ActivityLogButton';
 export default function App() {
   return (
     <View>

@@ -1,5 +1,6 @@
 import React from "react";
 import {Text, StyleSheet, TouchableOpacity } from "react-native";
+import { scale } from "@/utils/responsive";
 
 export default function NormalButton({ title, onPress, bgColor, textColor }: any) {
     return (
@@ -18,13 +19,13 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-        width: 370,
-        height: 50,
-        borderRadius: 8,
+        width: scale(370),
+        height: scale(50),
+        borderRadius: scale(8),
     },
     title: {
         fontWeight: "500",
-        fontSize: 16,
+        fontSize: scale(16),
         textAlign: "center",
     },
 });

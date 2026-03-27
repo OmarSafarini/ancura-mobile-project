@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import FileIcon from "../../assets/icons/FileIcon";
+import { scale } from "@/utils/responsive";
 
 interface SelfHelpResourceProps {
     Icon:any
@@ -13,7 +14,7 @@ export default function SelfHelpResource({ title, tag, Icon, onPress }: SelfHelp
     return (
         <TouchableOpacity onPress={onPress} style={styles.container}>
             <View style={styles.iconBackground}>
-                {Icon ? <Icon size={40} color="#6D93B5" /> : <FileIcon size={40} color="#6D93B5" />}
+                {Icon ? <Icon size={scale(40)} color="#6D93B5" /> : <FileIcon size={scale(40)} color="#6D93B5" />}
             </View>
             <View style={styles.textContainer}>
                 <Text style={styles.title} numberOfLines={2}>
@@ -37,10 +38,10 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         backgroundColor: "#FFFFFF",
-        width: 327,
-        height: 100.75,
-        borderRadius: 30,
-        paddingHorizontal: 17,
+        width: scale(327),
+        height: scale(100.75),
+        borderRadius: scale(30),
+        paddingHorizontal: scale(17),
         elevation: 4,
         shadowColor: "rgba(0, 0, 0, 0.04)",
         shadowOffset: { width: 0, height: 4 },
@@ -48,59 +49,59 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
     },
     iconBackground: {
-        width: 74,
-        height: 74,
+        width: scale(74),
+        height: scale(74),
         backgroundColor: "rgba(182, 210, 249, 0.5)",
-        borderRadius: 14,
+        borderRadius: scale(14),
         justifyContent: "center",
         alignItems: "center",
     },
     textContainer: {
         flex: 1,
-        marginLeft: 21,
+        marginLeft: scale(21),
         justifyContent: "center",
-        gap: 7,
+        gap: scale(7),
     },
     title: {
-        width: 167,
-        fontSize: 15,
+        width: scale(167),
+        fontSize: scale(15),
         fontWeight: "400",
         color: "#000000",
-        lineHeight: 16,
+        lineHeight: scale(16),
     },
     tagBadge: {
-        width: 63.53,
-        height: 18,
+        width: scale(63.53),
+        height: scale(18),
         backgroundColor: "rgba(182, 210, 249, 0.5)",
-        borderRadius: 4,
+        borderRadius: scale(4),
         justifyContent: "center",
         alignItems: "center",
     },
     tagText: {
-        fontSize: 10,
+        fontSize: scale(10),
         fontWeight: "400",
         color: "#6D93B5",
-        lineHeight: 11,
+        lineHeight: scale(11),
     },
     arrowContainer: {
         justifyContent: "center",
         alignItems: "center",
     },
     arrowCircle: {
-        width: 29,
-        height: 29,
-        borderRadius: 14.5,
+        width: scale(29),
+        height: scale(29),
+        borderRadius: scale(14.5),
         backgroundColor: "#DBE8FC",
         justifyContent: "center",
         alignItems: "center",
     },
     arrow: {
-        width: 8,
-        height: 8,
-        borderTopWidth: 1.5,
-        borderRightWidth: 1.5,
+        width: scale(8),
+        height: scale(8),
+        borderTopWidth: scale(1.5),
+        borderRightWidth: scale(1.5),
         borderColor: "#000000",
         transform: [{ rotate: "45deg" }],
-        marginLeft: -2,
+        marginLeft: scale(-2),
     },
 });
