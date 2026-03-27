@@ -1,12 +1,8 @@
-import React from 'react';
-import {View, Text, StyleSheet, useWindowDimensions, ViewStyle,} from 'react-native';
-import ArrowRightIcon from '@/assets/icons/ArrowRightIcon';
-import { Colors } from '@/utils/colors';
-
-const HEIGHT = 57;
-const THUMB_SIZE = 34; 
-const PADDING = 11;
-const MAX_WIDTH = 240;
+import {View, Text, StyleSheet, useWindowDimensions, ViewStyle,} from "react-native";
+import ArrowRightIcon from "@/assets/icons/ArrowRightIcon";
+import { Colors } from "@/utils/colors";
+import { Family } from "@/utils/typography";
+import { scale } from "@/utils/responsive";
 
 type SlideButtonProps = {
   label?: string;
@@ -15,16 +11,23 @@ type SlideButtonProps = {
   style?: ViewStyle;
 };
 
-export default function SlideButton({ label = "Activity Log", width, backgroundColor = Colors.primary,style,}: SlideButtonProps) {
-  const { width: screenWidth } = useWindowDimensions(); 
-  const buttonWidth = width || Math.min(screenWidth * 0.42, MAX_WIDTH);
+const HEIGHT = scale(50);        
+const BUTTON_WIDTH = scale(154); 
+const THUMB_SIZE = scale(30);    
+const PADDING = scale(10); 
 
+export default function ActivityLogButton({ label = "Activity Log", width, backgroundColor = Colors.primary,style,}: SlideButtonProps) {
+  const { width: screenWidth } = useWindowDimensions();
+  const buttonWidth = width || BUTTON_WIDTH;
   return (
     <View
-      style={[styles.container, { width: buttonWidth, backgroundColor }, style,]}>
+      style={[styles.container,{width: buttonWidth,backgroundColor,},style,]}>
       <Text style={styles.text}>{label}</Text>
       <View style={styles.thumb}>
-        <ArrowRightIcon color={Colors.primary} size={THUMB_SIZE * 0.45} />
+        <ArrowRightIcon
+          color={Colors.primary}
+          size={scale(THUMB_SIZE * 0.65)}
+        />
       </View>
     </View>
   );
@@ -34,24 +37,32 @@ const styles = StyleSheet.create({
   container: {
     height: HEIGHT,
     borderRadius: HEIGHT / 2,
-    justifyContent: 'center',
-    alignSelf: 'center',
-  },    
-  text: {
-    position: 'absolute',
-    alignSelf: 'center',
-    color: 'white',
-    marginStart : 30,
-    fontSize: 13,
+    justifyContent: "center",
+    alignSelf: "center",
   },
+
+  text: {
+    position: "absolute",
+    alignSelf: "center",
+    color: Colors.formBackground,
+    marginStart: scale(25),
+    fontSize: scale(13),
+    fontFamily: Family.FG_Medium,
+  },
+
   thumb: {
-    position: 'absolute',
+    position: "absolute",
     left: PADDING,
     width: THUMB_SIZE,
     height: THUMB_SIZE,
     borderRadius: THUMB_SIZE / 2,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: Colors.formBackground,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: Colors.textDark,
+    shadowOffset: { width: 0, height: scale(3) },
+    shadowOpacity: 0.15,
+    shadowRadius: scale(5),
+    elevation: 4,
   },
 });
