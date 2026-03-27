@@ -1,12 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import CaseCard from './src/components/common/CaseCard';
-import ViewMoreStatistics from './src/features/doctor/components/ViewMoreStatistics';
-import ActivityLogButton from './src/features/doctor/components/ActivityLogButton';
+import FileBar from './src/components/common/FileBar';
 export default function App() {
   return (
     <View>
-        <ActivityLogButton />
+        <FileBar title="Clinical Psychology License - California Board" />
     </View>
   );
 }

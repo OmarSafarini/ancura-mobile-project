@@ -1,22 +1,28 @@
-import { View, Text, StyleSheet, useWindowDimensions,} from 'react-native';
-import ArrowRightIcon from '@/assets/icons/ArrowRightIcon';
-import { Family } from '@/utils/typography'; 
+import { View, Text, StyleSheet, ViewStyle } from "react-native";
+import ArrowRightIcon from "@/assets/icons/ArrowRightIcon";
+import { Colors } from "@/utils/colors";
+import { Family } from "@/utils/typography";
+import { scale } from "@/utils/responsive";
 
-const HEIGHT = 45;
-const THUMB_SIZE = 30;
-const PADDING = 10;
-const MAX_WIDTH = 245; // in the future we can send this elements in the props 
+type LicenseButtonProps = {
+  label?: string;
+  width?: number;
+  backgroundColor?: string;
+  thumbColor?: string;
+};
 
-export default function LicenseVerificationButton() {
-  const { width: screenWidth } = useWindowDimensions();
-  const buttonWidth = Math.min(screenWidth * 0.8, MAX_WIDTH);
+const HEIGHT = scale(50);
+const BUTTON_WIDTH = scale(325);
+const THUMB_SIZE = scale(30);
+const PADDING = scale(10);
 
+export default function LicenseVerificationButton({ label = "Verify License Information", width, backgroundColor = Colors.formBackground, thumbColor = Colors.secondary }: LicenseButtonProps) {
+  const buttonWidth = width || BUTTON_WIDTH;
   return (
-    <View style={[styles.container, { width: buttonWidth }]}>
-      <Text style={styles.text}>Verify License Information</Text>
-
-      <View style={styles.thumb}>
-        <ArrowRightIcon color="white" size={THUMB_SIZE * 0.5} />
+    <View style={[ styles.container, { width: buttonWidth, backgroundColor, }, ]}>
+      <Text style={styles.text}>{label}</Text>
+      <View style={[styles.thumb, { backgroundColor: thumbColor }]}>
+        <ArrowRightIcon color={Colors.formBackground} size={scale(14)} />
       </View>
     </View>
   );
@@ -25,26 +31,31 @@ export default function LicenseVerificationButton() {
 const styles = StyleSheet.create({
   container: {
     height: HEIGHT,
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignSelf: 'center',
-    backgroundColor: 'white',
+    borderRadius: HEIGHT / 2,
+    justifyContent: "center",
+    alignSelf: "center",
   },
+
   text: {
-    position: 'absolute',
-    left: 35,
-    color: '#08070E',
-    fontSize: 14,
+    position: "absolute",
+    alignSelf: "center",
+    color: Colors.textDark,
+    fontSize: scale(14),
     fontFamily: Family.FG_Medium,
   },
+
   thumb: {
-    position: 'absolute',
+    position: "absolute",
     right: PADDING,
     width: THUMB_SIZE,
     height: THUMB_SIZE,
     borderRadius: THUMB_SIZE / 2,
-    backgroundColor: '#8EB392',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: Colors.textDark,
+    shadowOffset: { width: 0, height: scale(3) },
+    shadowOpacity: 0.15,
+    shadowRadius: scale(5),
+    elevation: 4,
   },
 });
