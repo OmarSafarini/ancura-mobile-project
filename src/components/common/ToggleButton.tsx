@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pressable, Text, StyleSheet, View } from 'react-native';
+import { scale } from '@/utils/responsive';
 
 interface ToggleButtonProps {
   Icon: any;
@@ -40,11 +41,11 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({ title, Icon, bgColor = '#FF
 
 const styles = StyleSheet.create({
   container: {
-    width: 120,
-    height: 25,
-    borderWidth: 0.8,
+    width: scale(120),
+    height: scale(25),
+    borderWidth: scale(0.8),
     borderColor: '#6D7EB5',
-    borderRadius: 11,
+    borderRadius: scale(11),
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -54,12 +55,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   iconContainer: {
-    marginRight: 6,
+    marginRight: scale(6),
   },
   text: {
     fontStyle: 'normal',
     fontWeight: '400',
-    fontSize: 10,
+    fontSize: scale(10),
   },
 });
 
