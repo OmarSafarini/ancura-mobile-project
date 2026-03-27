@@ -1,27 +1,19 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
-import { Dimensions } from "react-native";
-import { moderateScale } from "react-native-size-matters";
 import { Family } from "@/utils/typography";
 import { Colors } from "@/utils/colors";
+import { scale } from "@/utils/responsive";
+import ArrowRightIcon from "@/assets/icons/ArrowRightIcon";
 
-const { width } = Dimensions.get("window");
-
-const guidelineBaseWidth = 375;
-const rs = (size: number) => (width / guidelineBaseWidth) * size; // this code will be refactored in the future
 
 export default function Statistics() {
   return (
     <View style={styles.container}>
-`      <Pressable style={styles.arrowWrapper}>
-        <Text style={styles.arrow}>{">"}</Text>  
-        {/* this code will be refactored in the future */}
+      <Pressable style={styles.arrowWrapper}>
+        <ArrowRightIcon size={22} color={Colors.secondary} />
       </Pressable>
-
-      {/* Statistics */}
       <Pressable style={styles.statsWrapper}>
         <Text style={styles.statsText}>Statistics</Text>
       </Pressable>
-
     </View>
   );
 }
@@ -31,44 +23,42 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: rs(10),
+    gap: scale(10),
   },
 
   statsWrapper: {
+    width: scale(129),
+    height: scale(35),
     backgroundColor: "#F8F6FB",
-    paddingVertical: rs(7),
-    paddingHorizontal: rs(23),
-    borderRadius: rs(14),
+    borderRadius: scale(14),
     justifyContent: "center",
-
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: rs(4) },
+    alignItems: "center",
+    shadowColor: Colors.textDark,
+    shadowOffset: { width: 0, height: scale(4) },
     shadowOpacity: 0.15,
-    shadowRadius: rs(6),
+    shadowRadius: scale(6),
     elevation: 6,
   },
   statsText: {
-    fontSize: moderateScale(12),
-    fontFamily: Family.FG_Bold,
+    fontSize: scale(12),
+    fontFamily: Family.FG_Medium,
     color: Colors.textDark,
   },
-
   arrowWrapper: {
-    width: rs(38),
-    height: rs(38),
-    borderRadius: rs(19),
-
+    width: scale(46),
+    height: scale(46),
+    borderRadius: scale(23),
     justifyContent: "center",
     alignItems: "center",
-
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: rs(5) },
+    backgroundColor: Colors.formBackground,
+    shadowColor: Colors.textDark,
+    shadowOffset: { width: 0, height: scale(5) },
     shadowOpacity: 0.18,
-    shadowRadius: rs(8),
+    shadowRadius: scale(8),
     elevation: 8,
   },
   arrow: {
-    fontSize: moderateScale(18),
+    fontSize: scale(18),
     fontFamily: Family.FG_Semibold,
     color: Colors.secondary,
   },
