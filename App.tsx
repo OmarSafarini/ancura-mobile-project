@@ -1,10 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import ActivityLogButton from './src/features/doctor/components/ActivityLogButton';
+import EntryScreen from './src/features/auth/EntryScreen';
 export default function App() {
   return (
     <View>
-        <ActivityLogButton />
+        <EntryScreen />
     </View>
   );
 }
