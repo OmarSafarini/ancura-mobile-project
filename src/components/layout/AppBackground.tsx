@@ -1,13 +1,10 @@
 import React from 'react';
-import { View, StyleSheet, ViewStyle, Dimensions } from 'react-native';
+import { View, StyleSheet, ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, palette } from '../../utils/colors';
 import LogoOverlay from '../../assets/icons/LogoOverlay';
 import BackgroundTexture from '../../assets/icons/BackgroundTexture';
-
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
-const BASE_WIDTH = 430;
-const scale = (size: number) => (SCREEN_WIDTH / BASE_WIDTH) * size;
+import { scale, screenWidth, screenHeight } from '../../utils/responsive';
 
 
 export type BackgroundVariant = 'clean' | 'texture' | 'logo';
@@ -38,7 +35,7 @@ export default function AppBackground({
     >
       {variant === 'texture' && (
         <View style={StyleSheet.absoluteFill} pointerEvents="none">
-          <BackgroundTexture width={SCREEN_WIDTH} height={SCREEN_HEIGHT} />
+          <BackgroundTexture width={screenWidth} height={screenHeight} />
         </View>
       )}
 
