@@ -4,7 +4,7 @@ import ActivityLogButton from './src/features/doctor/components/ActivityLogButto
 export default function App() {
   return (
     <View>
-        <ActivityLogButton />
+        <FileBar title="Clinical Psychology License - California Board" />
     </View>
   );
 }
