@@ -14,7 +14,7 @@ export default function IconWrapper({
   size,
   bgColor = "#eee",
   shape = "circle",
-  border='#6D7EB5',
+  border,
   children,
 }: Props) {
   return (
@@ -25,14 +25,14 @@ export default function IconWrapper({
   );
 }
 
-const dynamicStyle = (size: number, bgColor: string, shape: "circle" | "square",border:string) => ({
+const dynamicStyle = (size: number, bgColor: string, shape: "circle" | "square",border?:string) => ({
   width: size,
   height: size,
   //16 according to figma
   borderRadius: shape === "circle" ? size / 2 : 16, 
   backgroundColor: bgColor,
-  borderColor:border,
-  borderWidth:1
+  borderColor: border,
+  borderWidth: border ? 1 : 0,
 });
 
 const styles = StyleSheet.create({
