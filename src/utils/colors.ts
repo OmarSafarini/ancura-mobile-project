@@ -3,6 +3,7 @@
 export const palette = {
 
   dark: '#08070E',
+  dark2: '#000000B2',
 
   darkGreen: '#8EB392',
   lightGreen: '#C3E3C7',
@@ -47,6 +48,7 @@ export const Colors = {
   formLabel: palette.darkGray,
 
   textDark: palette.dark,
+  textDark2: palette.dark2,
   textBlue: palette.darkBlue,
   textGreen: palette.darkGreen,
   textGray: palette.darkGray4,

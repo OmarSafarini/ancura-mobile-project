@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: scale(16),
     fontFamily: Family.FG_Medium,
-    color: "#000000b2",
+    color: Colors.textDark2,
   },
 
   line: {
@@ -58,6 +58,6 @@ const styles = StyleSheet.create({
   value: {
     fontSize: scale(40),
     fontFamily: Family.FG_Medium,
-    color: "#000000b2",
+    color: Colors.textDark2,
   },
 });

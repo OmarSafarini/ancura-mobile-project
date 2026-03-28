@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     width: scale(88),
     fontSize: scale(16),
     fontFamily: Family.FG_Medium,
-    color: "#000000b2",
+    color: Colors.textDark2,
   },
 
   line: {
@@ -62,11 +62,11 @@ const styles = StyleSheet.create({
   value: {
     fontSize: scale(40),
     fontFamily: Family.FG_Medium,
-    color: "#000000b2",
+    color: Colors.textDark2,
   },
 
   small: {
     fontSize: scale(40),
-    color: "#4f4f4fb2",
+    color: "#505050B2",
   },
 });
