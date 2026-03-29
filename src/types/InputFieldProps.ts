@@ -6,5 +6,4 @@ export type InputFieldProps = {
   label: string;
   placeholder: string;
   rules?: any;
-  width?: number;
 };
