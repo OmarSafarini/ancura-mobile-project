@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="./assets/ancura.gif" alt="Ancura Animated Logo" width="200" style="border-radius: 20px;" />
-</p>
+<img src="./assets/ancura.gif" alt="Ancura Animated Logo" width="200" style="border-radius: 20px; margin-bottom: 10px;" />
 
 
 # Ancura
