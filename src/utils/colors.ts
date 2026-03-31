@@ -4,6 +4,7 @@ export const palette = {
 
   dark: '#08070E',
   dark2: '#000000B2',
+  black:'#000000',
 
   darkGreen: '#8EB392',
   lightGreen: '#C3E3C7',
@@ -54,6 +55,7 @@ export const Colors = {
   textGray: palette.darkGray4,
 
   buttonActive: palette.darkBlue,
+  shadow:palette.black,
 
 
 
