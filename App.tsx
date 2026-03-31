@@ -1,18 +1,23 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import ActivityLogButton from './src/features/doctor/components/ActivityLogButton';
+import { StyleSheet, View } from 'react-native';
+import { useAppFonts } from './src/utils/useAppFonts';
+
+
 export default function App() {
+  const { fontsLoaded } = useAppFonts();
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
-    <View>
-        <FileBar title="Clinical Psychology License - California Board" />
+    <View style={styles.container}>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
