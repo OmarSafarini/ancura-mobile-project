@@ -3,9 +3,11 @@ import { View, Text, TextInput, StyleSheet } from "react-native";
 import { Controller } from "react-hook-form";
 import { Family } from "@/utils/typography";
 import { Colors } from "@/utils/colors";
-const InputField = ({ control, name, label, placeholder, rules,width }: { control: any; name: string; label: string; placeholder: string; rules: any; width: number }) => {
+import { scale } from "@/utils/responsive";
+
+const InputField = ({ control, name, label, placeholder, rules }: { control: any; name: string; label: string; placeholder: string; rules?: any }) => {
   return (
-    <View style={[styles.formInput, { width }]}>
+    <View style={styles.formInput}>
       <View style={styles.wrapper}>
         
         <Text style={styles.label}>{label}</Text>
@@ -16,14 +18,14 @@ const InputField = ({ control, name, label, placeholder, rules,width }: { contro
           rules={rules}
           render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
             <>
-              <View style={styles.inputField}>
+              <View style={[styles.inputField, error && styles.inputFieldError]}>
                 <TextInput
                   placeholder={placeholder}
                   value={value}
                   onBlur={onBlur}
                   onChangeText={onChange}
                   style={styles.inputText}
-                  placeholderTextColor="#666"
+                  placeholderTextColor={Colors.formLabel}
                 />
               </View>
 
@@ -41,46 +43,46 @@ const InputField = ({ control, name, label, placeholder, rules,width }: { contro
 
 export default InputField;
 
-
 const styles = StyleSheet.create({
-
   formInput: {
-    alignItems: "flex-start",
+    width: "100%",
   },
-
   wrapper: {
     flexDirection: "column",
-    gap: 8,
-    //width: 370,
+    gap: scale(8),
+    width: "100%",
   },
-
   label: {
     color: Colors.formLabel,
-    fontFamily:Family.HV_Bold,
-    fontSize: 12,
-    lineHeight: 18,
+    fontFamily: Family.HV_Bold,
+    fontSize: scale(12),
+    marginLeft: scale(4),
   },
-
   inputField: {
     backgroundColor: Colors.formBackground,
     borderWidth: 1,
     borderColor: Colors.formBorder,
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    borderRadius: scale(8),
+    height: scale(50),
+    justifyContent: "center",
+    paddingHorizontal: scale(16),
     width: "100%",
   },
-
-  inputText: {
-    fontSize: 18,
-    color: Colors.formLabel,
-    fontFamily:Family.FG_Light
+  inputFieldError: {
+    borderColor: Colors.warning,
+    borderWidth: 1.5,
   },
-
+  inputText: {
+    flex: 1,
+    fontSize: scale(16),
+    color: Colors.textDark,
+    fontFamily: Family.FG_Light,
+  },
   error: {
     color: Colors.warning,
-    fontSize: 12,
-    marginTop: 4,
+    fontSize: scale(12),
+    fontFamily: Family.FG_Regular,
+    marginTop: scale(4),
+    marginLeft: scale(4),
   }
-
 });
