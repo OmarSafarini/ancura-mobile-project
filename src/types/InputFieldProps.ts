@@ -6,4 +6,5 @@ export type InputFieldProps = {
   label: string;
   placeholder: string;
   rules?: any;
+  isEdit?: boolean;
 };

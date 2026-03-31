@@ -12,5 +12,4 @@ export type FormDropdownProps = {
   data: DropdownItem[];
   placeholder: string;
   rules?: any;
-  width?: number;
 };

@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 import { Controller } from "react-hook-form";
 import { InputFieldProps } from "@/types/InputFieldProps";
 import { Family } from "@/utils/typography";
-import { Colors } from "@/utils/colors";
+import { Colors, palette } from "@/utils/colors";
 import {scale} from "@utils/responsive";
-const InputField = ({ control, name, label, placeholder, rules }: InputFieldProps) => {
+const InputField = ({ control, name, label, placeholder, rules, isEdit=false }: InputFieldProps) => {
+  const [isFocused, setIsFocused] = useState(false);
   return (
     <View style={styles.formInput}>
       <View style={styles.wrapper}>
@@ -20,13 +21,20 @@ const InputField = ({ control, name, label, placeholder, rules }: InputFieldProp
               <View
                 style={[
                   styles.inputField,
+                  { backgroundColor: isEdit
+                    ? (isFocused ? palette.white : "transparent") 
+                    : palette.white,},
                   error && { borderColor: Colors.warning },
                 ]}
               >
                 <TextInput
                   placeholder={placeholder}
                   value={value || ""}
-                  onBlur={onBlur}
+                  onBlur={() => {
+                    onBlur();
+                    setIsFocused(false);
+                  }}
+                  onFocus={() => setIsFocused(true)}
                   onChangeText={onChange}
                   style={styles.inputText}
                   placeholderTextColor={Colors.formLabel}
