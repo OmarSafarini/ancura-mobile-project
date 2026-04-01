@@ -14,7 +14,7 @@ export interface NotificationCardProps {
   title: string;
   date: string;
   isRead: boolean;
-  status: "under_review" | "doctor_replied" | "resolved";
+  status?: "under_review" | "doctor_replied" | "resolved";
 }
 
 // _____________ Patient Comment Card _____________________
@@ -51,7 +51,6 @@ const styles = StyleSheet.create({
     borderRadius: Card_Radius,
     padding: scale(18),
     gap: scale(5),
-    maxHeight:"25%"
   },
   UnReadCard: {
     backgroundColor: "rgba(182,192,249,0.4)",
