@@ -1,10 +1,12 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import CaseStatus from "@/components/common/CaseStatus";
+import { ActivityLogCardProps } from "@/types/IActivityLogProps";
 import { Colors, palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
+import { scale } from "@utils/responsive";
 
-const ActivityLogCard = ({ title, description, time, isResolved }: { title: string; description: string; time: string; isResolved?: boolean; }) => {
+const ActivityLogCard = ({ title, description, time, isResolved }: ActivityLogCardProps) => {
   return (
     <View style={styles.card}>
 
@@ -37,57 +39,57 @@ const styles = StyleSheet.create({
 
   card: {
     backgroundColor: palette.white,
-    borderRadius: 30,
+    borderRadius: scale(30),
    
-    width: 327,
-    height: 100.75,
-    marginBottom: 12,
+    width: scale(327),
+    height: scale(100.75),
+    marginBottom: scale(12),
 
-    shadowColor: "#000",
+    shadowColor: Colors.shadow,
     shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowRadius: scale(4),
+    elevation: scale(3),
   },
 
   header: {
-    marginLeft:30,
-    marginTop: 16,
+    marginLeft:scale(30),
+    marginTop: scale(16),
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center"
   },
 
   timeContainer: {
-    marginRight: 30
+    marginRight: scale(30)
   },
 
   title: {
-    fontSize: 16,
+    fontSize: scale(16),
     fontFamily:Family.FG_Regular,
     color: Colors.textDark
   },
 
   time: {
-    fontSize: 10,
+    fontSize: scale(10),
     fontFamily:Family.FG_Regular,
     color: Colors.textGray
   },
 
   descriptionContainer: {
-    marginLeft:30,
-    marginTop: 8
+    marginLeft:scale(30),
+    marginTop: scale(8)
   },
 
   description: {
-    fontSize: 10,
+    fontSize: scale(10),
     color: Colors.textBlue,
     fontFamily:Family.FG_Regular,
-    lineHeight: 14
+    lineHeight: scale(14)
   },
 
   statusContainer: {
-    marginRight: 21,
-    marginBottom: 9.53,
+    marginRight: scale(21),
+    marginBottom: scale(9.53),
     alignItems: "flex-end"
   }
 
