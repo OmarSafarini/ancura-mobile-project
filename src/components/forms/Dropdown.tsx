@@ -91,7 +91,7 @@ export default FormDropdown;
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: scale(16),
+    width: "100%",
   },
 
   label: {
@@ -106,6 +106,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.formBorder,
     borderRadius: scale(8),
     padding: scale(12),
+    backgroundColor: palette.white,
   },
 
   dropdownList: {
