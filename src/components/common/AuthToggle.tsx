@@ -4,38 +4,39 @@ import { useState } from "react";
 import { Family } from "@/utils/typography";
 import { scale } from "@/utils/responsive";
 
-export default function AuthToggle() {
-  const [active, setActive] = useState<"signin" | "signup">("signin");
-  const { width } = useWindowDimensions();
-  const totalWidth = width * 0.85;
+interface AuthToggleProps {
+  value: "signin" | "signup";
+  onChange: (value: "signin" | "signup") => void;
+}
 
+export default function AuthToggle({ value, onChange }: AuthToggleProps) {
   return (
-    <View style={[styles.container, { width: totalWidth }]}>
+    <View style={[styles.container, { width: "100%" }]}>
       
       <View 
         style={[
           styles.activeBackground, 
           { 
-            left: active === "signin" ? 0 : undefined,
-            right: active === "signup" ? 0 : undefined,
+            left: value === "signin" ? 0 : undefined,
+            right: value === "signup" ? 0 : undefined,
           }
         ]} 
       />
 
       <Pressable
-        onPress={() => setActive("signin")}
+        onPress={() => onChange("signin")}
         style={styles.tab}
       >
-        <Text style={[styles.text, active === "signin" ? styles.activeText : styles.inactiveText]}>
+        <Text style={[styles.text, value === "signin" ? styles.activeText : styles.inactiveText]}>
           Sign in
         </Text>
       </Pressable>
 
       <Pressable
-        onPress={() => setActive("signup")}
+        onPress={() => onChange("signup")}
         style={styles.tab}
       >
-        <Text style={[styles.text, active === "signup" ? styles.activeText : styles.inactiveText]}>
+        <Text style={[styles.text, value === "signup" ? styles.activeText : styles.inactiveText]}>
           Sign up
         </Text>
       </Pressable>
