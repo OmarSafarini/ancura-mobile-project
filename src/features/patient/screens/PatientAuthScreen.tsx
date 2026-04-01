@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, KeyboardAvoidingView, ScrollView, Platform } fr
 import { useForm } from 'react-hook-form';
 import AppBackground from '../../../components/layout/AppBackground';
 import Logo from '../../../assets/icons/Logo';
+import FadeInView from '../../../utils/FadeInView';
 import AuthToggle from '../../../components/common/AuthToggle';
 import InputField from '../../../components/forms/InputFeild';
 import FormDropdown from '../../../components/forms/Dropdown';
@@ -44,24 +45,24 @@ export default function PatientAuthScreen() {
           keyboardShouldPersistTaps="handled"
         >
           {/* Logo Section */}
-          <View style={styles.logoContainer}>
+          <FadeInView delay={0} style={styles.logoContainer}>
             <Logo size={scale(110)} />
-          </View>
+          </FadeInView>
 
           {/* Title Section */}
-          <View style={styles.titleContainer}>
+          <FadeInView delay={150} style={styles.titleContainer}>
             <Text style={styles.titleLine1}>Your Path to</Text>
             <Text style={styles.titleLine2}>Mental Wellness</Text>
             <Text style={styles.titleLine3}>Starts Here!</Text>
-          </View>
+          </FadeInView>
 
           {/* Toggle Section */}
-          <View style={styles.toggleContainer}>
+          <FadeInView delay={300} style={styles.toggleContainer}>
             <AuthToggle value={authMode} onChange={setAuthMode} />
-          </View>
+          </FadeInView>
 
           {/* Form Section */}
-          <View style={styles.formContainer}>
+          <FadeInView delay={450} style={styles.formContainer}>
             <InputField 
               control={control}
               name="nickname"
@@ -102,13 +103,13 @@ export default function PatientAuthScreen() {
                 />
               </>
             )}
-          </View>
+          </FadeInView>
 
           {/* Spacer pushing bottom elements down */}
           <View style={styles.spacer} />
 
           {/* Actions Section */}
-          <View style={styles.actionsContainer}>
+          <FadeInView delay={600} style={styles.actionsContainer}>
             <NormalButton 
               title="Continue" 
               onPress={handleSubmit(onSubmit)}
@@ -127,7 +128,7 @@ export default function PatientAuthScreen() {
               bgColor={palette.darkGray2}
               textColor={Colors.textDark}
             />
-          </View>
+          </FadeInView>
 
         </ScrollView>
       </KeyboardAvoidingView>
