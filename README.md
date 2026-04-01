@@ -1,3 +1,6 @@
+<img src="./assets/ancura.gif" alt="Ancura Animated Logo" width="200" style="border-radius: 20px; margin-bottom: 10px;" />
+
+
 # Ancura
 
 A platform where users can anonymously seek mental health advice from licensed professionals. It also offers articles, self-help tools, and supportive resources to help users improve their mental health.

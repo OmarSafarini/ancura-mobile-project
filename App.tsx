@@ -1,14 +1,20 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { Notification } from './src/features/patient/screens/Notification';
+import { StyleSheet, View } from 'react-native';
+import { useAppFonts } from './src/utils/useAppFonts';
+
 
 export default function App() {
+  const { fontsLoaded } = useAppFonts();
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <View style={styles.container}>
-        <Notification />
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
