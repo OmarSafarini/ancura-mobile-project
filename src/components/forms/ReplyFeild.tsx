@@ -1,10 +1,12 @@
 import React from "react";
 import { View, TextInput, StyleSheet } from "react-native";
 import { Controller } from "react-hook-form";
+import { ReplyFieldProps } from "@/types/IReplyFieldProps";
 import { palette,Colors } from "@/utils/colors";
 import { Family } from "@/utils/typography";
+import {scale} from "@utils/responsive";
 
-const ReplyField = ({ control, name }: { control: any; name: string }) => {
+const ReplyField = ({ control, name }: ReplyFieldProps) => {
   return (
     <Controller
       control={control}
@@ -15,7 +17,7 @@ const ReplyField = ({ control, name }: { control: any; name: string }) => {
             style={styles.inputText}
             placeholder="Reply"
             placeholderTextColor={palette.darkGray}
-            value={value}
+            value={value || ""}
             onBlur={onBlur}
             onChangeText={onChange}
           />
@@ -29,16 +31,16 @@ export default ReplyField;
 const styles = StyleSheet.create({
   inputField: {
     backgroundColor: palette.white,
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: Colors.secondary,
-    borderRadius: 24,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    width: 278
+    borderRadius: scale(24),
+    paddingVertical: scale(12),
+    paddingHorizontal: scale(16),
+    width: "100%"
   },
 
   inputText: {
-    fontSize: 18,
+    fontSize: scale(18),
     color: palette.darkGray,
     fontFamily: Family.FG_Regular
   }

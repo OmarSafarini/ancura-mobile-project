@@ -2,10 +2,20 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Controller } from "react-hook-form";
 import { Dropdown } from "react-native-element-dropdown";
+import { FormDropdownProps } from "@/types/IDropdownProps";
 import { Family } from "@/utils/typography";
 import { palette, Colors } from "@/utils/colors";
+import { scale } from "@utils/responsive";
+import { Ionicons } from "@expo/vector-icons";
 
-const FormDropdown = ({ control, name, label, data, placeholder, rules,width }: { control: any; name: string; label: string; data: any[]; placeholder: string; rules: any; width: number }) => {
+const FormDropdown = ({
+  control,
+  name,
+  label,
+  data,
+  placeholder,
+  rules,
+}: FormDropdownProps) => {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
@@ -17,33 +27,59 @@ const FormDropdown = ({ control, name, label, data, placeholder, rules,width }: 
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <>
             <Dropdown
-              style={[styles.dropdown, { width }]}
+              style={styles.dropdown}
               data={data}
               labelField="label"
               valueField="value"
               placeholder={placeholder}
               value={value}
               onChange={(item) => onChange(item.value)}
-              renderItem={(item, index) => {
+              selectedTextStyle={styles.selectedValue}
+              placeholderStyle={styles.selectedValue}
+              maxHeight={data.length * scale(60)}
+              flatListProps={{
+                scrollEnabled: false,
+              }}
+              renderRightIcon={() => (
+                <View>
+                  <Ionicons
+                   name="chevron-down"
+                    size={scale(20)}
+                    color={Colors.primary}   
+                  />
+                </View>
+              )}
+              renderItem={(item) => {
                 const isSelected = item.value === value;
-                const isLast = data.findIndex(d => d.value === item.value) === data.length - 1;
+                const isLast =
+                  data.findIndex((d) => d.value === item.value) ===
+                  data.length - 1;
+
                 return (
-    <View style={[styles.item, isSelected && styles.selectedItem, isLast && styles.lastItem]}>
-      <Text style={[styles.itemText, isSelected && styles.selectedText]}>
-        {item.label}
-      </Text>
-    </View>
-  );
-}}
-              containerStyle={{
-    borderWidth: 1,
-    borderColor: Colors.formBorder,
-    borderRadius: 8,
-    overflow: "hidden"
-  }}
+                  <View
+                    style={[
+                      styles.item,
+                      isSelected && styles.selectedItem,
+                      isLast && styles.lastItem,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.itemText,
+                        isSelected && styles.selectedText,
+                      ]}
+                    >
+                      {item.label}
+                    </Text>
+                  </View>
+                );
+              }}
+              containerStyle={styles.dropdownList}
             />
 
-            {error && <Text style={styles.error}>{error.message}</Text>}
+            {error?.message && (
+              <Text style={styles.error}>{error.message}</Text>
+            )}
           </>
         )}
       />
@@ -55,53 +91,68 @@ export default FormDropdown;
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16
+    width: "100%",
   },
+
   label: {
-    fontSize: 12,
+    fontSize: scale(12),
     fontFamily: Family.HV_Bold,
     color: palette.darkGray,
-    marginBottom: 6
+    marginBottom: scale(6),
   },
+
   dropdown: {
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: Colors.formBorder,
-    borderRadius: 8,
-    padding: 12
+    borderRadius: scale(8),
+    padding: scale(12),
+    backgroundColor: palette.white,
   },
+
   dropdownList: {
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: Colors.formBorder,
-    borderTopWidth: 0, 
-    borderRadius: 8,
-    overflow: "hidden"
+    borderTopWidth: 0,
+    borderRadius: scale(8),
+    overflow: "hidden",
   },
+
   item: {
-    height: 48,
+    height: scale(48),
     justifyContent: "center",
-    paddingHorizontal: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.formBorder
+    paddingHorizontal: scale(12),
+    borderBottomWidth: scale(1),
+    borderBottomColor: Colors.formBorder,
   },
+  selectedValue: {
+  fontSize: scale(16),
+  fontFamily: Family.HV_Regular,
+  color: palette.darkGray,
+},
+
   lastItem: {
     borderBottomWidth: 0,
-    borderBottomLeftRadius: 8,
-    borderBottomRightRadius: 8
+    borderBottomLeftRadius: scale(8),
+    borderBottomRightRadius: scale(8),
   },
+
   selectedItem: {
-    backgroundColor: Colors.primary
+    backgroundColor: Colors.primary,
   },
+
   itemText: {
-    fontSize: 16,
+    fontSize: scale(16),
     color: palette.darkGray,
-    fontFamily: Family.HV_Regular
+    fontFamily: Family.HV_Regular,
   },
+
   selectedText: {
-    color: palette.white
+    color: palette.white,
   },
+
   error: {
-    color: "red",
-    marginTop: 4,
-    fontSize: 12
-  }
+    color: Colors.warning,
+    marginTop: scale(4),
+    fontSize: scale(12),
+  },
 });
