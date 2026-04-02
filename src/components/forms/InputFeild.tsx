@@ -58,13 +58,13 @@ export default InputField;
 const styles = StyleSheet.create({
 
   formInput: {
-    alignItems: "flex-start",
-  width: "100%",
+    width: "100%",
   },
 
   wrapper: {
     flexDirection: "column",
     gap: scale(8),
+    width: "100%",
   },
 
   label: {
@@ -87,7 +87,8 @@ const styles = StyleSheet.create({
   inputText: {
     fontSize: scale(18),
     color: Colors.formLabel,
-    fontFamily:Family.FG_Light
+    fontFamily:Family.FG_Light,
+    width: "100%",
   },
 
   error: {
