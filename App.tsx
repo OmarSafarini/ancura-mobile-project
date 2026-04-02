@@ -1,7 +1,6 @@
-import { StyleSheet, View } from 'react-native';
-import { useAppFonts } from './src/utils/useAppFonts';
-
-
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View } from 'react-native';
+import EntryScreen from './src/features/auth/EntryScreen';
 export default function App() {
   const { fontsLoaded } = useAppFonts();
 
@@ -10,7 +9,8 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
+    <View>
+        <EntryScreen />
     </View>
   );
 }
