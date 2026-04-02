@@ -38,19 +38,19 @@ export default function CaseCard({ data }: Props) {
   const config = STATUS_CONFIG[status];
 
   return (
-    <Pressable style={[styles.container,{ backgroundColor: config.background },data.isEmergency && styles.emergencyShadow,]}>
+    <Pressable style={[styles.container,{ backgroundColor: config.containerColor },data.isEmergency && styles.emergencyShadow,]}>
       <Text style={styles.title}>{data.title}</Text>
       <View style={styles.arrowContainer}>
         <Ionicons name="chevron-forward" size={scale(16)} />
       </View>
       <View style={styles.bottomRow}>
         <Text style={styles.time}>{data.created_at}</Text>
-        {status !== "Empty" && config.Icon && (
+        {status !== "Empty" && config.IconComponent && (
           <View style={styles.reviewContainer}>
-            <View style={[styles.iconCircle, { backgroundColor: config.iconColor }]}>
-              <config.Icon width={scale(10)} height={scale(10)} />
+            <View style={[styles.iconCircle, { backgroundColor: config.iconBackground }]}>
+              <config.IconComponent width={scale(10)} height={scale(10)} />
             </View>
-            <Text style={[styles.reviewText, { color: config.iconColor }]}>{status}</Text>
+            <Text style={[styles.reviewText, { color: config.iconBackground }]}>{status}</Text>
           </View>
         )}
       </View>
@@ -74,8 +74,8 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   title: {
-    fontSize: scale(9),
-    fontFamily: Family.FG_Semibold,
+    fontSize: scale(13),
+    fontFamily: Family.FG_Medium,
     color: Colors.textDark,
     maxWidth: "75%",
   },
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   time: {
-    fontSize: scale(7),
+    fontSize: scale(8),
     fontFamily: Family.HV_Regular,
     color: "rgba(0,0,0,0.36)",
   },
@@ -105,8 +105,9 @@ const styles = StyleSheet.create({
     gap: scale(4),
   },
   reviewText: {
-    fontSize: scale(6),
-    fontFamily: Family.FG_Medium,
+    paddingTop: scale(2),
+    fontSize: scale(7),
+    fontFamily: Family.FG_Regular,
   },
   iconCircle: {
     width: scale(12),
