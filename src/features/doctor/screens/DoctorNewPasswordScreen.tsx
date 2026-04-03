@@ -50,8 +50,9 @@ export default function DoctorNewPasswordScreen() {
               control={control}
               name="newPassword"
               label="Enter New Password"
-              placeholder=""
+              placeholder="Enter Password"
               rules={{ required: "New Password is required" }}
+              secureTextEntry={true}
             />
 
             <View style={{ height: scale(15) }} />
@@ -60,8 +61,9 @@ export default function DoctorNewPasswordScreen() {
               control={control}
               name="confirmPassword"
               label="Confirm Password"
-              placeholder=""
+              placeholder="Enter Password"
               rules={{ required: "Confirm Password is required" }}
+              secureTextEntry={true}
             />
           </FadeInView>
 

@@ -60,8 +60,9 @@ export default function DoctorLoginScreen() {
               control={control}
               name="password"
               label="Password"
-              placeholder="USR-978896"
+              placeholder="Enter Password"
               rules={{ required: "Password is required" }}
+              secureTextEntry={true}
             />
 
             <View style={styles.forgotPasswordContainer}>
