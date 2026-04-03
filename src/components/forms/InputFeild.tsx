@@ -5,7 +5,7 @@ import { InputFieldProps } from "@/types/InputFieldProps";
 import { Family } from "@/utils/typography";
 import { Colors, palette } from "@/utils/colors";
 import {scale} from "@utils/responsive";
-const InputField = ({ control, name, label, placeholder, rules, isEdit=false }: InputFieldProps) => {
+const InputField = ({ control, name, label, placeholder, rules, isEdit=false, secureTextEntry }: InputFieldProps) => {
   const [isFocused, setIsFocused] = useState(false);
   return (
     <View style={styles.formInput}>
@@ -38,6 +38,7 @@ const InputField = ({ control, name, label, placeholder, rules, isEdit=false }: 
                   onChangeText={onChange}
                   style={styles.inputText}
                   placeholderTextColor={Colors.formLabel}
+                  secureTextEntry={secureTextEntry}
                 />
               </View>
 
