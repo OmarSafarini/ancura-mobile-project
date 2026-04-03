@@ -80,6 +80,7 @@ export default function PatientAuthScreen() {
                 label="Password"
                 placeholder="Enter Password"
                 rules={{ required: "Password is required" }}
+                secureTextEntry={true}
               />
             ) : (
               <>
