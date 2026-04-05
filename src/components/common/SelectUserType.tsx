@@ -2,9 +2,20 @@ import React from "react";
 import { View, Text, StyleSheet, Pressable} from "react-native";
 import { scale } from "@/utils/responsive";
 
-export default function SelectUserType({ Icon, title, userType, onPress }: any) {
+export default function SelectUserType({ Icon, title, userType, onPress, isActive, activeBgColor}: any) {
     return (
-        <Pressable onPress={onPress} style={({ pressed }) => [styles.container, { backgroundColor: pressed ? "#B6C0F94D" : "#fff"}]}>
+        <Pressable 
+            onPress={onPress} 
+            style={({ pressed }) => [
+                styles.container, 
+                { 
+                    backgroundColor: isActive 
+                        ? (activeBgColor || "#B6C0F933") 
+                        : (pressed ? (activeBgColor || "#B6C0F933") : "transparent"),
+                   
+                }
+            ]}
+        >
             <View style={styles.iconContainer}>
                 <Icon></Icon>
             </View>
@@ -35,7 +46,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         width: scale(68),
         height: scale(68),
-        backgroundColor: "#B6C0F9",
         borderRadius: scale(34),
     },
     texts: {

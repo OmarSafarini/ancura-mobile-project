@@ -7,25 +7,27 @@ interface SelfHelpResourceProps {
     Icon:any
     title: string;
     tag: string;
+    tagColor?: string;
+    bgTagColor?: string;
     onPress?: () => void;
 }
 
-export default function SelfHelpResource({ title, tag, Icon, onPress }: SelfHelpResourceProps) {
+export default function SelfHelpResource({ title, tag, tagColor, bgTagColor, Icon, onPress }: SelfHelpResourceProps) {
     return (
         <TouchableOpacity onPress={onPress} style={styles.container}>
-            <View style={styles.iconBackground}>
-                {Icon ? <Icon size={scale(40)} color="#6D93B5" /> : <FileIcon size={scale(40)} color="#6D93B5" />}
+            <View style={[styles.iconBackground,{backgroundColor:bgTagColor}]}>
+                {Icon ? <Icon size={scale(40)} color={tagColor} /> : <FileIcon size={scale(40)} color={tagColor} />}
             </View>
             <View style={styles.textContainer}>
                 <Text style={styles.title} numberOfLines={2}>
                     {title}
                 </Text>
-                <View style={styles.tagBadge}>
-                    <Text style={styles.tagText}>{tag}</Text>
+                <View style={[styles.tagBadge,{backgroundColor:bgTagColor}]}>
+                    <Text style={[styles.tagText,{color:tagColor}]}>{tag}</Text>
                 </View>
             </View>
             <View style={styles.arrowContainer}>
-                <View style={styles.arrowCircle}>
+                <View style={[styles.arrowCircle,{backgroundColor:bgTagColor}]}>
                     <View style={styles.arrow} />
                 </View>
             </View>
@@ -51,7 +53,6 @@ const styles = StyleSheet.create({
     iconBackground: {
         width: scale(74),
         height: scale(74),
-        backgroundColor: "rgba(182, 210, 249, 0.5)",
         borderRadius: scale(14),
         justifyContent: "center",
         alignItems: "center",
@@ -70,12 +71,13 @@ const styles = StyleSheet.create({
         lineHeight: scale(16),
     },
     tagBadge: {
-        width: scale(63.53),
+        width: "fit-content",
         height: scale(18),
         backgroundColor: "rgba(182, 210, 249, 0.5)",
         borderRadius: scale(4),
         justifyContent: "center",
         alignItems: "center",
+        paddingHorizontal: scale(5),
     },
     tagText: {
         fontSize: scale(10),
