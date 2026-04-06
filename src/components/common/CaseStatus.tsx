@@ -8,14 +8,14 @@ import { caseStatusMap } from "@/types/ICaseStatusMap";
 
 
 
-const CaseStatus = ({ status, variant="default" }: CaseStatusProps) => {
+const CaseStatus = ({ status, variant="default",backgroundColor="rgba(216, 216, 216, 0.48)" }: CaseStatusProps) => {
 
   const config = caseStatusMap[status];
 
   const { text, color, Icon } = config;
 
   return (
-    <View style={[styles.container,variant === "activityLog" && styles.cardVariant]}>
+    <View style={[styles.container,variant === "activityLog" && styles.cardVariant,{backgroundColor:backgroundColor}]}>
   {Icon && <Icon width={scale(12)} height={scale(12)} />}
 
   <Text style={[styles.text, { color }]}>
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
 
-    backgroundColor: "#FFFFFF7A",    
+    backgroundColor: "rgba(216, 216, 216, 0.48)",
     borderRadius: scale(11),
 
     width: scale(74),
