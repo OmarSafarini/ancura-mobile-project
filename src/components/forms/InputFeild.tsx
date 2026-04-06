@@ -5,7 +5,7 @@ import { InputFieldProps } from "@/types/InputFieldProps";
 import { Family } from "@/utils/typography";
 import { Colors, palette } from "@/utils/colors";
 import {scale} from "@utils/responsive";
-const InputField = ({ control, name, label, placeholder, rules, isEdit=false, secureTextEntry }: InputFieldProps) => {
+const InputField = ({ control, name, label, placeholder, rules, isEdit=false, secureTextEntry, multiline=false, numberOfLines=1 }: InputFieldProps) => {
   const [isFocused, setIsFocused] = useState(false);
   return (
     <View style={styles.formInput}>
@@ -25,6 +25,7 @@ const InputField = ({ control, name, label, placeholder, rules, isEdit=false, se
                     ? (isFocused ? palette.white : "transparent") 
                     : palette.white,},
                   error && { borderColor: Colors.warning },
+                  multiline && styles.multilineInput,
                 ]}
               >
                 <TextInput
@@ -36,9 +37,12 @@ const InputField = ({ control, name, label, placeholder, rules, isEdit=false, se
                   }}
                   onFocus={() => setIsFocused(true)}
                   onChangeText={onChange}
-                  style={styles.inputText}
+                  style={[styles.inputText, multiline && styles.multilineText]}
                   placeholderTextColor={Colors.formLabel}
                   secureTextEntry={secureTextEntry}
+                  multiline={multiline}
+                  numberOfLines={numberOfLines}
+                  textAlignVertical={multiline ? "top" : "center"}
                 />
               </View>
 
@@ -90,6 +94,15 @@ const styles = StyleSheet.create({
     color: Colors.formLabel,
     fontFamily:Family.FG_Light,
     width: "100%",
+  },
+
+  multilineInput: {
+    height: scale(112),
+    paddingTop: scale(12),
+  },
+
+  multilineText: {
+    height: "100%",
   },
 
   error: {
