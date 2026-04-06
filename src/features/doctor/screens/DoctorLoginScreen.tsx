@@ -1,36 +1,26 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
+import React from 'react';
+import { StyleSheet, View, Text, KeyboardAvoidingView, ScrollView, Platform, TouchableOpacity } from 'react-native';
 import { useForm } from 'react-hook-form';
 import AppBackground from '../../../components/layout/AppBackground';
 import Logo from '../../../assets/icons/Logo';
 import FadeInView from '../../../utils/FadeInView';
-import AuthToggle from '../../../components/common/AuthToggle';
 import InputField from '../../../components/forms/InputFeild';
-import FormDropdown from '../../../components/forms/Dropdown';
 import NormalButton from '../../../components/common/NormalButton';
+import HIPAAFooter from '../../../components/common/Footer';
 import { Colors, palette } from '../../../utils/colors';
 import { Family } from '../../../utils/typography';
 import { scale } from '../../../utils/responsive';
 
-const genderData = [
-  { label: 'Male', value: 'Male' },
-  { label: 'Female', value: 'Female' },
-];
-
-export default function PatientAuthScreen() {
-  const [authMode, setAuthMode] = useState<"signin" | "signup">("signin");
-
+export default function DoctorLoginScreen() {
   const { control, handleSubmit } = useForm({
     defaultValues: {
-      nickname: '',
+      email: '',
       password: '',
-      age: '',
-      gender: '',
     }
   });
 
   const onSubmit = (data: any) => {
-    console.log("Form Data: ", { mode: authMode, ...data });
+    console.log("Doctor Login Data: ", data);
   };
 
   return (
@@ -51,24 +41,17 @@ export default function PatientAuthScreen() {
 
           {/* Title Section */}
           <FadeInView delay={150} style={styles.titleContainer}>
-            <Text style={styles.titleLine1}>Your Path to</Text>
-            <Text style={styles.titleLine2}>Mental Wellness</Text>
-            <Text style={styles.titleLine3}>Starts Here!</Text>
-          </FadeInView>
-
-          {/* Toggle Section */}
-          <FadeInView delay={300} style={styles.toggleContainer}>
-            <AuthToggle value={authMode} onChange={setAuthMode} />
+            <Text style={styles.titleText}>Doctor Login</Text>
           </FadeInView>
 
           {/* Form Section */}
-          <FadeInView delay={450} style={styles.formContainer}>
+          <FadeInView delay={300} style={styles.formContainer}>
             <InputField
               control={control}
-              name="nickname"
-              label="Nickname"
+              name="email"
+              label="Email"
               placeholder="USR-978896"
-              rules={{ required: "Nickname is required" }}
+              rules={{ required: "Email is required" }}
             />
 
             <View style={{ height: scale(15) }} />
@@ -82,43 +65,17 @@ export default function PatientAuthScreen() {
               secureTextEntry={true}
             />
 
-            {authMode === 'signup' && (
-              <>
-                <View style={{ height: scale(15) }} />
-
-                <View style={styles.formRow}>
-                  <View style={styles.halfInput}>
-                    <InputField
-                      control={control}
-                      name="age"
-                      label="Age"
-                      placeholder="Enter Age"
-                      rules={{ required: "Age is required" }}
-                    />
-                  </View>
-
-                  <View style={[styles.halfInput, { paddingTop: scale(3.5) }]}>
-                    <FormDropdown
-                      control={control}
-                      name="gender"
-                      label="Gender"
-                      data={genderData}
-                      placeholder="Gender"
-                      rules={{ required: "Gender is required" }}
-                    />
-                  </View>
-                </View>
-              </>
-            )}
+            <View style={styles.forgotPasswordContainer}>
+              <TouchableOpacity onPress={() => console.log('Forgot Password clicked')}>
+                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+              </TouchableOpacity>
+            </View>
           </FadeInView>
 
-          {/* Spacer pushing bottom elements down */}
-          <View style={styles.spacer} />
-
           {/* Actions Section */}
-          <FadeInView delay={600} style={styles.actionsContainer}>
+          <FadeInView delay={450} style={styles.actionsContainer}>
             <NormalButton
-              title="Continue"
+              title="Login"
               onPress={handleSubmit(onSubmit)}
               bgColor={Colors.primary}
             />
@@ -130,11 +87,18 @@ export default function PatientAuthScreen() {
             </View>
 
             <NormalButton
-              title="Generate New Anonymous ID"
-              onPress={() => console.log('Generate ID')}
-              bgColor={palette.darkGray2}
-              textColor={Colors.textDark}
+              title="Apply as a Licensed Professional"
+              onPress={() => console.log('Apply clicked')}
+              bgColor={Colors.secondary}
             />
+          </FadeInView>
+
+          {/* Spacer pushing bottom elements down */}
+          <View style={styles.spacer} />
+
+          {/* Footer */}
+          <FadeInView delay={600} style={{ width: '100%' }}>
+            <HIPAAFooter />
           </FadeInView>
 
         </ScrollView>
@@ -150,7 +114,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: scale(20),
-    paddingBottom: scale(40),
+    paddingBottom: scale(20),
     paddingTop: scale(70),
     alignItems: 'center',
   },
@@ -161,41 +125,27 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     alignItems: 'center',
-    marginBottom: scale(25),
+    marginBottom: scale(30),
   },
-  titleLine1: {
-    fontFamily: Family.FG_Regular,
-    fontSize: scale(32),
-    color: Colors.primary,
-    marginBottom: scale(2),
-  },
-  titleLine2: {
+  titleText: {
     fontFamily: Family.HV_Bold,
-    fontSize: scale(30),
-    color: Colors.secondary,
-    marginBottom: scale(10),
-  },
-  titleLine3: {
-    fontFamily: Family.FG_MediumItalic,
-    fontSize: scale(34),
+    fontSize: scale(24),
     color: Colors.textDark,
-  },
-  toggleContainer: {
-    width: '100%',
-    marginBottom: scale(20),
-    alignItems: 'center',
   },
   formContainer: {
     width: '100%',
     alignItems: 'center',
   },
-  formRow: {
-    flexDirection: 'row',
+  forgotPasswordContainer: {
     width: '100%',
-    gap: scale(15),
+    alignItems: 'flex-end',
+    marginTop: scale(10),
+    marginBottom: scale(20),
   },
-  halfInput: {
-    flex: 1,
+  forgotPasswordText: {
+    fontFamily: Family.FG_Regular,
+    fontSize: scale(14),
+    color: Colors.secondary,
   },
   spacer: {
     flex: 1,
