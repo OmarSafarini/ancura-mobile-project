@@ -20,10 +20,13 @@ export const palette = {
   darkGray2: '#DBE6ED',
   darkGray3: '#E4E0EB',
   darkGray4: '#C2C2C2',
+  darkgrey5 : '#D7D7EA',
+
 
   orange: '#E87000',
   red: '#F8545D',
-  
+  darkPink: '#D88787',
+  pink: '#F9B6B7',
 
 };
 
@@ -56,7 +59,10 @@ export const Colors = {
 
   buttonActive: palette.darkBlue,
   shadow:palette.black,
-
+  
+  darkPink: palette.darkPink,
+  pink: palette.pink,
+  shieldBackground : palette.darkgrey5,
 
 
 } as const;

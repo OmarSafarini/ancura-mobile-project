@@ -35,11 +35,11 @@ export default function PatientAuthScreen() {
 
   return (
     <AppBackground variant="clean">
-      <KeyboardAvoidingView 
-        style={styles.keyboardView} 
+      <KeyboardAvoidingView
+        style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
@@ -63,45 +63,51 @@ export default function PatientAuthScreen() {
 
           {/* Form Section */}
           <FadeInView delay={450} style={styles.formContainer}>
-            <InputField 
+            <InputField
               control={control}
               name="nickname"
               label="Nickname"
               placeholder="USR-978896"
               rules={{ required: "Nickname is required" }}
             />
-            
+
             <View style={{ height: scale(15) }} />
 
-            {authMode === 'signin' ? (
-              <InputField 
-                control={control}
-                name="password"
-                label="Password"
-                placeholder="Enter Password"
-                rules={{ required: "Password is required" }}
-                secureTextEntry={true}
-              />
-            ) : (
-              <>
-                <InputField 
-                  control={control}
-                  name="age"
-                  label="Age"
-                  placeholder="Enter Age"
-                  rules={{ required: "Age is required" }}
-                />
+            <InputField
+              control={control}
+              name="password"
+              label="Password"
+              placeholder="Enter Password"
+              rules={{ required: "Password is required" }}
+              secureTextEntry={true}
+            />
 
+            {authMode === 'signup' && (
+              <>
                 <View style={{ height: scale(15) }} />
 
-                <FormDropdown 
-                  control={control}
-                  name="gender"
-                  label="Gender"
-                  data={genderData}
-                  placeholder="Dropdown option"
-                  rules={{ required: "Gender is required" }}
-                />
+                <View style={styles.formRow}>
+                  <View style={styles.halfInput}>
+                    <InputField
+                      control={control}
+                      name="age"
+                      label="Age"
+                      placeholder="Enter Age"
+                      rules={{ required: "Age is required" }}
+                    />
+                  </View>
+
+                  <View style={[styles.halfInput, { paddingTop: scale(3.5) }]}>
+                    <FormDropdown
+                      control={control}
+                      name="gender"
+                      label="Gender"
+                      data={genderData}
+                      placeholder="Gender"
+                      rules={{ required: "Gender is required" }}
+                    />
+                  </View>
+                </View>
               </>
             )}
           </FadeInView>
@@ -111,8 +117,8 @@ export default function PatientAuthScreen() {
 
           {/* Actions Section */}
           <FadeInView delay={600} style={styles.actionsContainer}>
-            <NormalButton 
-              title="Continue" 
+            <NormalButton
+              title="Continue"
               onPress={handleSubmit(onSubmit)}
               bgColor={Colors.primary}
             />
@@ -123,8 +129,8 @@ export default function PatientAuthScreen() {
               <View style={styles.line} />
             </View>
 
-            <NormalButton 
-              title="Generate New Anonymous ID" 
+            <NormalButton
+              title="Generate New Anonymous ID"
               onPress={() => console.log('Generate ID')}
               bgColor={palette.darkGray2}
               textColor={Colors.textDark}
@@ -182,6 +188,14 @@ const styles = StyleSheet.create({
   formContainer: {
     width: '100%',
     alignItems: 'center',
+  },
+  formRow: {
+    flexDirection: 'row',
+    width: '100%',
+    gap: scale(15),
+  },
+  halfInput: {
+    flex: 1,
   },
   spacer: {
     flex: 1,
