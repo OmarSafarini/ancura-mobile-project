@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import { Colors, palette } from "@/utils/colors";
 import { scale } from "@/utils/responsive";
 import { Family } from "@/utils/typography";
@@ -11,10 +11,14 @@ type Props = {
 
 export default function ReplyText({ title, color }: Props) {
   return (
-    <View style={styles.container}>
+    <Pressable 
+      onPress={() => {
+      console.log("Pressed");
+    }}
+    style={styles.container}>
       <View style={[styles.line, { backgroundColor: color }]} />
       <Text style={styles.text}>{title}</Text>
-    </View>
+    </Pressable>
   );
 }
 
