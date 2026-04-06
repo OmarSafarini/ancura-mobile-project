@@ -29,4 +29,9 @@ export const caseStatusMap: Record<Status, StatusConfig> = {
     color: Colors.secondary,
     Icon: ResolvedIcon,
   },
+  None: {
+    text: "None",
+    color: Colors.underReview,
+    Icon: null,
+  },
 };

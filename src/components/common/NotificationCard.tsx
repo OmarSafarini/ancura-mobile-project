@@ -14,7 +14,7 @@ export interface NotificationCardProps {
   title: string;
   date: string;
   isRead: boolean;
-  status?: "under_review" | "doctor_replied" | "resolved";
+  status?: "under_review" | "doctor_replied" | "resolved" | "None";
 }
 
 // _____________ Patient Comment Card _____________________
@@ -23,7 +23,7 @@ export default function NotificationCard({
   title,
   date,
   isRead,
-  status
+  status = "None"
 }: NotificationCardProps) {
 
   
@@ -38,7 +38,7 @@ export default function NotificationCard({
         <ClockIcon color={"gray"} size={11} />
         <Text style={styles.Time}>{date}</Text>
       </View>
-      <CaseStatus status={status} />
+      {status !== "None" && <CaseStatus status={status} backgroundColor={isRead ? "rgba(216, 216, 216, 0.48)" : "rgba(255, 255, 255, 0.48)"} />}
       </View>
     </View>
   );
