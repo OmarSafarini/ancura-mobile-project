@@ -136,7 +136,6 @@ export function LicenseVerification() {
                 </ScrollView>
             </KeyboardAvoidingView>
 
-            {/* 2. Wrap SuccessScreen in a transparent Modal with an overlay View */}
             <Modal
                 visible={showSuccess}
                 transparent={true}
@@ -160,10 +159,9 @@ const styles = StyleSheet.create({
         paddingTop: scale(50),
         flex: 1,
     },
-    // 3. Add the overlay styling here
     overlay: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.6)', // 0.6 is the opacity (0 is invisible, 1 is solid black)
+        backgroundColor: 'rgba(0, 0, 0, 0.6)', 
         justifyContent: 'center',
         alignItems: 'center',
     },

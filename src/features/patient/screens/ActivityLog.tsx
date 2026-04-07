@@ -12,7 +12,6 @@ import ArrowIcon from "@/features/doctor/components/Icons/ArrowIcon";
 import HandLikeIcon from "@/features/doctor/components/Icons/HandLikeIcon";
 import StarIcon from "@/features/doctor/components/Icons/StarIcon";
 
-// 1. Extract data into an array
 const ACTIVITY_DATA = [
     {
         id: '1',
@@ -64,7 +63,6 @@ const ACTIVITY_DATA = [
 export function ActivityLog() {
     return (
         <AppBackground variant="clean" style={styles.screen}>
-            {/* Header kept outside FlatList to remain pinned at the top */}
             <View style={styles.header}>
                 <Text style={styles.title}>Activity Log</Text>
                 <View style={styles.backWrapper}>
@@ -73,10 +71,7 @@ export function ActivityLog() {
             </View>
             
             <View style={styles.timelineContainer}>
-                {/* Background Line */}
                 <View style={styles.timelineLine} />
-
-                {/* 2. Replace ScrollView with FlatList */}
                 <FlatList
                     data={ACTIVITY_DATA}
                     keyExtractor={(item) => item.id}
