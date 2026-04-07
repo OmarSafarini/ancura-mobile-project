@@ -13,23 +13,23 @@ type Props = {
 };
 
 const STATUS_CONFIG = {
-  "Under Review": { 
+  "Under Review": {
     containerColor: "rgba(232,112,0 , 0.24)",
-    IconComponent: UnderViewIcon, 
-    iconBackground: Colors.underReview, 
+    IconComponent: UnderViewIcon,
+    iconBackground: Colors.underReview,
   },
-    "Doctor Replied": { 
-    containerColor: "rgba(8, 7, 14 , 0.13)", 
-    IconComponent: DoctorRepliedIcon, 
-    iconBackground: Colors.secondary, 
+  "Doctor Replied": {
+    containerColor: "rgba(8, 7, 14 , 0.13)",
+    IconComponent: DoctorRepliedIcon,
+    iconBackground: Colors.secondary,
   },
-  "Resolved": { 
-    containerColor: Colors.secondaryLight, 
-    IconComponent: ResolvedIcon, 
-    iconBackground: Colors.secondary, 
+  "Resolved": {
+    containerColor: Colors.secondaryLight,
+    IconComponent: ResolvedIcon,
+    iconBackground: Colors.secondary,
   },
-  "Empty": { 
-    containerColor: "rgba(8, 7, 14 , 0.13)", 
+  "Empty": {
+    containerColor: "rgba(8, 7, 14 , 0.13)",
   }
 };
 
@@ -38,7 +38,8 @@ export default function CaseCard({ data }: Props) {
   const config = STATUS_CONFIG[status];
 
   return (
-    <Pressable style={[styles.container,{ backgroundColor: config.containerColor },data.isEmergency && styles.emergencyShadow,]}>
+    <Pressable style={[styles.container, { backgroundColor: "#FFFFFF" }, data.isEmergency && styles.emergencyShadow,]}>
+      <View style={[StyleSheet.absoluteFillObject, { backgroundColor: config.containerColor, borderRadius: scale(15) }]} pointerEvents="none" />
       <Text style={styles.title}>{data.title}</Text>
       <View style={styles.arrowContainer}>
         <Ionicons name="chevron-forward" size={scale(16)} />
@@ -65,11 +66,12 @@ const styles = StyleSheet.create({
     borderRadius: scale(15),
     padding: scale(12),
     justifyContent: "space-between",
+
   },
   emergencyShadow: {
-    shadowColor: "rgba(255,0,0,0.85)",
+    shadowColor: Colors.warning,
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
+    shadowOpacity: 0.45,
     shadowRadius: 8,
     elevation: 8,
   },
