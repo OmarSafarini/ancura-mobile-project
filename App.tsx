@@ -1,9 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import { useAppFonts } from './src/utils/useAppFonts';
-import { Notification } from '@/features/patient/screens/Notification';
-import { LicenseVerification } from '@/features/patient/screens/LicenseVerification';
-import { BaseKnowledge } from '@/features/patient/screens/BaseKnowledge';
-import { ActivityLog } from '@/features/patient/screens/ActivityLog';
+import CreateCaseScreen from '@/features/patient/screens/CreateCaseScreen';
 
 
 export default function App() {
@@ -14,8 +11,8 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}> 
-      <BaseKnowledge/> 
+    <View style={styles.container}>
+      <CreateCaseScreen/>
     </View>
   );
 }

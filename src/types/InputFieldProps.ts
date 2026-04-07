@@ -7,4 +7,7 @@ export type InputFieldProps = {
   placeholder: string;
   rules?: any;
   isEdit?: boolean;
+  secureTextEntry?: boolean;
+  multiline?: boolean;
+  numberOfLines?: number;
 };

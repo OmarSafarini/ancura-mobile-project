@@ -9,7 +9,7 @@ export default function Statistics() {
   return (
     <View style={styles.container}>
       <Pressable style={styles.arrowWrapper}>
-        <ArrowRightIcon size={22} color={Colors.secondary} />
+        <ArrowRightIcon size={scale(22)} color={Colors.secondary} />
       </Pressable>
       <Pressable style={styles.statsWrapper}>
         <Text style={styles.statsText}>Statistics</Text>

@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
+    width: scale(90),
     fontSize: scale(16),
     fontFamily: Family.FG_Medium,
     color: Colors.textDark2,
