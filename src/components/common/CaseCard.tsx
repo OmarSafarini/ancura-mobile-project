@@ -1,7 +1,7 @@
 import { Colors } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import { Ionicons } from "@expo/vector-icons";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View, GestureResponderEvent } from "react-native";
 import { scale } from "@/utils/responsive";
 import { CaseData } from "@/types/CaseData";
 import UnderViewIcon from "@/assets/icons/UnderViewIcon";
@@ -10,6 +10,7 @@ import ResolvedIcon from "@/assets/icons/ResolvedIcon";
 
 type Props = {
   data: CaseData;
+  onPress?: (event: GestureResponderEvent) => void; 
 };
 
 const STATUS_CONFIG = {
@@ -33,12 +34,12 @@ const STATUS_CONFIG = {
   }
 };
 
-export default function CaseCard({ data }: Props) {
+export default function CaseCard({ data, onPress }: Props) {
   const status = data.status || "Empty";
   const config = STATUS_CONFIG[status];
 
   return (
-    <Pressable style={[styles.container, { backgroundColor: "#FFFFFF" }, data.isEmergency && styles.emergencyShadow,]}>
+    <Pressable onPress={onPress} style={[styles.container, { backgroundColor: "#FFFFFF" }, data.isEmergency && styles.emergencyShadow,]}>
       <View style={[StyleSheet.absoluteFillObject, { backgroundColor: config.containerColor, borderRadius: scale(15) }]} pointerEvents="none" />
       <Text style={styles.title}>{data.title}</Text>
       <View style={styles.arrowContainer}>

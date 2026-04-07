@@ -17,6 +17,7 @@ const BUTTON_WIDTH = scale(325);
 const THUMB_SIZE = scale(30);
 const PADDING = scale(10);
 
+
 export default function LicenseVerificationButton({ label = "Verify License Information", width, backgroundColor = Colors.formBackground, thumbColor = Colors.secondary ,onPress}: LicenseButtonProps) {
   const buttonWidth = width || BUTTON_WIDTH;
   return (
