@@ -61,7 +61,11 @@ export default function DoctorLoginScreen() {
               name="password"
               label="Password"
               placeholder="Enter Password"
-              rules={{ required: "Password is required" }}
+              rules={{ 
+                required: "Password is required",
+                minLength: { value: 8, message: "Password must be at least 8 characters" },
+                maxLength: { value: 13, message: "Password cannot exceed 13 characters" }
+              }}
               secureTextEntry={true}
             />
 
