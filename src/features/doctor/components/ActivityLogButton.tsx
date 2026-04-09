@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, useWindowDimensions, ViewStyle,} from "react-native";
+import {View, Text, StyleSheet, useWindowDimensions, ViewStyle, Pressable,} from "react-native";
 import ArrowRightIcon from "@/assets/icons/ArrowRightIcon";
 import { Colors } from "@/utils/colors";
 import { Family } from "@/utils/typography";
@@ -9,6 +9,7 @@ type SlideButtonProps = {
   width?: number;
   backgroundColor?: string;
   style?: ViewStyle;
+  onPress?: () => void;
 };
 
 const HEIGHT = scale(50);        
@@ -16,12 +17,12 @@ const BUTTON_WIDTH = scale(154);
 const THUMB_SIZE = scale(30);    
 const PADDING = scale(10); 
 
-export default function ActivityLogButton({ label = "Activity Log", width, backgroundColor = Colors.primary,style,}: SlideButtonProps) {
+export default function ActivityLogButton({ label = "Activity Log", width, backgroundColor = Colors.primary,style, onPress }: SlideButtonProps) {
   const { width: screenWidth } = useWindowDimensions();
   const buttonWidth = width || BUTTON_WIDTH;
   return (
-    <View
-      style={[styles.container,{width: buttonWidth,backgroundColor,},style,]}>
+    <Pressable
+      style={[styles.container,{width: buttonWidth,backgroundColor,},style,]} onPress={onPress}>
       <Text style={styles.text}>{label}</Text>
       <View style={styles.thumb}>
         <ArrowRightIcon
@@ -29,7 +30,7 @@ export default function ActivityLogButton({ label = "Activity Log", width, backg
           size={scale(THUMB_SIZE * 0.65)}
         />
       </View>
-    </View>
+    </Pressable>
   );
 }
 

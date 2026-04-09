@@ -30,14 +30,21 @@ export default function DoctorProfileAndSettings() {
   });
   const OnSubmit = (data: any) => {
     console.log("Profile: ", data);
+    navigation.navigate("DoctorLoginScreen");
   };
+
+  const goBack= ()=>{
+    navigation.navigate("LicenseVerification");
+  };
+
+ 
   return (
     <AppBackground variant="clean">
       <View style={styles.container}>
         <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
           <Text style={styles.Text}>Profile & Settings</Text>
           <IconWrapper size={scale(33)} bgColor={palette.white} shape="square">
-            <ArrowLeftIcon size={scale(18)} color={palette.dark} />
+            <ArrowLeftIcon size={scale(18)} color={palette.dark} onPress={goBack}/>
           </IconWrapper>
         </SafeAreaView>
         <View>

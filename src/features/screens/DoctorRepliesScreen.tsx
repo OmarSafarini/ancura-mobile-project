@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { View, FlatList, StyleSheet, Text } from "react-native";
 
 import AppBackground from "@/components/layout/AppBackground";
@@ -15,13 +15,20 @@ import { Colors } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import { Control, useForm } from "react-hook-form";
 
-type Props = { route?: any };
 type FormData = { doctorReply: string };
 
-export default function DoctorRepliesScreen({ route }: Props) {
-  const role = route?.params?.role || "patient";
+export default function DoctorRepliesScreen(navigation: any) {
+  const [role, setRole] = useState<"patient" | "doctor" | null>(null);
   const isDoctor = role === "doctor";
   const isPatient = role === "patient";
+
+  const handleViewAllReplies = () => {
+      navigation.navigate('AllRepliesScreen');
+    };
+  
+    const handleViewGoBack = () => {
+      navigation.navigate('CaseDetailsAndRepliesScreen');
+    };
 
   const { control } = useForm<FormData>({
     defaultValues: { doctorReply: "" },
@@ -74,7 +81,7 @@ export default function DoctorRepliesScreen({ route }: Props) {
       <View style={styles.fixedHeader}>
         <View style={styles.header}>
           <Text style={styles.title}>Coping with work pressure</Text>
-          <BackButton onPress={() => {}} />
+          <BackButton onPress={handleViewGoBack} />
         </View>
 
         <ReplyText title="Doctor's Replies" color={Colors.secondary} />
@@ -96,8 +103,8 @@ export default function DoctorRepliesScreen({ route }: Props) {
               major={item.major}
               message={item.message}
               time={item.time}
-              CardOnPress={() => {}}
-              ChatOnPress={() => {}}
+              CardOnPress={handleViewAllReplies}
+              ChatOnPress={handleViewAllReplies}
             />
           )}
         />
