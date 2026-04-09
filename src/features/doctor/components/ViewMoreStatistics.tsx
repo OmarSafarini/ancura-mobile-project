@@ -4,11 +4,14 @@ import { Colors } from "@/utils/colors";
 import { scale } from "@/utils/responsive";
 import ArrowRightIcon from "@/assets/icons/ArrowRightIcon";
 
+interface Props {
+  onPress?: () => void;
+}
 
-export default function Statistics() {
+export default function Statistics({ onPress }: Props) {
   return (
     <View style={styles.container}>
-      <Pressable style={styles.arrowWrapper}>
+      <Pressable style={styles.arrowWrapper} onPress={onPress}>
         <ArrowRightIcon size={scale(22)} color={Colors.secondary} />
       </Pressable>
       <Pressable style={styles.statsWrapper}>

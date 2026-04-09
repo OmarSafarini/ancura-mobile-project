@@ -6,9 +6,10 @@ import { scale } from "@/utils/responsive";
 
 interface StatisticsSectionProps {
   data: BarData[];
+  onPress: () => void;
 }
 
-export default function StatisticsSection({ data }: StatisticsSectionProps) {
+export default function StatisticsSection({ data, onPress }: StatisticsSectionProps) {
   return (
     <View style={styles.container}>
 
@@ -19,7 +20,7 @@ export default function StatisticsSection({ data }: StatisticsSectionProps) {
       </View>
 
       <View style={styles.buttonWrapper}>
-        <Statistics />
+        <Statistics onPress={onPress} />
       </View>
 
     </View>

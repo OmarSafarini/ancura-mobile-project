@@ -7,14 +7,13 @@ import { Family } from "@/utils/typography";
 type Props = {
   title: string;
   color: string;
+  onPress?: () => void;
 };
 
-export default function ReplyText({ title, color }: Props) {
+export default function ReplyText({ title, color, onPress }: Props) {
   return (
     <Pressable 
-      onPress={() => {
-      console.log("Pressed");
-    }}
+    onPress={onPress}
     style={styles.container}>
       <View style={[styles.line, { backgroundColor: color }]} />
       <Text style={styles.text}>{title}</Text>

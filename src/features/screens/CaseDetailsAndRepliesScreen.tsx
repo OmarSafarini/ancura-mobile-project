@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Control, useForm } from "react-hook-form";
 import { View, FlatList, StyleSheet } from "react-native";
 
@@ -19,18 +19,28 @@ import { Colors } from "@/utils/colors";
 import PencilIcon from "@/assets/icons/PencilIcon";
 import TrashIcon from "@/assets/icons/TrashIcon";
 
-type Props = {
-  route?: any;
-};
+
 
 type FormData = {
   doctorReply: string;
 };
 
-export default function CaseDetailScreen({ route }: Props) {
-  const role = route?.params?.role || "patient";
+export default function CaseDetailScreen(navigation: any) {
+  const [role, setRole] = useState<"patient" | "doctor" | null>(null);
   const isDoctor = role === "doctor";
   const isPatient = role === "patient";
+
+  const handleViewDoctorReplies = () => {
+    navigation.navigate('DoctorRepliesScreen');
+  };
+
+  const handleViewAllReplies = () => {
+    navigation.navigate('AllRepliesScreen');
+  };
+
+  const handleViewGoBack = () => {
+    navigation.navigate('DoctorHomeScreen');
+  };
 
   const { control } = useForm<FormData>({
     defaultValues: { doctorReply: "" },
@@ -91,7 +101,7 @@ export default function CaseDetailScreen({ route }: Props) {
             )}
           </View>
 
-          <BackButton onPress={() => {}} />
+          <BackButton onPress={handleViewGoBack} />
         </View>
 
         <View style={styles.mainContent}>
@@ -106,7 +116,7 @@ export default function CaseDetailScreen({ route }: Props) {
           />
 
           <View style={styles.replySection}>
-            <ReplyText title="Doctor's Reply" color={Colors.primary} />
+            <ReplyText title="Doctor's Reply" color={Colors.primary} onPress={handleViewDoctorReplies}/>
 
             <FlatList
               ref={flatListRef}
@@ -124,8 +134,8 @@ export default function CaseDetailScreen({ route }: Props) {
                   major={item.major}
                   message={item.message}
                   time={item.time}
-                  CardOnPress={() => {}}
-                  ChatOnPress={() => {}}
+                  CardOnPress={handleViewDoctorReplies}
+                  ChatOnPress={handleViewAllReplies}
                 />
               )}
             />

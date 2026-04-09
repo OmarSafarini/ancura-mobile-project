@@ -15,10 +15,14 @@ import { Colors,palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import { scale } from "@/utils/responsive";
 
-export default function DoctorDashboardAndCases() {
+export default function DoctorDashboardAndCases(navigation : any) {
 
   const handleViewAllCases = () => {
-    console.log("View all cases pressed");
+    navigation.navigate('DoctorHomeScreen');
+  };
+
+  const handleViewDashboardScreen = () => {
+    navigation.navigate('DashboardScreen');
   };
 
   const cases = [
@@ -54,7 +58,7 @@ export default function DoctorDashboardAndCases() {
 
           <View style={styles.box}>
             <View style={styles.chartBox}>
-              <StatisticsSection data={chartData} />
+              <StatisticsSection data={chartData} onPress={handleViewDashboardScreen} />
             </View>
 
             <View style={styles.iconsColumn}>
