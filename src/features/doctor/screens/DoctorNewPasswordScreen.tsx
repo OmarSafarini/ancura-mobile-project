@@ -51,7 +51,11 @@ export default function DoctorNewPasswordScreen() {
               name="newPassword"
               label="Enter New Password"
               placeholder="Enter Password"
-              rules={{ required: "New Password is required" }}
+              rules={{ 
+                required: "New Password is required",
+                minLength: { value: 8, message: "Password must be at least 8 characters" },
+                maxLength: { value: 13, message: "Password cannot exceed 13 characters" }
+              }}
               secureTextEntry={true}
             />
 
@@ -62,7 +66,11 @@ export default function DoctorNewPasswordScreen() {
               name="confirmPassword"
               label="Confirm Password"
               placeholder="Enter Password"
-              rules={{ required: "Confirm Password is required" }}
+              rules={{ 
+                required: "Confirm Password is required",
+                minLength: { value: 8, message: "Password must be at least 8 characters" },
+                maxLength: { value: 13, message: "Password cannot exceed 13 characters" }
+              }}
               secureTextEntry={true}
             />
           </FadeInView>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, SafeAreaView } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { scale } from "@/utils/responsive";
 
 import NormalButton from "@/components/common/NormalButton";
@@ -21,7 +21,7 @@ export default function RoleSelectionScreen({ navigation }: any) {
         <View style={styles.container}>
            <AppBackground style={{ position: "absolute", width: "100%", height: "100%" }}/>
 
-            <SafeAreaView style={styles.safeArea}>
+            <View style={styles.safeArea}>
                 <View style={styles.content}>
                     <Text style={styles.title}>How would you like to use the app?</Text>
                     
@@ -54,7 +54,7 @@ export default function RoleSelectionScreen({ navigation }: any) {
                         textColor="#FFFFFF"
                     />
                 </View>
-            </SafeAreaView>
+            </View>
         </View>
     );
 }

@@ -8,4 +8,6 @@ export type InputFieldProps = {
   rules?: any;
   isEdit?: boolean;
   secureTextEntry?: boolean;
+  multiline?: boolean;
+  numberOfLines?: number;
 };
