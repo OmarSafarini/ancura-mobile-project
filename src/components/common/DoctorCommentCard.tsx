@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#66666649",
     gap: scale(15),
-    maxHeight: "25%",
+   //maxHeight: "25%",
   },
   Card_Header: {
     flexDirection: "row",
