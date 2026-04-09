@@ -111,6 +111,12 @@ export default function SuccessScreen({ subtitle, onPress }: SuccessScreenProps)
 
   return (
     <View style={styles.absoluteWrapper} pointerEvents="box-none">
+      <Animated.View
+        style={[
+          StyleSheet.absoluteFillObject,
+          { backgroundColor: 'rgba(0, 0, 0, 0.3)', opacity: contentOpacity }
+        ]}
+      />
       <Animated.View 
         style={[
           StyleSheet.absoluteFillObject, 

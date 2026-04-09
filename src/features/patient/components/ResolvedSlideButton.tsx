@@ -132,7 +132,7 @@ const ResolvedSlideButton: React.FC<ResolvedSlideButtonProps> = ({ onSlideComple
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    maxWidth: scale(300),
+    maxWidth: scale(400),
     height: THUMB_SIZE,
     alignSelf: 'center',
   },
