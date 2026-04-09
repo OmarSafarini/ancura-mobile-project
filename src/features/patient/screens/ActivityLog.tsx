@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, StyleSheet, FlatList } from "react-native";
+import { Text, View, StyleSheet, FlatList ,  } from "react-native";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 import { Colors } from "@/utils/colors";
 import { scale } from "@/utils/responsive";
@@ -11,6 +11,7 @@ import StartwithTickIcon from "@/features/doctor/components/Icons/StartwithTickI
 import ArrowIcon from "@/features/doctor/components/Icons/ArrowIcon";
 import HandLikeIcon from "@/features/doctor/components/Icons/HandLikeIcon";
 import StarIcon from "@/features/doctor/components/Icons/StarIcon";
+import { useNavigation } from "@react-navigation/native";
 
 const ACTIVITY_DATA = [
     {
@@ -61,12 +62,13 @@ const ACTIVITY_DATA = [
 ];
 
 export function ActivityLog() {
+    const navigation = useNavigation();
     return (
         <AppBackground variant="clean" style={styles.screen}>
             <View style={styles.header}>
                 <Text style={styles.title}>Activity Log</Text>
                 <View style={styles.backWrapper}>
-                    <ArrowLeftIcon color={Colors.textDark2} size={scale(18)} />
+                    <ArrowLeftIcon color={Colors.textDark2} size={scale(18)} onPress={() => navigation.goBack()} />
                 </View>
             </View>
             

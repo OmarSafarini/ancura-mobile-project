@@ -10,7 +10,7 @@ import InputField from "@/components/forms/InputFeild";
 import LicenseVerificationButton from "../components/LiecenseVerficationButton";
 import UploadImageButton from "../components/UploadImageButton";
 
-export default function DoctorProfileAndSettings() {
+export default function DoctorProfileAndSettings(navigation : any) {
   const insets = useSafeAreaInsets();
   const user = {
     profilePic: require("../../../../assets/ancura.gif"),
@@ -28,6 +28,7 @@ export default function DoctorProfileAndSettings() {
   });
   const OnSubmit = (data: any) => {
     console.log("Profile: ", data);
+    navigation.navigate('LicenseVerification');
   };
   return (
     <AppBackground variant="clean">
