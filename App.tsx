@@ -1,9 +1,8 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import FlashMessage from 'react-native-flash-message';
 import { useAppFonts } from './src/utils/useAppFonts';
-
-
-
-
+import RootNavigator from './src/layout/RootNavigator';
 
 export default function App() {
   const { fontsLoaded } = useAppFonts();
@@ -13,10 +12,12 @@ export default function App() {
   }
 
   return (
-
-    <View style={styles.container}>
-      <CreateCaseScreen/>
-    </View>
+    <>
+      <NavigationContainer>
+        <RootNavigator />
+      </NavigationContainer>
+      <FlashMessage position="top" />
+    </>
   );
 }
 
