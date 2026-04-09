@@ -21,6 +21,14 @@ export default function PaitentSettings() {
       floating: true,
     });
   };
+
+  const goBack =()=>{
+ navigation.goBack();
+  }
+  const LogOut=()=>{
+        navigation.navigate("PatientAuthScreen");
+
+  }
   return (
     <AppBackground variant="logo">
       <View style={styles.container}>
@@ -28,7 +36,7 @@ export default function PaitentSettings() {
           <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
             <Text style={styles.Text}>Profile & Settings</Text>
             <IconWrapper size={scale(33)} bgColor={palette.white} shape="square">
-              <ArrowLeftIcon size={scale(18)} color={palette.dark} />
+              <ArrowLeftIcon size={scale(18)} color={palette.dark} onPress={goBack}/>
             </IconWrapper>
           </SafeAreaView>
           <View style={styles.Card}>
@@ -49,7 +57,7 @@ export default function PaitentSettings() {
           style={[styles.BottomBar, { paddingBottom: insets.bottom }]}
         >
           <FlashMessage position="bottom" style={{ marginBottom: scale(40) }} />
-          <LogoutButton />
+          <LogoutButton onPress={LogOut}/>
         </SafeAreaView>
       </View>
     </AppBackground>
