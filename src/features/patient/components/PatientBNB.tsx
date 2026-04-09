@@ -1,38 +1,64 @@
 import React, { useState } from 'react';
-import { View, Alert } from 'react-native';
 import BottomNavBar, { TabItem } from '../../../components/layout/BottomNavBar';
 import HomeIcon from '../../../assets/icons/HomeIcon';
-import KnowledgeIcon from '../../../assets/icons/KnowledgeIcon';
+import DocumentIcon from '../../../features/patient/components/Icons/DoucmentIcon';
 import NotificationsIcon from '../../../assets/icons/NotificationsIcon';
 import ProfileIcon from '../../../assets/icons/ProfileIcon';
 import FabAddIcon from '../../../assets/icons/FabAddIcon';
 
 const TABS: TabItem[] = [
-    { name: 'Home',          label: 'Home',          icon: HomeIcon          },
-    { name: 'Knowledge',     label: 'Knowledge',     icon: KnowledgeIcon     },
-    { name: 'Notifications', label: 'Notifications', icon: NotificationsIcon },
-    { name: 'Profile',       label: 'Profile',       icon: ProfileIcon       },
+    { name: 'PatientHomeTab', label: 'Dashboard', icon: HomeIcon },
+    { name: 'PatientKnowledgeTab', label: 'Resources', icon: DocumentIcon },
+    { name: 'PatientNotifyTab', label: 'Notifications', icon: NotificationsIcon },
+    { name: 'PatientProfileTab', label: 'Settings', icon: ProfileIcon },
 ];
 
-export default function PatientBNB() {
-    const [activeTab, setActiveTab] = useState('Home');
+export default function PatientBNB(props: any) {
+    if (props.state && props.navigation) {
+        const activeRoute = props.state.routes[props.state.index];
+        const currentTab = activeRoute.name;
 
-    // To-Do: Replace the (Alert) with (for example) navigation.navigate('CaseAdditionScreen') when screen is ready to use
-    const handleFabPress = () => {
-        Alert.alert('This screen is not ready yet');
-    };
+        const handleTabPress = (tabName: string) => {
+            const isFocused = props.state.routes[props.state.index].name === tabName;
+            const event = props.navigation.emit({
+                type: 'tabPress',
+                target: props.state.routes.find((r: any) => r.name === tabName)?.key,
+                canPreventDefault: true,
+            });
 
-    return (
-        <View style={{ flex: 1 }}>
+            if (!isFocused && !event.defaultPrevented) {
+                props.navigation.navigate(tabName);
+            }
+        };
+
+        const handleAddPress = () => {
+            // FAB Click -> Navigate to CreateCaseScreen
+            // We can push to the current stack, or navigate specifically.
+            // Since CreateCaseScreen is likely in PatientHomeTab stack:
+            props.navigation.navigate('PatientHomeTab', { screen: 'CreateCaseScreen' });
+        };
+
+        return (
             <BottomNavBar
                 tabs={TABS}
-                activeTab={activeTab}
-                onTabPress={setActiveTab}
+                activeTab={currentTab}
+                onTabPress={handleTabPress}
                 showFab={true}
                 fabIcon={FabAddIcon}
-                onAddPress={handleFabPress}
+                onAddPress={handleAddPress}
             />
-        </View>
+        );
+    }
+
+    const [activeTab, setActiveTab] = useState('PatientHomeTab');
+
+    return (
+        <BottomNavBar
+            tabs={TABS}
+            activeTab={activeTab}
+            onTabPress={setActiveTab}
+            showFab={true}
+            fabIcon={FabAddIcon}
+        />
     );
 }
-

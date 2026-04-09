@@ -11,7 +11,7 @@ import { Colors, palette } from '../../../utils/colors';
 import { Family } from '../../../utils/typography';
 import { scale } from '../../../utils/responsive';
 
-export default function DoctorLoginScreen() {
+export default function DoctorLoginScreen({ navigation }: any) {
   const { control, handleSubmit } = useForm({
     defaultValues: {
       email: '',
@@ -21,6 +21,11 @@ export default function DoctorLoginScreen() {
 
   const onSubmit = (data: any) => {
     console.log("Doctor Login Data: ", data);
+    // Navigate to the DoctorApp stack and reset the history so the user cannot go back
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'DoctorApp' }],
+    });
   };
 
   return (
@@ -70,7 +75,7 @@ export default function DoctorLoginScreen() {
             />
 
             <View style={styles.forgotPasswordContainer}>
-              <TouchableOpacity onPress={() => console.log('Forgot Password clicked')}>
+              <TouchableOpacity onPress={() => navigation.navigate('DoctorForgotPasswordScreen')}>
                 <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
               </TouchableOpacity>
             </View>
@@ -92,7 +97,7 @@ export default function DoctorLoginScreen() {
 
             <NormalButton
               title="Apply as a Licensed Professional"
-              onPress={() => console.log('Apply clicked')}
+              onPress={() => navigation.navigate('DoctorProfileAndSettings')}
               bgColor={Colors.secondary}
             />
           </FadeInView>

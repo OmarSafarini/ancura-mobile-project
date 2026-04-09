@@ -17,7 +17,7 @@ const genderData = [
   { label: 'Female', value: 'Female' },
 ];
 
-export default function PatientAuthScreen() {
+export default function PatientAuthScreen({ navigation }: any) {
   const [authMode, setAuthMode] = useState<"signin" | "signup">("signin");
 
   const { control, handleSubmit } = useForm({
@@ -31,6 +31,12 @@ export default function PatientAuthScreen() {
 
   const onSubmit = (data: any) => {
     console.log("Form Data: ", { mode: authMode, ...data });
+    // Assuming backend connection is successful, navigate to the PatientApp 
+    // and replace the current auth stack so the user cannot navigate back
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'PatientApp' }],
+    });
   };
 
   return (

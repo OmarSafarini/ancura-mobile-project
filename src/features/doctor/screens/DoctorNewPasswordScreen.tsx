@@ -11,7 +11,7 @@ import { Colors } from '../../../utils/colors';
 import { Family } from '../../../utils/typography';
 import { scale } from '../../../utils/responsive';
 
-export default function DoctorNewPasswordScreen() {
+export default function DoctorNewPasswordScreen({ navigation }: any) {
   const { control, handleSubmit } = useForm({
     defaultValues: {
       newPassword: '',
@@ -21,6 +21,8 @@ export default function DoctorNewPasswordScreen() {
 
   const onSubmit = (data: any) => {
     console.log("New Password Data: ", data);
+    // Assuming backend password change is successful, navigate back to login
+    navigation.navigate('DoctorLoginScreen');
   };
 
   return (
