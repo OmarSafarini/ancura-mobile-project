@@ -60,7 +60,7 @@ const ACTIVITY_DATA = [
     }
 ];
 
-export function ActivityLog() {
+export default function ActivityLog() {
     return (
         <AppBackground variant="clean" style={styles.screen}>
             <View style={styles.header}>

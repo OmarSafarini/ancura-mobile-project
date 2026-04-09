@@ -90,6 +90,6 @@ const styles = StyleSheet.create({
         paddingBottom: scale(40),
         alignItems: "center",
         justifyContent: "center",
+        paddingHorizontal: scale(30),
     }
 });
-
