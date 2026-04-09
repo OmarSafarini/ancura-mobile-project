@@ -1,12 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import { useAppFonts } from './src/utils/useAppFonts';
-import { Notification } from '@/features/patient/screens/Notification';
-import { LicenseVerification } from '@/features/patient/screens/LicenseVerification';
-import { BaseKnowledge } from '@/features/patient/screens/BaseKnowledge';
-import { ActivityLog } from '@/features/patient/screens/ActivityLog';
-// import DoctorProfile from '@/features/doctor/screens/DoctorProfile';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import DoctorProfileAndSettings from '@/features/doctor/screens/DoctorProfileAndSetting';
+import CreateCaseScreen from '@/features/patient/screens/CreateCaseScreen';
 
 
 export default function App() {
@@ -17,10 +11,8 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}> 
-        <SafeAreaProvider> <DoctorProfileAndSettings/></SafeAreaProvider>
-      {/* <Notification/>  */}
-    
+    <View style={styles.container}>
+      <CreateCaseScreen/>
     </View>
   );
 }
