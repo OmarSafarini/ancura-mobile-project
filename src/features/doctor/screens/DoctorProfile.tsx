@@ -39,7 +39,15 @@ export default function DoctorProfile() {
   };
 
   const insets = useSafeAreaInsets();
+ 
+  const goBack =()=>{
+ navigation.goBack();
+  }
 
+  const LogOut=()=>{
+        navigation.navigate("DoctorLoginScreen");
+
+  }
   return (
     <AppBackground variant="clean">
       <SafeAreaView style={{ flex: 1 }}>
@@ -48,7 +56,7 @@ export default function DoctorProfile() {
             <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
               <Text style={styles.Text}>Profile & Settings</Text>
               <IconWrapper size={scale(33)} bgColor={palette.white} shape="square">
-                  <ArrowLeftIcon size={scale(18)} color={palette.dark} />
+                  <ArrowLeftIcon size={scale(18)} color={palette.dark} onPress={goBack}/>
               </IconWrapper>
             </SafeAreaView>
 
@@ -126,7 +134,7 @@ export default function DoctorProfile() {
             </View>
 
             <SafeAreaView style={{ paddingBottom: insets.bottom }}>
-              <LogoutButton />
+              <LogoutButton onPress={LogOut}/>
             </SafeAreaView>
           </View>
         </ScrollView>
