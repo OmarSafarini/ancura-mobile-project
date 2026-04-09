@@ -17,6 +17,8 @@ import LocationIcon from "../components/Icons/LocationIcoon";
 import EmailIcon from "../components/Icons/EmailIcon";
 import TickIcon from "@/assets/icons/TickIcon";
 import { IDoctor } from "@/types/IDoctor";
+import IconWrapper from "../components/Icons/IconWrapper";
+import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 
 export default function DoctorProfile() {
   const doctor: IDoctor = {
@@ -45,6 +47,9 @@ export default function DoctorProfile() {
           <View style={styles.container}>
             <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
               <Text style={styles.Text}>Profile & Settings</Text>
+              <IconWrapper size={scale(33)} bgColor={palette.white} shape="square">
+                  <ArrowLeftIcon size={scale(18)} color={palette.dark} />
+              </IconWrapper>
             </SafeAreaView>
 
             <View style={styles.profileCard}>

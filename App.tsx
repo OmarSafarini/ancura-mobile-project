@@ -3,6 +3,8 @@ import { useAppFonts } from './src/utils/useAppFonts';
 
 
 
+
+
 export default function App() {
   const { fontsLoaded } = useAppFonts();
 
@@ -12,8 +14,6 @@ export default function App() {
 
   return (
 
-    <View style={styles.container}> 
-    
     <View style={styles.container}>
       <CreateCaseScreen/>
     </View>
