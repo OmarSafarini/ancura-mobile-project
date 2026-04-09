@@ -10,7 +10,7 @@ import ArrowLeftIcon from "./../../../assets/icons/ArrowLeftIcon";
 import CopyIcon from "../../../assets/icons/CopyIcon";
 import FlashMessage, { showMessage } from "react-native-flash-message";
 
-export default function Settings() {
+export default function PaitentSettings() {
   const insets = useSafeAreaInsets();
   const id = "USR-XXXXX";
   const CopyId = () => {
@@ -27,6 +27,9 @@ export default function Settings() {
         <View>
           <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
             <Text style={styles.Text}>Profile & Settings</Text>
+            <IconWrapper size={scale(33)} bgColor={palette.white} shape="square">
+              <ArrowLeftIcon size={scale(18)} color={palette.dark} />
+            </IconWrapper>
           </SafeAreaView>
           <View style={styles.Card}>
             <Text style={[styles.CardHeader, styles.CardText]}>
