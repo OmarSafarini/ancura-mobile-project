@@ -11,10 +11,10 @@ import DoctorRepliesScreen from '../features/screens/DoctorRepliesScreen';
 import AllRepliesScreen from '../features/screens/AllRepliesScreen';
 
 // --- Screens for Tab 2 (Activity Log) ---
-import { ActivityLog as ActivityLogScreen } from '../features/patient/screens/ActivityLog'; 
+import ActivityLogScreen from '../features/patient/screens/ActivityLog'; 
 
 // --- Screens for Tab 3 (Notifications) ---
-import { Notification as NotificationScreen } from '../features/patient/screens/Notification';
+import NotificationScreen from '../features/patient/screens/Notification';
 
 // --- Screens for Tab 4 (Profile & Settings) ---
 import DoctorProfileAndSettings from '../features/doctor/screens/DoctorProfileAndSetting';

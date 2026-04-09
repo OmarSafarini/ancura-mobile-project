@@ -7,7 +7,7 @@ import { Family } from "@/utils/typography";
 import AppBackground from "@/components/layout/AppBackground";
 import NotificationCard from "@/components/common/NotificationCard";
 
-export function Notification() {
+export default function Notification() {
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const translateY = useRef(new Animated.Value(20)).current; 
 

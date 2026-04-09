@@ -6,7 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import PatientHomePage from '../features/patient/screens/PatientHomePage';
 import CreateCaseScreen from '../features/patient/screens/CreateCaseScreen';
 import CaseDetailsAndRepliesScreen from '../features/screens/CaseDetailsAndRepliesScreen';
-import EditCaseScreen from '../features/patient/screens/EditCaseScreen';
+//import EditCaseScreen from '../features/patient/screens/EditCaseScreen';
 import AllRepliesScreen from '../features/screens/AllRepliesScreen';
 import DoctorRepliesScreen from '../features/screens/DoctorRepliesScreen';
 
@@ -14,7 +14,7 @@ import DoctorRepliesScreen from '../features/screens/DoctorRepliesScreen';
 import { BaseKnowledge as BaseKnowledgeScreen } from '../features/patient/screens/BaseKnowledge';
 
 // --- Screens for Tab 3 (Notifications) ---
-import { Notification as NotificationScreen } from '../features/patient/screens/Notification';
+import NotificationScreen from '../features/patient/screens/Notification';
 
 // --- Screens for Tab 4 (Settings) ---
 import PatientSettingsScreen from '../features/patient/screens/Settings';
@@ -32,7 +32,7 @@ function PatientHomeStackNavigator() {
       <HomeStack.Screen name="PatientHomePage" component={PatientHomePage} />
       <HomeStack.Screen name="CreateCaseScreen" component={CreateCaseScreen} />
       <HomeStack.Screen name="CaseDetailsAndRepliesScreen" component={CaseDetailsAndRepliesScreen} />
-      <HomeStack.Screen name="EditCaseScreen" component={EditCaseScreen} />
+      {/*<HomeStack.Screen name="EditCaseScreen" component={EditCaseScreen} />*/}
       <HomeStack.Screen name="AllRepliesScreen" component={AllRepliesScreen} />
       <HomeStack.Screen name="DoctorRepliesScreen" component={DoctorRepliesScreen} />
     </HomeStack.Navigator>

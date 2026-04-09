@@ -15,7 +15,7 @@ import { Colors,palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import { scale } from "@/utils/responsive";
 
-export default function DoctorDashboardAndCases(navigation : any) {
+export default function DoctorDashboardAndCases({ navigation }: any) {
 
   const handleViewAllCases = () => {
     navigation.navigate('DoctorHomeScreen');
