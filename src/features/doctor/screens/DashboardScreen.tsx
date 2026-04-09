@@ -22,8 +22,12 @@ const sampleBarData: BarData[] = [
   
 ];
 
-export default function DoctorDashboard() {
+export default function DoctorDashboard(navigation : any) {
   const [selectedPeriod, setSelectedPeriod] = useState<'Weekly' | 'Monthly' | 'All Time'>('Weekly');
+
+  const handleViewActivityLog = () => {
+    navigation.navigate('ActivityLog');
+  };
 
   return (
     <AppBackground>
@@ -48,6 +52,7 @@ export default function DoctorDashboard() {
             <ActivityLogButton 
               label="Activity Log" 
               style={styles.activityButton} 
+              onPress={handleViewActivityLog}
             />
           </View>
 
