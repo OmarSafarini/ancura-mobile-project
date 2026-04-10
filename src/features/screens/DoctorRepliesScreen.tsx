@@ -17,13 +17,21 @@ import { Control, useForm } from "react-hook-form";
 
 type FormData = { doctorReply: string };
 
-export default function DoctorRepliesScreen(navigation: any) {
-  const [role, setRole] = useState<"patient" | "doctor" | null>(null);
+export default function DoctorRepliesScreen({ navigation, route }: any) {
+  const caseData = route?.params?.caseData;
+  const role = route?.params?.role || 'patient';
+
   const isDoctor = role === "doctor";
   const isPatient = role === "patient";
 
-  const handleViewAllReplies = () => {
-      navigation.navigate('AllRepliesScreen');
+  const handleViewAllReplies = (reply: any) => {
+      navigation.navigate('AllRepliesScreen', { 
+        caseId: route?.params?.caseId, 
+        caseData, 
+        role,
+        replyId: reply.id, 
+        replyData: reply 
+      });
     };
   
     const handleViewGoBack = () => {
@@ -80,7 +88,7 @@ export default function DoctorRepliesScreen(navigation: any) {
       
       <View style={styles.fixedHeader}>
         <View style={styles.header}>
-          <Text style={styles.title}>Coping with work pressure</Text>
+          <Text style={styles.title}>{caseData?.title || "Case Title"}</Text>
           <BackButton onPress={handleViewGoBack} />
         </View>
 
@@ -103,8 +111,8 @@ export default function DoctorRepliesScreen(navigation: any) {
               major={item.major}
               message={item.message}
               time={item.time}
-              CardOnPress={handleViewAllReplies}
-              ChatOnPress={handleViewAllReplies}
+              CardOnPress={() => handleViewAllReplies(item)}
+              ChatOnPress={() => handleViewAllReplies(item)}
             />
           )}
         />

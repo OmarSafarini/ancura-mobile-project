@@ -23,7 +23,7 @@ type CaseDetailCardProps = {
   description: string;
   date: string;
   avatar?: string;
-  status: "under_review" | "doctor_replied" | "resolved";
+  status?: "under_review" | "doctor_replied" | "resolved";
 };
 
 // ________________ COMPONENT ________________
@@ -49,7 +49,7 @@ export default function CaseDetailsCard({
         <Text style={styles.tag}>{userId}</Text>
         <Text style={styles.tag}>{gender}</Text>
         <Text style={styles.tag}>{age}</Text>
-        <CaseStatus status={status} />
+        {status && <CaseStatus status={status} />}
       </View>
 
       <Text style={styles.title}>{title}</Text>

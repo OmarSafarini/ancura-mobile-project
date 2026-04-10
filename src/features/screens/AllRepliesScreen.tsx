@@ -13,6 +13,7 @@ import { Family } from "@/utils/typography";
 import ArrowInCircle from "@/assets/icons/SubmitButton";
 import ReplyField from "@/components/forms/ReplyFeild";
 import { Control, useForm } from "react-hook-form";
+import { allDummyComments } from "@/types/mockData";
 
 
 
@@ -20,11 +21,19 @@ type FormData = {
   doctorReply: string;
 };
 
-export default function AllRepliesScreen(navigation: any) {
-  const role = "patient";
+export default function AllRepliesScreen({ navigation, route }: any) {
+  const caseData = route?.params?.caseData;
+  const replyId = route?.params?.replyId;
+  const replyData = route?.params?.replyData;
+  const role = route?.params?.role || 'patient';
+
   const isPatient = role === "patient";
   const handleViewGoBack = () => {
-      navigation.navigate('DoctorRepliesScreen');
+      navigation.navigate('DoctorRepliesScreen', { 
+         caseId: route?.params?.caseId,
+         caseData,
+         role
+      });
     };
 
   const { control } = useForm<FormData>({
@@ -33,60 +42,23 @@ export default function AllRepliesScreen(navigation: any) {
 
   const listRef = useRef<FlatList>(null);
 
-  const comments = [
-    {
-      id: "1",
-      title: "You",
-      discreption:
-        "I have tried that, but it doesn't seem to help much.",
-      time: "Just now",
-      major: "Patient",
-    },
-    {
-      id: "2",
-      title: "You",
-      discreption:
-        "I still feel overwhelmed with my workload and deadlines.",
-      time: "Just now",
-      major: "Patient",
-    },
-    {
-      id: "3",
-      title: "You",
-      discreption:
-        "I have trouble sleeping and concentrating at work.",
-      time: "Just now",
-      major: "Patient",
-    },
-    {
-      id: "4",
-      title: "You",
-      discreption:
-        "I'm not sure what else to try.",
-      time: "Just now",
-      major: "Patient",
-    },
-  ];
+  const comments = allDummyComments.filter(c => c.reply_id === replyId);
 
   return (
     <AppBackground>
       <View style={styles.container}>
 
         <View style={styles.header}>
-          <Text style={styles.title}>Coping with work pressure</Text>
+          <Text style={styles.title}>{caseData?.title || "Case Title"}</Text>
           <BackButton onPress={handleViewGoBack} />
         </View>
 
         <View style={styles.staticContent}>
           <DoctorReplyCard
-              title="Dr. Sarah Ahmed"
-              major="Clinical Psychologist"
-              message="Thank you for sharing. Work-related anxiety is very common. Have you
-                  tried breaking your tasks into smaller, manageable chunks? This can
-                  help reduce the feeling of being overwhelmed
-                  breaking your tasks into smaller, manageable chunks? This can
-                  help reduce the feeling of being overwhelmed."
-              time="Just now"
+              title={replyData?.title || "Dr. Sarah Ahmed"}
+              major={replyData?.major || "Clinical Psychologist"}
+              message={replyData?.message || "Reply details."}
+              time={replyData?.time || "Just now"}
               CardOnPress={() => {}}
               ChatOnPress={() => {}}
             />
@@ -109,7 +81,7 @@ export default function AllRepliesScreen(navigation: any) {
             renderItem={({ item }) => (
               <DoctorCommentCard
                 title={item.title}
-                discreption={item.discreption}
+                discreption={item.description}
                 time={item.time}
                 avatar={undefined}
                 major={item.major}

@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
 import AppBackground from "@/components/layout/AppBackground"; 
 import DoctorGreeting from "../components/DoctorGreeting";
 import CaseCard from "@/components/common/CaseCard";
+import { dummyCases } from "@/types/mockData";
 import IconWrapper from "@/features/doctor/components/Icons/IconWrapper";
 import ClockIcon from "@/features/doctor/components/Icons/ClockIcon";
 import ChatIcon from "../components/Icons/ChatIcon";
@@ -25,14 +26,7 @@ export default function DoctorDashboardAndCases({ navigation }: any) {
     navigation.navigate('DashboardScreen');
   };
 
-  const cases = [
-    { title: "Anxiety and sleep problem", created_at: "2h ago", status: "Under Review"},
-    { title: "Headache after work", created_at: "5h ago", status: "Doctor Replied" },
-    { title: "Stomach pain", created_at: "1d ago", status: "Resolved" },
-    { title: "Back pain", created_at: "3d ago", status: "", isEmergency: true },
-    { title: "Stomach pain", created_at: "1d ago", status: "Resolved" },
-    { title: "Back pain", created_at: "3d ago", status: "" },
-  ];
+  const doctorCases = dummyCases.filter(c => c.status !== "Resolved");
 
   const chartData = [
     { label: "Sat", value: 20 },
@@ -79,14 +73,22 @@ export default function DoctorDashboardAndCases({ navigation }: any) {
           <View style={styles.casesContainer}>
             <View style={styles.grid}>
               <View style={styles.column}>
-                {cases.slice(0, 3).map((item, index) => (
-                  <CaseCard key={index} data={item as any} />
+                {doctorCases.slice(0, 3).map((item, index) => (
+                  <CaseCard 
+                    key={index} 
+                    data={{ ...item, status: undefined } as any} 
+                    onPress={() => navigation.navigate("CaseDetailsAndRepliesScreen", { caseId: item.id, caseData: item, role: 'doctor' })} 
+                  />
                 ))}
               </View>
 
               <View style={styles.column}>
-                {cases.slice(3, 6).map((item, index) => (
-                  <CaseCard key={index} data={item as any} />
+                {doctorCases.slice(3, 6).map((item, index) => (
+                  <CaseCard 
+                    key={index} 
+                    data={{ ...item, status: undefined } as any} 
+                    onPress={() => navigation.navigate("CaseDetailsAndRepliesScreen", { caseId: item.id, caseData: item, role: 'doctor' })} 
+                  />
                 ))}
               </View>
             </View>

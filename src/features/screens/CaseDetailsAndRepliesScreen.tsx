@@ -18,6 +18,7 @@ import { Colors } from "@/utils/colors";
 
 import PencilIcon from "@/assets/icons/PencilIcon";
 import TrashIcon from "@/assets/icons/TrashIcon";
+import { allDummyReplies } from "@/types/mockData";
 
 
 
@@ -25,17 +26,26 @@ type FormData = {
   doctorReply: string;
 };
 
-export default function CaseDetailScreen(navigation: any) {
-  const [role, setRole] = useState<"patient" | "doctor" | null>(null);
+export default function CaseDetailScreen({ navigation, route }: any) {
+  const caseId = route?.params?.caseId;
+  const caseData = route?.params?.caseData;
+  const role = route?.params?.role || 'patient';
+  console.log("Opened Case Details for ID: ", caseId, " as Role: ", role);
+
   const isDoctor = role === "doctor";
   const isPatient = role === "patient";
 
   const handleViewDoctorReplies = () => {
-    navigation.navigate('DoctorRepliesScreen');
+    navigation.navigate('DoctorRepliesScreen', { caseId, caseData });
   };
 
-  const handleViewAllReplies = () => {
-    navigation.navigate('AllRepliesScreen');
+  const handleViewAllReplies = (reply: any) => {
+    navigation.navigate('AllRepliesScreen', { 
+      caseId, 
+      caseData,
+      replyId: reply.id,
+      replyData: reply
+    });
   };
 
   const handleViewGoBack = () => {
@@ -52,29 +62,8 @@ export default function CaseDetailScreen(navigation: any) {
     flatListRef.current?.scrollToEnd({ animated: true });
   };
 
-  const replies = [
-    {
-      id: "1",
-      title:"Dr. Sarah Ahmed" ,
-      major:"Clinical Psychologist" ,
-      message:"Based on the symptoms you described, I recommend starting with cognitive behavioral therapy techniques for sleep. I'll send you a detailed plan within 24 hours." ,
-      time:"Just now",
-    },
-    {
-      id: "2",
-      title:"Dr. Sarah Ahmed" ,
-      major:"Clinical Psychologist" ,
-      message:"Based on the symptoms you described, I recommend starting with cognitive behavioral therapy techniques for sleep. I'll send you a detailed plan within 24 hours." ,
-      time:"Just now",
-    },
-    {
-      id: "3",
-      title:"Dr. Sarah Ahmed" ,
-      major:"Clinical Psychologist" ,
-      message:"Based on the symptoms you described, I recommend starting with cognitive behavioral therapy techniques for sleep. I'll send you a detailed plan within 24 hours." ,
-      time:"Just now",
-    },
-  ];
+
+  const replies = allDummyReplies.filter(reply => reply.case_id === caseId);
 
 
   return (
@@ -106,13 +95,18 @@ export default function CaseDetailScreen(navigation: any) {
 
         <View style={styles.mainContent}>
           <CaseDetailsCard
-            userId="#124"
+            userId={caseData ? `#${caseData.patient_id}` : "#124"}
             gender="Female"
             age={28}
-            title="Anxiety and sleep problem"
-            description="Patient reports severe anxiety and insomnia for the past 3 weeks."
-            date="2 hours ago"
-            status="under_review"
+            title={caseData?.title || "Anxiety and sleep problem"}
+            description={caseData?.description || "Patient reports severe anxiety and insomnia for the past 3 weeks."}
+            date={caseData?.created_at || "2 hours ago"}
+            status={
+              isDoctor ? undefined :
+              caseData?.status === "Under Review" ? "under_review" :
+              caseData?.status === "Doctor Replied" ? "doctor_replied" :
+              caseData?.status === "Resolved" ? "resolved" : "under_review"
+            }
           />
 
           <View style={styles.replySection}>
@@ -135,7 +129,7 @@ export default function CaseDetailScreen(navigation: any) {
                   message={item.message}
                   time={item.time}
                   CardOnPress={handleViewDoctorReplies}
-                  ChatOnPress={handleViewAllReplies}
+                  ChatOnPress={() => handleViewAllReplies(item)}
                 />
               )}
             />
