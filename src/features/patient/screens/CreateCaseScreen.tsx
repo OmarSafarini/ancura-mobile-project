@@ -8,6 +8,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import {useForm} from "react-hook-form"
+import * as DocumentPicker from "expo-document-picker";
 import AppBackground from "@/components/layout/AppBackground";
 import InputField from "@/components/forms/InputFeild";
 import AttachmentsField from "@/components/forms/AttachmentFeild";
@@ -23,7 +24,7 @@ type FormValues = {
   title: string;
   description: string;
   isEmergency: boolean;
-  files: File[];
+  files: DocumentPicker.DocumentPickerAsset[];
 };
 
 const CreateCase = ({ navigation }: any) => {

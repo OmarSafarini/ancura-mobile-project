@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 import { useAppFonts } from './src/utils/useAppFonts';
 import CreateCaseScreen from '@/features/patient/screens/CreateCaseScreen';
+import EditCaseScreen from '@/features/patient/screens/EditCaseScreen';
 
 
 export default function App() {
@@ -12,7 +13,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <CreateCaseScreen/>
+      <EditCaseScreen/>
     </View>
   );
 }

@@ -10,7 +10,7 @@ interface ToggleButtonProps {
   onPress?: () => void;
 }
 
-const ToggleButton: React.FC<ToggleButtonProps> = ({ title, Icon, bgColor = '#FFFFFF', textColor = '#6D7EB5', onPress }) => {
+const ToggleButton: React.FC<ToggleButtonProps> = ({ title, Icon, bgColor = '#ffffff01', textColor = '#6D7EB5', onPress }) => {
   return (
     <Pressable 
       style={({ pressed }) => [
@@ -23,7 +23,7 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({ title, Icon, bgColor = '#FF
       onPress={onPress}
     >
       {({ pressed }) => {
-        const activeColor = pressed ? bgColor : textColor;
+        const activeColor = pressed ? "#FFFFFF" : textColor;
         return (
           <View style={styles.content}>
             {Icon && (
