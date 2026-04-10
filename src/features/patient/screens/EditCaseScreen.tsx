@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -38,7 +38,7 @@ type CaseFileItem = {
 };
 
 const EditCaseScreen = ({ navigation }: any) => {
-  const caseFiles: CaseFileItem[] = [
+  const [caseFiles, setCaseFiles] = useState<CaseFileItem[]>([
     {
       id: "1",
       title: "Clinical Psychology License - California Board",
@@ -47,7 +47,7 @@ const EditCaseScreen = ({ navigation }: any) => {
       id: "2",
       title: "Clinical Psychology License - Hello World",
     },
-  ];
+  ]);
 
   const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
     defaultValues: {
@@ -60,10 +60,31 @@ const EditCaseScreen = ({ navigation }: any) => {
   });
 
   const isEmergency = watch("isEmergency");
+  const pickedFiles = watch("files");
 
   const onSubmit = (data: FormValues) => {
     console.log("Updated Case:", data);
   };
+
+  const deleteFile = (id: string) => {
+    setCaseFiles((prevFiles) => prevFiles.filter((file) => file.id !== id));
+  };
+
+  useEffect(() => {
+    if (!pickedFiles?.length) return;
+
+    setCaseFiles((prevFiles) => {
+      const existingIds = new Set(prevFiles.map((file) => file.id));
+      const newItems = pickedFiles
+        .map((file) => ({
+          id: file.uri || file.name,
+          title: file.name,
+        }))
+        .filter((file) => !existingIds.has(file.id));
+
+      return [...prevFiles, ...newItems];
+    });
+  }, [pickedFiles]);
 
   return (
     <AppBackground variant="clean">
@@ -95,6 +116,7 @@ const EditCaseScreen = ({ navigation }: any) => {
             name="title"
             label="Subject / Title"
             placeholder="Type here"
+            isEdit={true}
             textStyle={{
               fontSize: scale(20),
               fontFamily: Family.FG_Medium,
@@ -107,6 +129,7 @@ const EditCaseScreen = ({ navigation }: any) => {
             name="description"
             label="Description"
             placeholder="Type here"
+            isEdit={true}
             multiline
             numberOfLines={4}
             textStyle={{
@@ -132,7 +155,7 @@ const EditCaseScreen = ({ navigation }: any) => {
                     </IconWrapper>
                    } />
                 </View>
-                <DeleteIconButton />
+                <DeleteIconButton onPress={() => deleteFile(file.id)} />
               </View>
             ))}
           </View>
