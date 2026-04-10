@@ -1,4 +1,6 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import FlashMessage from 'react-native-flash-message';
 import { useAppFonts } from './src/utils/useAppFonts';
 import CreateCaseScreen from '@/features/patient/screens/CreateCaseScreen';
 import EditCaseScreen from '@/features/patient/screens/EditCaseScreen';

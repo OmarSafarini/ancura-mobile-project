@@ -3,7 +3,7 @@ import HandLikeIcon from "@/features/doctor/components/Icons/HandLikeIcon";
 import { palette, Colors as colors } from "../../utils/colors";
 import { Family } from "../../utils/typography";
 import React from "react";
-import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
+import { View, Text, StyleSheet, Image, Dimensions, Pressable } from "react-native";
 import VerificationIcon from "@/assets/icons/VerificationIcon";
 import DisLikeIcon from "@/assets/icons/DisLikeIcon";
 import { scale } from "@/utils/responsive";
@@ -19,6 +19,8 @@ type DoctorReplyCardProps = {
   message: string;
   time: string;
   avatar?: string;
+  CardOnPress:()=>void;
+  ChatOnPress:()=>void;
 };
 // ________________ COMPONENT ________________
 export default function DoctorReplyCard({
@@ -27,10 +29,11 @@ export default function DoctorReplyCard({
   message,
   time,
   avatar,
-  
+  CardOnPress,
+  ChatOnPress
 }: DoctorReplyCardProps) {
   return (
-    <View style={styles.container}>
+    <Pressable style={styles.container} onPress={CardOnPress}>
       <View style={styles.header}>
         <Image
           source={
@@ -60,12 +63,12 @@ export default function DoctorReplyCard({
           <DisLikeIcon size={18} color="#707070" />
         </View>
 
-        <View style={styles.ReplyContainer}>
+        <Pressable style={styles.ReplyContainer} onPress={ChatOnPress}>
           <ChatIcon size={18} color="#707070" />
           <Text style={styles.reply}>Reply</Text>
-        </View>
+        </Pressable>
       </View>
-    </View>
+    </Pressable>
   );
 }
 

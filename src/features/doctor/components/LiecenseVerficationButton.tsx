@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ViewStyle } from "react-native";
+import { View, Text, StyleSheet, ViewStyle, Pressable } from "react-native";
 import ArrowRightIcon from "@/assets/icons/ArrowRightIcon";
 import { Colors } from "@/utils/colors";
 import { Family } from "@/utils/typography";
@@ -9,6 +9,7 @@ type LicenseButtonProps = {
   width?: number;
   backgroundColor?: string;
   thumbColor?: string;
+  onPress:()=>void;
 };
 
 const HEIGHT = scale(50);
@@ -16,15 +17,16 @@ const BUTTON_WIDTH = scale(325);
 const THUMB_SIZE = scale(30);
 const PADDING = scale(10);
 
-export default function LicenseVerificationButton({ label = "Verify License Information", width, backgroundColor = Colors.formBackground, thumbColor = Colors.secondary }: LicenseButtonProps) {
+
+export default function LicenseVerificationButton({ label = "Verify License Information", width, backgroundColor = Colors.formBackground, thumbColor = Colors.secondary ,onPress}: LicenseButtonProps) {
   const buttonWidth = width || BUTTON_WIDTH;
   return (
-    <View style={[ styles.container, { width: buttonWidth, backgroundColor, }, ]}>
+    <Pressable style={[ styles.container, { width: buttonWidth, backgroundColor, }, ]} onPress={onPress}>
       <Text style={styles.text}>{label}</Text>
       <View style={[styles.thumb, { backgroundColor: thumbColor }]}>
         <ArrowRightIcon color={Colors.formBackground} size={scale(14)} />
       </View>
-    </View>
+    </Pressable>
   );
 }
 

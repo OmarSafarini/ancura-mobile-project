@@ -10,13 +10,15 @@ import { Colors, palette } from '../../../utils/colors';
 import { Family } from '../../../utils/typography';
 import { scale } from '../../../utils/responsive';
 
-export default function DoctorVerificationScreen() {
+export default function DoctorVerificationScreen({ navigation }: any) {
   const onCodeFilled = (code: string) => {
     console.log("Verification Code entered: ", code);
   };
 
   const handleSend = () => {
     console.log("Send clicked");
+    // Navigate to the next step, assuming verification is successful
+    navigation.navigate('DoctorNewPasswordScreen');
   };
 
   return (
@@ -69,7 +71,7 @@ export default function DoctorVerificationScreen() {
 
             <NormalButton
               title="Apply as a Licensed Professional"
-              onPress={() => console.log('Apply clicked')}
+              onPress={() => navigation.navigate('DoctorProfileAndSettings')}
               bgColor={Colors.secondary}
             />
           </FadeInView>
