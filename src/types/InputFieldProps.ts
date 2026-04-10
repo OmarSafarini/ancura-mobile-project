@@ -10,4 +10,6 @@ export type InputFieldProps = {
   secureTextEntry?: boolean;
   multiline?: boolean;
   numberOfLines?: number;
+  textStyle?: object;
+  containerStyle?: object;
 };
