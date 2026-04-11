@@ -1,5 +1,6 @@
-import AppBackground from "@/components/layout/AppBackground";
-import IconWrapper from "@/features/doctor/components/Icons/IconWrapper";
+import AppBackground from "@/components/base/AppBackground";
+import IconWrapper from "@/components/common/IconWrapper";
+import { useNavigation } from "@react-navigation/native";
 import {
   StyleSheet,
   View,
@@ -11,7 +12,7 @@ import {
 } from "react-native";
 import { Colors as colors, palette } from "@/utils/colors";
 import NotificationsIcon from "@/assets/icons/NotificationsIcon";
-import BottomNavBar, { TabItem } from "@/components/layout/BottomNavBar";
+import BottomNavBar, { TabItem } from "@/components/base/BottomNavBar";
 import HomeIcon from "@/assets/icons/HomeIcon";
 import ProfileIcon from "@/assets/icons/ProfileIcon";
 import ActivityLogIcon from "@/assets/icons/ActivityLogIcon";
@@ -21,10 +22,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FabAddIcon from "@/assets/icons/FabAddIcon";
 import { Family } from "@/utils/typography";
 import CaseCard from "@/components/common/CaseCard";
-import { CaseData } from "@/types/CaseData";
 import FilterButton from "@/components/common/FiltterButton";
+import { dummyCases } from "@/types/mockData";
 
 export default function PatientHomePage() {
+  const navigation = useNavigation<any>();
   const [activeTab, setActiveTab] = useState("Dashboard");
   const insets = useSafeAreaInsets();
   const [filterStatus, setFilterStatus] = useState<null | string>(null);
@@ -41,117 +43,6 @@ export default function PatientHomePage() {
     profilePic: require("../../../../assets/ancura.gif"),
     name: "USER-XXXX",
   };
-
-  const dummyCases: CaseData[] = [
-    {
-      id: 1,
-      patient_id: 101,
-      title: "Headache and fever",
-      description: "Patient has been experiencing headache for 2 days",
-      created_at: "2026-04-02",
-      status: "Under Review",
-      isEmergency: false,
-    },
-    {
-      id: 2,
-      patient_id: 102,
-      title: "Skin Rash",
-      description: "Red rash on arms",
-      created_at: "2026-04-01",
-      status: "Doctor Replied",
-      isEmergency: true,
-    },
-    {
-      id: 3,
-      patient_id: 103,
-      title: "Skin Rash",
-      description: "Red rash on arms",
-      created_at: "2026-04-01",
-      status: "Resolved",
-      isEmergency: false,
-    },
-    {
-      id: 4,
-      patient_id: 104,
-      title: "Headache and fever",
-      description: "Patient has been experiencing headache for 2 days",
-      created_at: "2026-04-02",
-      status: "Under Review",
-      isEmergency: false,
-    },
-    {
-      id: 5,
-      patient_id: 105,
-      title: "Skin Rash",
-      description: "Red rash on arms",
-      created_at: "2026-04-01",
-      status: "Doctor Replied",
-      isEmergency: true,
-    },
-    {
-      id: 6,
-      patient_id: 106,
-      title: "Skin Rash",
-      description: "Red rash on arms",
-      created_at: "2026-04-01",
-      status: "Resolved",
-      isEmergency: false,
-    },
-    {
-      id: 7,
-      patient_id: 107,
-      title: "Headache and fever",
-      description: "Patient has been experiencing headache for 2 days",
-      created_at: "2026-04-02",
-      status: "Under Review",
-      isEmergency: false,
-    },
-    {
-      id: 8,
-      patient_id: 108,
-      title: "Skin Rash",
-      description: "Red rash on arms",
-      created_at: "2026-04-01",
-      status: "Doctor Replied",
-      isEmergency: true,
-    },
-    {
-      id: 9,
-      patient_id: 109,
-      title: "Skin Rash",
-      description: "Red rash on arms",
-      created_at: "2026-04-01",
-      status: "Resolved",
-      isEmergency: false,
-    },
-    {
-      id: 10,
-      patient_id: 110,
-      title: "Headache and fever",
-      description: "Patient has been experiencing headache for 2 days",
-      created_at: "2026-04-02",
-      status: "Under Review",
-      isEmergency: false,
-    },
-    {
-      id: 11,
-      patient_id: 111,
-      title: "Skin Rash",
-      description: "Red rash on arms",
-      created_at: "2026-04-01",
-      status: "Doctor Replied",
-      isEmergency: true,
-    },
-    {
-      id: 12,
-      patient_id: 112,
-      title: "Skin Rash",
-      description: "Red rash on arms",
-      created_at: "2026-04-01",
-      status: "Resolved",
-      isEmergency: false,
-    },
-  ];
 
   const filteredCases = filterStatus
     ? dummyCases.filter((c) => c.status === filterStatus)
@@ -200,7 +91,12 @@ export default function PatientHomePage() {
                 marginBottom: scale(12),
               }}
               showsVerticalScrollIndicator={false}
-              renderItem={({ item }) => <CaseCard data={item} />}
+              renderItem={({ item }) => (
+                <CaseCard
+                  data={item}
+                  onPress={() => navigation.navigate("CaseDetailsAndRepliesScreen", { caseId: item.id, caseData: item })}
+                />
+              )}
               contentContainerStyle={{
                 paddingBottom: scale(90),
                 paddingTop: scale(10),

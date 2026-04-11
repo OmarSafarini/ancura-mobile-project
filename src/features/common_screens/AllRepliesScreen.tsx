@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { View, FlatList, StyleSheet, Text } from "react-native";
 
-import AppBackground from "@/components/layout/AppBackground";
+import AppBackground from "@/components/base/AppBackground";
 import BackButton from "@/components/common/BackButton";
 import ReplyText from "@/components/common/ReplyText";
 import DoctorReplyCard from "@/components/common/DoctorReplyCard";
@@ -29,12 +29,12 @@ export default function AllRepliesScreen({ navigation, route }: any) {
 
   const isPatient = role === "patient";
   const handleViewGoBack = () => {
-      navigation.navigate('DoctorRepliesScreen', { 
-         caseId: route?.params?.caseId,
-         caseData,
-         role
-      });
-    };
+    navigation.navigate('DoctorRepliesScreen', {
+      caseId: route?.params?.caseId,
+      caseData,
+      role
+    });
+  };
 
   const { control } = useForm<FormData>({
     defaultValues: { doctorReply: "" },
@@ -55,13 +55,13 @@ export default function AllRepliesScreen({ navigation, route }: any) {
 
         <View style={styles.staticContent}>
           <DoctorReplyCard
-              title={replyData?.title || "Dr. Sarah Ahmed"}
-              major={replyData?.major || "Clinical Psychologist"}
-              message={replyData?.message || "Reply details."}
-              time={replyData?.time || "Just now"}
-              CardOnPress={() => {}}
-              ChatOnPress={() => {}}
-            />
+            title={replyData?.title || "Dr. Sarah Ahmed"}
+            major={replyData?.major || "Clinical Psychologist"}
+            message={replyData?.message || "Reply details."}
+            time={replyData?.time || "Just now"}
+            CardOnPress={() => { }}
+            ChatOnPress={() => { }}
+          />
 
 
           <ReplyText title="All Replies" color={Colors.primary} />
@@ -148,8 +148,8 @@ const styles = StyleSheet.create({
   },
 
   listWrapper: {
-  height: "30%", 
-},
+    height: "30%",
+  },
 
   listContent: {
     paddingBottom: scale(20),
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
 
   patientBottom: {
     width: "100%",
-   // marginTop: scale(10),
+    // marginTop: scale(10),
   },
 
   doctorBottom: {

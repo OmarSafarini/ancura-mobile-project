@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Control, useForm } from "react-hook-form";
 import { View, FlatList, StyleSheet } from "react-native";
 
-import AppBackground from "@/components/layout/AppBackground";
+import AppBackground from "@/components/base/AppBackground";
 import BackButton from "@/components/common/BackButton";
 import ToggleButton from "@/components/common/ToggleButton";
 import CaseDetailsCard from "@/components/common/CaseDetailsCard";
@@ -11,7 +11,7 @@ import ResolvedSlideButton from "../patient/components/ResolvedSlideButton";
 import ReplyText from "@/components/common/ReplyText";
 import ReplyField from "@/components/forms/ReplyFeild";
 import ArrowInCircle from "@/assets/icons/SubmitButton";
-import ScrollToBottomButton from "../patient/components/Buttons/ScrollToBottom";
+import ScrollToBottomButton from "../patient/components/ScrollToBottom";
 
 import { scale } from "@/utils/responsive";
 import { Colors } from "@/utils/colors";
@@ -24,6 +24,12 @@ import { allDummyReplies } from "@/types/mockData";
 
 type FormData = {
   doctorReply: string;
+};
+
+const STATUS_MAP: Record<string, "under_review" | "doctor_replied" | "resolved"> = {
+  "Under Review": "under_review",
+  "Doctor Replied": "doctor_replied",
+  "Resolved": "resolved",
 };
 
 export default function CaseDetailScreen({ navigation, route }: any) {
@@ -40,8 +46,8 @@ export default function CaseDetailScreen({ navigation, route }: any) {
   };
 
   const handleViewAllReplies = (reply: any) => {
-    navigation.navigate('AllRepliesScreen', { 
-      caseId, 
+    navigation.navigate('AllRepliesScreen', {
+      caseId,
       caseData,
       replyId: reply.id,
       replyData: reply
@@ -102,15 +108,16 @@ export default function CaseDetailScreen({ navigation, route }: any) {
             description={caseData?.description || "Patient reports severe anxiety and insomnia for the past 3 weeks."}
             date={caseData?.created_at || "2 hours ago"}
             status={
-              isDoctor ? undefined :
-              caseData?.status === "Under Review" ? "under_review" :
-              caseData?.status === "Doctor Replied" ? "doctor_replied" :
-              caseData?.status === "Resolved" ? "resolved" : "under_review"
+              isDoctor
+                ? undefined
+                : caseData?.status
+                  ? STATUS_MAP[caseData.status as string]
+                  : "under_review"
             }
           />
 
           <View style={styles.replySection}>
-            <ReplyText title="Doctor's Reply" color={Colors.primary} onPress={handleViewDoctorReplies}/>
+            <ReplyText title="Doctor's Reply" color={Colors.primary} onPress={handleViewDoctorReplies} />
 
             <FlatList
               ref={flatListRef}
@@ -200,7 +207,7 @@ const styles = StyleSheet.create({
   },
 
   replySection: {
-    height:scale(410),
+    height: scale(410),
     gap: scale(41),
   },
 
@@ -216,8 +223,8 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingBottom: scale(30),
     paddingHorizontal: scale(24),
-    position:"absolute",
-    bottom:scale(30),
+    position: "absolute",
+    bottom: scale(30),
   },
 
   patientBottom: {

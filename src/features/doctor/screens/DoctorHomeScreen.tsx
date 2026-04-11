@@ -1,5 +1,5 @@
-import AppBackground from "@/components/layout/AppBackground";
-import IconWrapper from "@/features/doctor/components/Icons/IconWrapper";
+import AppBackground from "@/components/base/AppBackground";
+import IconWrapper from "@/components/common/IconWrapper";
 import {
   StyleSheet,
   View,
@@ -13,10 +13,11 @@ import { scale } from "@/utils/responsive";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Family } from "@/utils/typography";
 import CaseCard from "@/components/common/CaseCard";
-import { CaseData } from "@/types/CaseData";
+import { CaseData } from "@/types/ICaseData";
+import { dummyCases } from "@/types/mockData";
 import DoctorBNB from "../components/DoctorBNB";
 
-export default function DoctorHomeScreen() {
+export default function DoctorHomeScreen({ navigation }: any) {
   const insets = useSafeAreaInsets();
 
   const user = {
@@ -24,105 +25,7 @@ export default function DoctorHomeScreen() {
     name: "Dr.Aprar Ismail",
   };
 
-  const dummyCases: CaseData[] = [
-    {
-      id: 1,
-      patient_id: 101,
-      title: "Headache and fever",
-      description: "Patient has been experiencing headache for 2 days",
-      created_at: "2026-04-02",
-      isEmergency: false,
-    },
-    {
-      id: 2,
-      patient_id: 102,
-      title: "Skin Rash",
-      description: "Red rash on arms",
-      created_at: "2026-04-01",
-      isEmergency: true,
-    },
-    {
-      id: 3,
-      patient_id: 103,
-      title: "Skin Rash",
-      description: "Red rash on arms",
-      created_at: "2026-04-01",
-      isEmergency: false,
-    },
-    {
-      id: 4,
-      patient_id: 104,
-      title: "Headache and fever",
-      description: "Patient has been experiencing headache for 2 days",
-      created_at: "2026-04-02",
-      isEmergency: false,
-    },
-    {
-      id: 5,
-      patient_id: 105,
-      title: "Skin Rash",
-      description: "Red rash on arms",
-      created_at: "2026-04-01",
-      isEmergency: true,
-    },
-    {
-      id: 6,
-      patient_id: 106,
-      title: "Skin Rash",
-      description: "Red rash on arms",
-      created_at: "2026-04-01",
-      isEmergency: false,
-    },
-    {
-      id: 7,
-      patient_id: 107,
-      title: "Headache and fever",
-      description: "Patient has been experiencing headache for 2 days",
-      created_at: "2026-04-02",
-      isEmergency: false,
-    },
-    {
-      id: 8,
-      patient_id: 108,
-      title: "Skin Rash",
-      description: "Red rash on arms",
-      created_at: "2026-04-01",
-      isEmergency: true,
-    },
-    {
-      id: 9,
-      patient_id: 109,
-      title: "Skin Rash",
-      description: "Red rash on arms",
-      created_at: "2026-04-01",
-      isEmergency: false,
-    },
-    {
-      id: 10,
-      patient_id: 110,
-      title: "Headache and fever",
-      description: "Patient has been experiencing headache for 2 days",
-      created_at: "2026-04-02",
-      isEmergency: false,
-    },
-    {
-      id: 11,
-      patient_id: 111,
-      title: "Skin Rash",
-      description: "Red rash on arms",
-      created_at: "2026-04-01",
-      isEmergency: true,
-    },
-    {
-      id: 12,
-      patient_id: 112,
-      title: "Skin Rash",
-      description: "Red rash on arms",
-      created_at: "2026-04-01",
-      status: "Resolved",
-      isEmergency: false,
-    },
-  ];
+  const doctorCases = dummyCases.filter(c => c.status !== "Resolved");
 
   function greeting() {
     const now = new Date();
@@ -148,7 +51,7 @@ export default function DoctorHomeScreen() {
         </SafeAreaView>
 
         <FlatList
-          data={dummyCases}
+          data={doctorCases}
           keyExtractor={(item) => item.id.toString()}
           numColumns={2}
           columnWrapperStyle={{
@@ -156,14 +59,19 @@ export default function DoctorHomeScreen() {
             marginBottom: scale(12),
           }}
           showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => <CaseCard data={item} />}
+          renderItem={({ item }) => (
+            <CaseCard
+              data={{ ...item, status: undefined } as any}
+              onPress={() => navigation.navigate("CaseDetailsAndRepliesScreen", { caseId: item.id, caseData: item, role: 'doctor' })}
+            />
+          )}
           contentContainerStyle={{
             paddingBottom: scale(90),
             paddingTop: scale(10),
           }}
         />
       </View>
-      
+
     </AppBackground>
   );
 }
