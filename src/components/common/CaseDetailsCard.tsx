@@ -2,13 +2,13 @@ import React from "react";
 import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
 import { palette, Colors as colors } from "../../utils/colors";
 import { Family } from "../../utils/typography";
-import ChatIcon from "@/features/doctor/components/Icons/ChatIcon";
+import ChatIcon from "@/assets/icons/ChatIcon";
 import { scale } from "@/utils/responsive";
 import CaseStatus from "./CaseStatus";
-import ClockIcon from "@/features/doctor/components/Icons/ClockIcon";
+import ClockIcon from "@/assets/icons/ClockIcon";
 import FileBar from "./FileBar";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
-import IconWrapper from "./../../features/doctor/components/Icons/IconWrapper";
+import IconWrapper from "./IconWrapper";
 
 // ________________ CONSTANTS ________________
 const AVATAR_SIZE = scale(25);

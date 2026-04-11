@@ -1,5 +1,5 @@
-import AppBackground from "@/components/layout/AppBackground";
-import IconWrapper from "@/features/doctor/components/Icons/IconWrapper";
+import AppBackground from "@/components/base/AppBackground";
+import IconWrapper from "@/components/common/IconWrapper";
 import { useNavigation } from "@react-navigation/native";
 import {
   StyleSheet,
@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Colors as colors, palette } from "@/utils/colors";
 import NotificationsIcon from "@/assets/icons/NotificationsIcon";
-import BottomNavBar, { TabItem } from "@/components/layout/BottomNavBar";
+import BottomNavBar, { TabItem } from "@/components/base/BottomNavBar";
 import HomeIcon from "@/assets/icons/HomeIcon";
 import ProfileIcon from "@/assets/icons/ProfileIcon";
 import ActivityLogIcon from "@/assets/icons/ActivityLogIcon";
@@ -92,8 +92,8 @@ export default function PatientHomePage() {
               }}
               showsVerticalScrollIndicator={false}
               renderItem={({ item }) => (
-                <CaseCard 
-                  data={item} 
+                <CaseCard
+                  data={item}
                   onPress={() => navigation.navigate("CaseDetailsAndRepliesScreen", { caseId: item.id, caseData: item })}
                 />
               )}

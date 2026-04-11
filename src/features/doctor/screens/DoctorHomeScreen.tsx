@@ -1,5 +1,5 @@
-import AppBackground from "@/components/layout/AppBackground";
-import IconWrapper from "@/features/doctor/components/Icons/IconWrapper";
+import AppBackground from "@/components/base/AppBackground";
+import IconWrapper from "@/components/common/IconWrapper";
 import {
   StyleSheet,
   View,
@@ -13,7 +13,7 @@ import { scale } from "@/utils/responsive";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Family } from "@/utils/typography";
 import CaseCard from "@/components/common/CaseCard";
-import { CaseData } from "@/types/CaseData";
+import { CaseData } from "@/types/ICaseData";
 import { dummyCases } from "@/types/mockData";
 import DoctorBNB from "../components/DoctorBNB";
 
@@ -60,9 +60,9 @@ export default function DoctorHomeScreen({ navigation }: any) {
           }}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
-            <CaseCard 
-              data={{ ...item, status: undefined } as any} 
-              onPress={() => navigation.navigate("CaseDetailsAndRepliesScreen", { caseId: item.id, caseData: item, role: 'doctor' })} 
+            <CaseCard
+              data={{ ...item, status: undefined } as any}
+              onPress={() => navigation.navigate("CaseDetailsAndRepliesScreen", { caseId: item.id, caseData: item, role: 'doctor' })}
             />
           )}
           contentContainerStyle={{
@@ -71,7 +71,7 @@ export default function DoctorHomeScreen({ navigation }: any) {
           }}
         />
       </View>
-      
+
     </AppBackground>
   );
 }
