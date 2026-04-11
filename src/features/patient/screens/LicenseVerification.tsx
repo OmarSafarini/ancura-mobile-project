@@ -15,7 +15,7 @@ import EditPaperclipAttachmentIcon from "@/assets/icons/EditPaperclipAttachment"
 import NormalButton from "@/components/common/NormalButton";
 import SuccessScreen from "@/components/common/SuccessScreen";
 
-export function LicenseVerification() {
+export function LicenseVerification({navigation}: any) {
     const { control } = useForm();
     const [selectedDocument, setSelectedDocument] = useState<null | { name: string, uri: string, size?: number }>(null);
     const [showSuccess, setShowSuccess] = useState(false);
@@ -66,9 +66,9 @@ export function LicenseVerification() {
 
                     <View style={styles.header}>
                         <Text style={styles.title}>License Verification</Text>
-                        <View style={styles.iconWrapper}>
+                        <Pressable style={styles.iconWrapper} onPress={() => navigation.navigate('DoctorProfileAndSettings')}>
                             <ArrowLeftIcon color={Colors.textDark2} size={scale(18)} />
-                        </View>
+                        </Pressable>
                     </View>
 
                     <View style={styles.articleContainer}>
@@ -143,9 +143,9 @@ export function LicenseVerification() {
                 onRequestClose={() => setShowSuccess(false)}
             >
                 <View style={styles.overlay}>
-                    <SuccessScreen
-                        subtitle="Your account created successfully and ready now."
-                        onPress={() => setShowSuccess(false)}
+                    <SuccessScreen 
+                        subtitle="Your account created successfully and ready now." 
+                        onPress={() => {setShowSuccess(false); navigation.replace('DoctorApp')}} 
                     />
                 </View>
             </Modal>

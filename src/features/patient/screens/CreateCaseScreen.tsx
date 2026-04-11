@@ -23,7 +23,7 @@ type FormValues = {
   title: string;
   description: string;
   isEmergency: boolean;
-  files: File[];
+  files: DocumentPicker.DocumentPickerAsset[];
 };
 
 const CreateCase = ({ navigation }: any) => {

@@ -12,7 +12,6 @@ export default function ArrowLeftIcon({ color, size, onPress }: ArrowLeftIconPro
   return (
     <Pressable 
         onPress={onPress} 
-        // Optional: Add a hitSlop so the button is easier to press with a finger
         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
     >
       <Svg width={size} height={size} viewBox="0 0 18 18" fill="none">

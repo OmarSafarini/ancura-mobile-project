@@ -21,6 +21,7 @@ import PatientSettingsScreen from '../features/patient/screens/Settings';
 
 // --- Custom Tab Bar ---
 import PatientBNB from '../features/patient/components/PatientBNB';
+import EditCaseScreen from '@/features/patient/screens/EditCaseScreen';
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
@@ -32,7 +33,7 @@ function PatientHomeStackNavigator() {
       <HomeStack.Screen name="PatientHomePage" component={PatientHomePage} />
       <HomeStack.Screen name="CreateCaseScreen" component={CreateCaseScreen} />
       <HomeStack.Screen name="CaseDetailsAndRepliesScreen" component={CaseDetailsAndRepliesScreen} />
-      {/*<HomeStack.Screen name="EditCaseScreen" component={EditCaseScreen} />*/}
+      <HomeStack.Screen name="EditCaseScreen" component={EditCaseScreen} />
       <HomeStack.Screen name="AllRepliesScreen" component={AllRepliesScreen} />
       <HomeStack.Screen name="DoctorRepliesScreen" component={DoctorRepliesScreen} />
     </HomeStack.Navigator>

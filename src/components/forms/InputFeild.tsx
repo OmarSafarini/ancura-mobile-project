@@ -5,7 +5,7 @@ import { InputFieldProps } from "@/types/InputFieldProps";
 import { Family } from "@/utils/typography";
 import { Colors, palette } from "@/utils/colors";
 import {scale} from "@utils/responsive";
-const InputField = ({ control, name, label, placeholder, rules, isEdit=false, secureTextEntry, multiline=false, numberOfLines=1 }: InputFieldProps) => {
+const InputField = ({ control, name, label, placeholder, rules, isEdit=false, secureTextEntry, multiline=false, numberOfLines=1, textStyle, containerStyle }: InputFieldProps) => {
   const [isFocused, setIsFocused] = useState(false);
   return (
     <View style={styles.formInput}>
@@ -37,7 +37,7 @@ const InputField = ({ control, name, label, placeholder, rules, isEdit=false, se
                   }}
                   onFocus={() => setIsFocused(true)}
                   onChangeText={onChange}
-                  style={[styles.inputText, multiline && styles.multilineText]}
+                  style={[styles.inputText, textStyle, multiline && styles.multilineText]}
                   placeholderTextColor={Colors.formLabel}
                   secureTextEntry={secureTextEntry}
                   multiline={multiline}

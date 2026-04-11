@@ -12,6 +12,7 @@ import StartwithTickIcon from "@/assets/icons/StartwithTickIcon";
 import ArrowIcon from "@/assets/icons/ArrowIcon";
 import HandLikeIcon from "@/assets/icons/HandLikeIcon";
 import StarIcon from "@/assets/icons/StarIcon";
+import { useNavigation } from "@react-navigation/native";
 
 const ACTIVITY_DATA = [
     {
@@ -67,9 +68,9 @@ export default function ActivityLog() {
         <AppBackground variant="clean" style={styles.screen}>
             <View style={styles.header}>
                 <Text style={styles.title}>Activity Log</Text>
-                <TouchableOpacity style={styles.backWrapper} onPress={() => navigation.goBack()}>
+                <Pressable style={styles.backWrapper} onPress={() => navigation.goBack()}>
                     <ArrowLeftIcon color={Colors.textDark2} size={scale(18)} />
-                </TouchableOpacity>
+                </Pressable>
             </View>
 
             <View style={styles.timelineContainer}>
