@@ -9,7 +9,7 @@ import DoctorHomeScreen from '../features/doctor/screens/DoctorHomeScreen'; // A
 import CaseDetailsAndRepliesScreen from '../features/screens/CaseDetailsAndRepliesScreen';
 import DoctorRepliesScreen from '../features/screens/DoctorRepliesScreen';
 import AllRepliesScreen from '../features/screens/AllRepliesScreen';
-
+import {BaseKnowledge} from '../features/patient/screens/BaseKnowledge';
 // --- Screens for Tab 2 (Activity Log) ---
 import ActivityLogScreen from '../features/patient/screens/ActivityLog'; 
 

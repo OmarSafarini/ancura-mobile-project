@@ -66,7 +66,7 @@ export function LicenseVerification({navigation}: any) {
 
                     <View style={styles.header}>
                         <Text style={styles.title}>License Verification</Text>
-                        <Pressable style={styles.iconWrapper} onPress={() => navigation.navigate('DoctorProfileAndSetting')}>
+                        <Pressable style={styles.iconWrapper} onPress={() => navigation.navigate('DoctorProfileAndSettings')}>
                             <ArrowLeftIcon color={Colors.textDark2} size={scale(18)} />
                         </Pressable>
                     </View>
@@ -145,7 +145,7 @@ export function LicenseVerification({navigation}: any) {
                 <View style={styles.overlay}>
                     <SuccessScreen 
                         subtitle="Your account created successfully and ready now." 
-                        onPress={() => {setShowSuccess(false); navigation.navigate('DashboardAndCasesScreen')}} 
+                        onPress={() => {setShowSuccess(false); navigation.replace('DoctorApp')}} 
                     />
                 </View>
             </Modal>
