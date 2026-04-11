@@ -12,7 +12,7 @@ import UploadImageButton from "../components/UploadImageButton";
 import IconWrapper from "../components/Icons/IconWrapper";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 
-export default function DoctorProfileAndSettings() {
+export default function DoctorProfileAndSettings(navigation : any) {
   const insets = useSafeAreaInsets();
   const user = {
     profilePic: require("../../../../assets/ancura.gif"),

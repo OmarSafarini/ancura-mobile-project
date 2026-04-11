@@ -9,6 +9,7 @@ import { Colors } from "@/utils/colors";
 import { scale } from "@/utils/responsive";
 import { Family } from "@/utils/typography";
 import YoutubeIcon from "@/assets/icons/YoutubeIcon";
+import { useNavigation } from "@react-navigation/native";
 
 const ARTICLE_CATEGORIES = ["Articles", "Exercises"];
 
@@ -22,6 +23,7 @@ export function BaseKnowledge() {
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const translateY = useRef(new Animated.Value(20)).current; 
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const navigation = useNavigation();
 
     useEffect(() => {
         Animated.timing(fadeAnim, {
@@ -50,7 +52,7 @@ export function BaseKnowledge() {
         <View style={styles.headerWrapper}>
             <View style={styles.header}>
                 <Text style={styles.title}>Self-Help & Resources</Text>
-                <Pressable style={styles.iconWrapper}>
+                <Pressable style={styles.iconWrapper} onPress={() => navigation.goBack()}>
                     <ArrowLeftIcon color={Colors.textDark2} size={scale(18)} />
                 </Pressable>
             </View>
