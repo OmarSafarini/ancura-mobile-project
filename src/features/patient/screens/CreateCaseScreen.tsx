@@ -7,8 +7,8 @@ import {
   ScrollView,
   SafeAreaView,
 } from "react-native";
-import {useForm} from "react-hook-form"
-import AppBackground from "@/components/layout/AppBackground";
+import { useForm } from "react-hook-form"
+import AppBackground from "@/components/base/AppBackground";
 import InputField from "@/components/forms/InputFeild";
 import AttachmentsField from "@/components/forms/AttachmentFeild";
 import NormalButton from "@/components/common/NormalButton";
@@ -16,7 +16,7 @@ import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 import { scale } from "@/utils/responsive";
 import { Colors, palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
-import EmergencyCheckBox from "../components/Buttons/EmergencyCheckBox";
+import EmergencyCheckBox from "../components/EmergencyCheckBox";
 
 
 type FormValues = {
@@ -45,7 +45,7 @@ const CreateCase = ({ navigation }: any) => {
   return (
     <AppBackground variant="clean">
       <View style={styles.safeArea}>
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
@@ -56,7 +56,7 @@ const CreateCase = ({ navigation }: any) => {
                 Your identity will remain 100% anonymous, and your name will not be shown to the doctors
               </Text>
             </View>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.backButton}
               onPress={() => navigation?.goBack()}
               activeOpacity={0.7}

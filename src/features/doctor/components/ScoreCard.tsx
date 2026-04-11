@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import IconWrapper from "./Icons/IconWrapper";
-import StartwithTickIcon from "./Icons/StartwithTickIcon";
+import IconWrapper from "../../../components/common/IconWrapper";
+import StartwithTickIcon from "../../../assets/icons/StartwithTickIcon";
 import { palette, Colors } from "@/utils/colors";
 import { Family } from "@/utils/typography";
-import {scale} from "@/utils/responsive";
+import { scale } from "@/utils/responsive";
 
 export const ScoreCard = ({ value }: {
   value: string | number;

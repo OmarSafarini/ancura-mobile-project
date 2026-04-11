@@ -5,10 +5,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // --- Screens for Tab 1 (Patient Home Stack) ---
 import PatientHomePage from '../features/patient/screens/PatientHomePage';
 import CreateCaseScreen from '../features/patient/screens/CreateCaseScreen';
-import CaseDetailsAndRepliesScreen from '../features/screens/CaseDetailsAndRepliesScreen';
+import CaseDetailsAndRepliesScreen from '../features/common_screens/CaseDetailsAndRepliesScreen';
 //import EditCaseScreen from '../features/patient/screens/EditCaseScreen';
-import AllRepliesScreen from '../features/screens/AllRepliesScreen';
-import DoctorRepliesScreen from '../features/screens/DoctorRepliesScreen';
+import AllRepliesScreen from '../features/common_screens/AllRepliesScreen';
+import DoctorRepliesScreen from '../features/common_screens/DoctorRepliesScreen';
 
 // --- Screens for Tab 2 (Knowledge Base) ---
 import { BaseKnowledge as BaseKnowledgeScreen } from '../features/patient/screens/BaseKnowledge';

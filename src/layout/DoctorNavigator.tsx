@@ -6,12 +6,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DashboardAndCasesScreen from '../features/doctor/screens/DashboardAndCasesScreen';
 import DashboardScreen from '../features/doctor/screens/DashboardScreen'; // Statistics
 import DoctorHomeScreen from '../features/doctor/screens/DoctorHomeScreen'; // All Cases
-import CaseDetailsAndRepliesScreen from '../features/screens/CaseDetailsAndRepliesScreen';
-import DoctorRepliesScreen from '../features/screens/DoctorRepliesScreen';
-import AllRepliesScreen from '../features/screens/AllRepliesScreen';
+import CaseDetailsAndRepliesScreen from '../features/common_screens/CaseDetailsAndRepliesScreen';
+import DoctorRepliesScreen from '../features/common_screens/DoctorRepliesScreen';
+import AllRepliesScreen from '../features/common_screens/AllRepliesScreen';
 
 // --- Screens for Tab 2 (Activity Log) ---
-import ActivityLogScreen from '../features/patient/screens/ActivityLog'; 
+import ActivityLogScreen from '../features/patient/screens/ActivityLog';
 
 // --- Screens for Tab 3 (Notifications) ---
 import NotificationScreen from '../features/patient/screens/Notification';
@@ -28,7 +28,7 @@ const HomeStack = createNativeStackNavigator();
 // --- Journey 2: Home Stack ---
 function DoctorHomeStackNavigator() {
   return (
-    <HomeStack.Navigator screenOptions={{ headerShown: false}}>
+    <HomeStack.Navigator screenOptions={{ headerShown: false }}>
       <HomeStack.Screen name="DashboardAndCasesScreen" component={DashboardAndCasesScreen} />
       <HomeStack.Screen name="DashboardScreen" component={DashboardScreen} />
       <HomeStack.Screen name="DoctorHomeScreen" component={DoctorHomeScreen} />
@@ -49,31 +49,31 @@ export default function DoctorNavigator() {
       }}
     >
       {/* Tab 1: Home / Dashboard */}
-      <Tab.Screen 
-        name="HomeTab" 
-        component={DoctorHomeStackNavigator} 
-        options={{ tabBarLabel: 'Home' }} 
+      <Tab.Screen
+        name="HomeTab"
+        component={DoctorHomeStackNavigator}
+        options={{ tabBarLabel: 'Home' }}
       />
 
       {/* Tab 2: Activity Log */}
-      <Tab.Screen 
-        name="ActivityTab" 
-        component={ActivityLogScreen} 
-        options={{ tabBarLabel: 'Activity' }} 
+      <Tab.Screen
+        name="ActivityTab"
+        component={ActivityLogScreen}
+        options={{ tabBarLabel: 'Activity' }}
       />
 
       {/* Tab 3: Notifications */}
-      <Tab.Screen 
-        name="NotificationsTab" 
-        component={NotificationScreen} 
-        options={{ tabBarLabel: 'Alerts' }} 
+      <Tab.Screen
+        name="NotificationsTab"
+        component={NotificationScreen}
+        options={{ tabBarLabel: 'Alerts' }}
       />
 
       {/* Tab 4: Profile & Settings */}
-      <Tab.Screen 
-        name="ProfileTab" 
-        component={DoctorProfileAndSettings} 
-        options={{ tabBarLabel: 'Profile' }} 
+      <Tab.Screen
+        name="ProfileTab"
+        component={DoctorProfileAndSettings}
+        options={{ tabBarLabel: 'Profile' }}
       />
     </Tab.Navigator>
   );

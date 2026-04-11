@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import BottomNavBar, { TabItem } from '../../../components/layout/BottomNavBar';
+import BottomNavBar, { TabItem } from '../../../components/base/BottomNavBar';
 import HomeIcon from '../../../assets/icons/HomeIcon';
-import DocumentIcon from '../../../features/patient/components/Icons/DoucmentIcon';
+import DocumentIcon from '../../../assets/icons/DoucmentIcon';
 import NotificationsIcon from '../../../assets/icons/NotificationsIcon';
 import ProfileIcon from '../../../assets/icons/ProfileIcon';
 import FabAddIcon from '../../../assets/icons/FabAddIcon';

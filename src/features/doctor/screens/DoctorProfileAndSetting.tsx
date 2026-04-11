@@ -1,4 +1,4 @@
-import AppBackground from "@/components/layout/AppBackground";
+import AppBackground from "@/components/base/AppBackground";
 import { Colors, palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import React from "react";
@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import InputField from "@/components/forms/InputFeild";
 import LicenseVerificationButton from "../components/LiecenseVerficationButton";
 import UploadImageButton from "../components/UploadImageButton";
-import IconWrapper from "../components/Icons/IconWrapper";
+import IconWrapper from "../../../components/common/IconWrapper";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 
 export default function DoctorProfileAndSettings() {
@@ -33,18 +33,18 @@ export default function DoctorProfileAndSettings() {
     navigation.navigate("DoctorLoginScreen");
   };
 
-  const goBack= ()=>{
+  const goBack = () => {
     navigation.navigate("LicenseVerification");
   };
 
- 
+
   return (
     <AppBackground variant="clean">
       <View style={styles.container}>
         <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
           <Text style={styles.Text}>Profile & Settings</Text>
           <IconWrapper size={scale(33)} bgColor={palette.white} shape="square">
-            <ArrowLeftIcon size={scale(18)} color={palette.dark} onPress={goBack}/>
+            <ArrowLeftIcon size={scale(18)} color={palette.dark} onPress={goBack} />
           </IconWrapper>
         </SafeAreaView>
         <View>

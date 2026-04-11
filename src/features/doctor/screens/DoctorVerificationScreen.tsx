@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text, KeyboardAvoidingView, ScrollView, Platform, TouchableOpacity } from 'react-native';
-import AppBackground from '../../../components/layout/AppBackground';
+import AppBackground from '../../../components/base/AppBackground';
 import Logo from '../../../assets/icons/Logo';
 import FadeInView from '../../../utils/FadeInView';
 import AuthOTPInput from '../../../components/forms/AuthOTPInput';

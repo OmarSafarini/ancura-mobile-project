@@ -3,14 +3,14 @@ import { Family } from "@/utils/typography";
 import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text, View, GestureResponderEvent } from "react-native";
 import { scale } from "@/utils/responsive";
-import { CaseData } from "@/types/CaseData";
+import { CaseData } from "@/types/ICaseData";
 import UnderViewIcon from "@/assets/icons/UnderViewIcon";
 import DoctorRepliedIcon from "@/assets/icons/DoctorRepliedIcon";
 import ResolvedIcon from "@/assets/icons/ResolvedIcon";
 
 type Props = {
   data: CaseData;
-  onPress?: (event: GestureResponderEvent) => void; 
+  onPress?: (event: GestureResponderEvent) => void;
 };
 
 const STATUS_CONFIG = {

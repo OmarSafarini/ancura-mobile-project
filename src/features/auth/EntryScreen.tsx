@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import AppBackground from '../../components/layout/AppBackground';
+import AppBackground from '../../components/base/AppBackground';
 import LogoOverlay from '../../assets/icons/LogoOverlay';
 import SlideButton from '../../components/common/SlideButton';
 import { scale } from '../../utils/responsive';
@@ -13,15 +13,15 @@ export default function EntryScreen({ navigation }: any) {
   };
 
 
-  return (    
-    <AppBackground variant="texture" style={{width: scale(430), height: scale(932)}}>
+  return (
+    <AppBackground variant="texture" style={{ width: scale(430), height: scale(932) }}>
       <View style={styles.container}>
         <LogoOverlay size={150} opacity={1} />
-        
+
         <View style={styles.buttonContainer}>
-          <SlideButton 
-            onSlideComplete={handleSlideComplete} 
-            label="Let's Go" 
+          <SlideButton
+            onSlideComplete={handleSlideComplete}
+            label="Let's Go"
           />
         </View>
       </View>
