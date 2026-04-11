@@ -11,7 +11,7 @@ import { Colors } from '../../../utils/colors';
 import { Family } from '../../../utils/typography';
 import { scale } from '../../../utils/responsive';
 
-export default function DoctorForgotPasswordScreen() {
+export default function DoctorForgotPasswordScreen({ navigation }: any) {
   const { control, handleSubmit } = useForm({
     defaultValues: {
       email: '',
@@ -20,6 +20,7 @@ export default function DoctorForgotPasswordScreen() {
 
   const onSubmit = (data: any) => {
     console.log("Forgot Password Data: ", data);
+    navigation.navigate('DoctorVerificationScreen');
   };
 
   return (
@@ -67,8 +68,8 @@ export default function DoctorForgotPasswordScreen() {
             </View>
 
             <NormalButton
-              title="Sign Up"
-              onPress={() => console.log('Sign Up clicked')}
+              title="Sign In"
+              onPress={() => navigation.navigate('DoctorLoginScreen')}
               bgColor={Colors.secondary}
             />
           </FadeInView>

@@ -14,17 +14,18 @@ import ArrowInCircle from "@/assets/icons/SubmitButton";
 import ReplyField from "@/components/forms/ReplyFeild";
 import { Control, useForm } from "react-hook-form";
 
-type Props = {
-  route?: any;
-};
+
 
 type FormData = {
   doctorReply: string;
 };
 
-export default function AllRepliesScreen({ route }: Props) {
+export default function AllRepliesScreen(navigation: any) {
   const role = "patient";
   const isPatient = role === "patient";
+  const handleViewGoBack = () => {
+      navigation.navigate('DoctorRepliesScreen');
+    };
 
   const { control } = useForm<FormData>({
     defaultValues: { doctorReply: "" },
@@ -73,7 +74,7 @@ export default function AllRepliesScreen({ route }: Props) {
 
         <View style={styles.header}>
           <Text style={styles.title}>Coping with work pressure</Text>
-          <BackButton onPress={() => {}} />
+          <BackButton onPress={handleViewGoBack} />
         </View>
 
         <View style={styles.staticContent}>

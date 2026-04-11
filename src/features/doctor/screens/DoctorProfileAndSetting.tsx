@@ -9,6 +9,8 @@ import { useForm } from "react-hook-form";
 import InputField from "@/components/forms/InputFeild";
 import LicenseVerificationButton from "../components/LiecenseVerficationButton";
 import UploadImageButton from "../components/UploadImageButton";
+import IconWrapper from "../components/Icons/IconWrapper";
+import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 
 export default function DoctorProfileAndSettings(navigation : any) {
   const insets = useSafeAreaInsets();
@@ -28,13 +30,22 @@ export default function DoctorProfileAndSettings(navigation : any) {
   });
   const OnSubmit = (data: any) => {
     console.log("Profile: ", data);
-    navigation.navigate('LicenseVerification');
+    navigation.navigate("DoctorLoginScreen");
   };
+
+  const goBack= ()=>{
+    navigation.navigate("LicenseVerification");
+  };
+
+ 
   return (
     <AppBackground variant="clean">
       <View style={styles.container}>
         <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
           <Text style={styles.Text}>Profile & Settings</Text>
+          <IconWrapper size={scale(33)} bgColor={palette.white} shape="square">
+            <ArrowLeftIcon size={scale(18)} color={palette.dark} onPress={goBack}/>
+          </IconWrapper>
         </SafeAreaView>
         <View>
           <UploadImageButton
@@ -45,7 +56,7 @@ export default function DoctorProfileAndSettings(navigation : any) {
 
         <View style={styles.Form}>
           <InputField
-            control={control}
+            control={control as any}
             name="FullName"
             label="Full Name"
             placeholder="Enter your Name"
@@ -53,27 +64,27 @@ export default function DoctorProfileAndSettings(navigation : any) {
           />
 
           <InputField
-            control={control}
+            control={control as any}
             name="Location"
             label="Location"
             placeholder="Enter your Location"
             rules={{ required: "Location is required" }}
           />
           <InputField
-            control={control}
+            control={control as any}
             name="Email"
             label="Email"
             placeholder="Enter your Email"
             rules={{
               required: "Location is required",
               pattern: {
-                value: /\S+@\S+\.\S+/,
+                value: "/\S+@\S+\.\S+/",
                 message: "Invalid email",
               },
             }}
           />
           <InputField
-            control={control}
+            control={control as any}
             name="Password"
             label="Password"
             placeholder="Enter your password"
@@ -91,10 +102,11 @@ export default function DoctorProfileAndSettings(navigation : any) {
             secureTextEntry={true}
           />
           <InputField
-            control={control}
+            control={control as any}
             name="Bio"
             label="Bio"
             placeholder="Enter your Bio"
+            numberOfLines={4}
             rules={{ required: "Bio is required" }}
           />
         </View>

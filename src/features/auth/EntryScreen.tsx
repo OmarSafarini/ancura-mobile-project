@@ -7,13 +7,10 @@ import { scale } from '../../utils/responsive';
 
 export default function EntryScreen({ navigation }: any) {
   const handleSlideComplete = () => {
-    // Navigate to the next screen, for example Login or Auth Selection
     if (navigation && typeof navigation.navigate === 'function') {
-      navigation.navigate('ChooseRole');
+      navigation.navigate('RoleSelectionScreen');
     }
   };
-
-      console.log(scale(135))
 
 
   return (    

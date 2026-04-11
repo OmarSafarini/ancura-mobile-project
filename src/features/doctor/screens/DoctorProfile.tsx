@@ -17,6 +17,8 @@ import LocationIcon from "../components/Icons/LocationIcoon";
 import EmailIcon from "../components/Icons/EmailIcon";
 import TickIcon from "@/assets/icons/TickIcon";
 import { IDoctor } from "@/types/IDoctor";
+import IconWrapper from "../components/Icons/IconWrapper";
+import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 
 export default function DoctorProfile() {
   const doctor: IDoctor = {
@@ -37,7 +39,15 @@ export default function DoctorProfile() {
   };
 
   const insets = useSafeAreaInsets();
+ 
+  const goBack =()=>{
+ navigation.goBack();
+  }
 
+  const LogOut=()=>{
+        navigation.navigate("DoctorLoginScreen");
+
+  }
   return (
     <AppBackground variant="clean">
       <SafeAreaView style={{ flex: 1 }}>
@@ -45,6 +55,9 @@ export default function DoctorProfile() {
           <View style={styles.container}>
             <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
               <Text style={styles.Text}>Profile & Settings</Text>
+              <IconWrapper size={scale(33)} bgColor={palette.white} shape="square">
+                  <ArrowLeftIcon size={scale(18)} color={palette.dark} onPress={goBack}/>
+              </IconWrapper>
             </SafeAreaView>
 
             <View style={styles.profileCard}>
@@ -121,7 +134,7 @@ export default function DoctorProfile() {
             </View>
 
             <SafeAreaView style={{ paddingBottom: insets.bottom }}>
-              <LogoutButton />
+              <LogoutButton onPress={LogOut}/>
             </SafeAreaView>
           </View>
         </ScrollView>

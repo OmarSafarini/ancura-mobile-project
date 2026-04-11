@@ -1,47 +1,81 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View, Text } from 'react-native';
 
-import PatientHomePage from '@/features/patient/screens/PatientHomePage';
-import CreateCase from '@/features/patient/screens/CreateCaseScreen';
-import { BaseKnowledge } from '@/features/patient/screens/BaseKnowledge';
-import { Notification as PatientNotificationsPage } from '@/features/patient/screens/Notification';
-import Settings from '@/features/patient/screens/Settings';
+// --- Screens for Tab 1 (Patient Home Stack) ---
+import PatientHomePage from '../features/patient/screens/PatientHomePage';
+import CreateCaseScreen from '../features/patient/screens/CreateCaseScreen';
+import CaseDetailsAndRepliesScreen from '../features/screens/CaseDetailsAndRepliesScreen';
+//import EditCaseScreen from '../features/patient/screens/EditCaseScreen';
+import AllRepliesScreen from '../features/screens/AllRepliesScreen';
+import DoctorRepliesScreen from '../features/screens/DoctorRepliesScreen';
 
-// TODO: Create these screens when ready
-function SpecificCasePage() {
-  return <View><Text>Specific Case</Text></View>;
-}
-function EditCasePage() {
-  return <View><Text>Edit Case</Text></View>;
-}
-function CaseDetailsRepliesPage() {
-  return <View><Text>Case Details & Replies</Text></View>;
-}
+// --- Screens for Tab 2 (Knowledge Base) ---
+import { BaseKnowledge as BaseKnowledgeScreen } from '../features/patient/screens/BaseKnowledge';
+
+// --- Screens for Tab 3 (Notifications) ---
+import NotificationScreen from '../features/patient/screens/Notification';
+
+// --- Screens for Tab 4 (Settings) ---
+import PatientSettingsScreen from '../features/patient/screens/Settings';
+
+// --- Custom Tab Bar ---
+import PatientBNB from '../features/patient/components/PatientBNB';
+import EditCaseScreen from '@/features/patient/screens/EditCaseScreen';
 
 const Tab = createBottomTabNavigator();
-const PatientCasesStack = createNativeStackNavigator();
+const HomeStack = createNativeStackNavigator();
 
-function PatientCasesFlow() {
+// --- Journey 1: Patient Home Stack ---
+function PatientHomeStackNavigator() {
   return (
-    <PatientCasesStack.Navigator>
-      <PatientCasesStack.Screen name="CasesStatus" component={PatientHomePage} options={{ title: 'حالاتي' }} />
-      <PatientCasesStack.Screen name="AddCase" component={CreateCase} options={{ title: 'إضافة حالة' }} />
-      <PatientCasesStack.Screen name="SpecificCase" component={SpecificCasePage} />
-      <PatientCasesStack.Screen name="EditCase" component={EditCasePage} />
-      <PatientCasesStack.Screen name="CaseDetailsWithReplies" component={CaseDetailsRepliesPage} />
-    </PatientCasesStack.Navigator>
+    <HomeStack.Navigator screenOptions={{ headerShown: false }}>
+      <HomeStack.Screen name="PatientHomePage" component={PatientHomePage} />
+      <HomeStack.Screen name="CreateCaseScreen" component={CreateCaseScreen} />
+      <HomeStack.Screen name="CaseDetailsAndRepliesScreen" component={CaseDetailsAndRepliesScreen} />
+      <HomeStack.Screen name="EditCaseScreen" component={EditCaseScreen} />
+      <HomeStack.Screen name="AllRepliesScreen" component={AllRepliesScreen} />
+      <HomeStack.Screen name="DoctorRepliesScreen" component={DoctorRepliesScreen} />
+    </HomeStack.Navigator>
   );
 }
 
+// --- Main Patient Tab Navigator ---
 export default function PatientNavigator() {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
-      <Tab.Screen name="MyCasesTab" component={PatientCasesFlow} options={{ tabBarLabel: 'حالاتي' }} />
-      <Tab.Screen name="BaseKnowledgeTab" component={BaseKnowledge} options={{ tabBarLabel: 'المعرفة الطبية' }} />
-      <Tab.Screen name="NotificationsTab" component={PatientNotificationsPage} options={{ tabBarLabel: 'الإشعارات' }} />
-      <Tab.Screen name="ProfileTab" component={Settings} options={{ tabBarLabel: 'حسابي' }} />
+    <Tab.Navigator
+      tabBar={(props) => <PatientBNB {...props} />}
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      {/* Tab 1: Home / Dashboard */}
+      <Tab.Screen
+        name="PatientHomeTab"
+        component={PatientHomeStackNavigator}
+        options={{ tabBarLabel: 'Dashboard' }}
+      />
+
+      {/* Tab 2: Knowledge Base / Resources */}
+      <Tab.Screen
+        name="PatientKnowledgeTab"
+        component={BaseKnowledgeScreen}
+        options={{ tabBarLabel: 'Resources' }}
+      />
+
+      {/* Tab 3: Notifications */}
+      <Tab.Screen
+        name="PatientNotifyTab"
+        component={NotificationScreen}
+        options={{ tabBarLabel: 'Notifications' }}
+      />
+
+      {/* Tab 4: Settings / Profile */}
+      <Tab.Screen
+        name="PatientProfileTab"
+        component={PatientSettingsScreen}
+        options={{ tabBarLabel: 'Settings' }}
+      />
     </Tab.Navigator>
   );
 }

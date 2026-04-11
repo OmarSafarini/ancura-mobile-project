@@ -61,7 +61,7 @@ const ACTIVITY_DATA = [
     }
 ];
 
-export function ActivityLog({navigate} : any) {
+export default function ActivityLog({navigate} : any) {
     const navigation = useNavigation();
     return (
         <AppBackground variant="clean" style={styles.screen}>

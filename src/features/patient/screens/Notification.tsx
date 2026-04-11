@@ -8,7 +8,7 @@ import AppBackground from "@/components/layout/AppBackground";
 import NotificationCard from "@/components/common/NotificationCard";
 import { useNavigation } from "@react-navigation/native";
 
-export function Notification() {
+export default function Notification() {
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const translateY = useRef(new Animated.Value(20)).current; 
     const navigation = useNavigation();

@@ -11,9 +11,10 @@ export default function RoleSelectionScreen({ navigation }: any) {
     const [selectedRole, setSelectedRole] = useState<"patient" | "doctor" | null>(null);
 
     const handleContinue = () => {
-        if (selectedRole) {
-            // Handle navigation based on role, e.g. navigation.navigate('NextScreen', { role: selectedRole })
-            console.log("Selected role:", selectedRole);
+        if (selectedRole === "patient") {
+            navigation.navigate("PatientAuthScreen");
+        } else if (selectedRole === "doctor") {
+            navigation.navigate("DoctorLoginScreen");
         }
     };
 
@@ -89,6 +90,6 @@ const styles = StyleSheet.create({
         paddingBottom: scale(40),
         alignItems: "center",
         justifyContent: "center",
+        paddingHorizontal: scale(30),
     }
 });
-

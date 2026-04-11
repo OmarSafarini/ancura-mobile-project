@@ -176,36 +176,37 @@ export default function PatientHomePage() {
           </Text>
         </View>
 
-    <View style={styles.filterRow}>
-          {STATUS_OPTIONS.map((status) => (
-            <FilterButton
-              key={status}
-              title={status}
-              isActive={selected === status}
-              onPress={() => {
-                setSelcted(status);
-                setFilterStatus(status === "All" ? null : status);
+        {filteredCases.length > 0 ? (
+          <View>
+            <View style={styles.filterRow}>
+              {STATUS_OPTIONS.map((status) => (
+                <FilterButton
+                  key={status}
+                  title={status}
+                  isActive={selected === status}
+                  onPress={() => {
+                    setSelcted(status);
+                    setFilterStatus(status === "All" ? null : status);
+                  }}
+                />
+              ))}
+            </View>
+            <FlatList
+              data={filteredCases}
+              keyExtractor={(item) => item.id.toString()}
+              numColumns={2}
+              columnWrapperStyle={{
+                justifyContent: "space-between",
+                marginBottom: scale(12),
+              }}
+              showsVerticalScrollIndicator={false}
+              renderItem={({ item }) => <CaseCard data={item} />}
+              contentContainerStyle={{
+                paddingBottom: scale(90),
+                paddingTop: scale(10),
               }}
             />
-          ))}
-        </View>
-
-        {filteredCases.length > 0 ? (
-          <FlatList
-            data={filteredCases}
-            keyExtractor={(item) => item.id.toString()}
-            numColumns={2}
-            columnWrapperStyle={{
-              justifyContent: "space-between",
-              marginBottom: scale(12),
-            }}
-            showsVerticalScrollIndicator={false}
-            renderItem={({ item }) => <CaseCard data={item} />}
-            contentContainerStyle={{
-              paddingBottom: scale(90),
-              paddingTop: scale(10),
-            }}
-          />
+          </View>
         ) : (
           <View style={styles.noCases}>
             <Text style={[styles.NoCasesHeaderText, styles.Text]}>
@@ -219,8 +220,6 @@ export default function PatientHomePage() {
 
         <View style={{ flex: 1 }} />
       </View>
-
-    
     </AppBackground>
   );
 }
@@ -261,7 +260,7 @@ const styles = StyleSheet.create({
     color: palette.darkGreen,
     fontWeight: "bold",
   },
-   filterRow: {
+  filterRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",

@@ -1,39 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { View, ActivityIndicator } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { AuthNavigator, AuthNavigatorDoctor } from './AuthNavigator';
-import { DoctorMainStack as DoctorNavigator } from './DoctorNavigator';
+import AuthNavigator from './AuthNavigator';
 import PatientNavigator from './PatientNavigator';
+import DoctorNavigator from './DoctorNavigator';
 
 const RootStack = createNativeStackNavigator();
 
 export default function RootNavigator() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userRole, setUserRole] = useState<'doctor' | 'patient' | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-  }, []);
-
-  if (isLoading) {
-    return null; 
-  }
 
   return (
-    <NavigationContainer>
-      <RootStack.Navigator screenOptions={{ headerShown: false }}>
-        {!isAuthenticated ? (
-          <RootStack.Screen name="AuthFlow" component={AuthNavigator} />
-        ) : userRole === 'doctor' ? (
-          <RootStack.Screen name="DoctorFlow" component={DoctorNavigator} />
-        ) : (
-          <RootStack.Screen name="PatientFlow" component={PatientNavigator} />
-        )}
-      </RootStack.Navigator>
-    </NavigationContainer>
+    //we will add conditional navigation but not now cuz we have to complete the ui flow perfectly
+    <RootStack.Navigator screenOptions={{ headerShown: false }}>
+      <RootStack.Screen name="Auth" component={AuthNavigator} />
+      <RootStack.Screen name="PatientApp" component={PatientNavigator} />
+      <RootStack.Screen name="DoctorApp" component={DoctorNavigator} />
+    </RootStack.Navigator>
   );
 }
