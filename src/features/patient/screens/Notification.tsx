@@ -6,10 +6,12 @@ import { scale } from "@/utils/responsive";
 import { Family } from "@/utils/typography";
 import AppBackground from "@/components/layout/AppBackground";
 import NotificationCard from "@/components/common/NotificationCard";
+import { useNavigation } from "@react-navigation/native";
 
 export function Notification() {
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const translateY = useRef(new Animated.Value(20)).current; 
+    const navigation = useNavigation();
 
     useEffect(() => {
         Animated.parallel([
@@ -36,9 +38,9 @@ export function Notification() {
     const renderHeader = () => (
         <View style={styles.header}>
             <Text style={styles.title}>Notifications</Text>
-            <View style={styles.iconWrapper}>
+            <Pressable style={styles.iconWrapper} onPress={() => navigation.goBack()}>
                 <ArrowLeftIcon color={Colors.textDark2} size={scale(18)} />
-            </View>
+            </Pressable>
         </View>
     );
 

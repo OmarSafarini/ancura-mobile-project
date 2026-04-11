@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, StyleSheet, FlatList ,  } from "react-native";
+import { Text, View, StyleSheet, FlatList , Pressable } from "react-native";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 import { Colors } from "@/utils/colors";
 import { scale } from "@/utils/responsive";
@@ -61,15 +61,15 @@ const ACTIVITY_DATA = [
     }
 ];
 
-export function ActivityLog() {
+export function ActivityLog({navigate} : any) {
     const navigation = useNavigation();
     return (
         <AppBackground variant="clean" style={styles.screen}>
             <View style={styles.header}>
                 <Text style={styles.title}>Activity Log</Text>
-                <View style={styles.backWrapper}>
-                    <ArrowLeftIcon color={Colors.textDark2} size={scale(18)} onPress={() => navigation.goBack()} />
-                </View>
+                <Pressable style={styles.backWrapper} onPress={() => navigation.goBack()}>
+                    <ArrowLeftIcon color={Colors.textDark2} size={scale(18)} />
+                </Pressable>
             </View>
             
             <View style={styles.timelineContainer}>
