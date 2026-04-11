@@ -1,5 +1,6 @@
 export type CaseStatus = "Under Review" | "Doctor Replied" | "Resolved";
 
+//case data
 export type CaseData = {
   id: number;
   patient_id: number;
@@ -11,6 +12,7 @@ export type CaseData = {
   isEmergency: boolean;
 };
 
+//reply for specific case
 export type ReplyData = {
   id: string;
   case_id: number;
@@ -20,6 +22,8 @@ export type ReplyData = {
   time: string;
 };
 
+
+//comment for specific reply
 export type CommentData = {
   id: string;
   reply_id: string;

@@ -2,7 +2,7 @@ import React from "react";
 import { palette, Colors as colors } from "../../utils/colors";
 import { Family } from "../../utils/typography";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
-import ClockIcon from "@/features/doctor/components/Icons/ClockIcon";
+import ClockIcon from "@/assets/icons/ClockIcon";
 import { scale } from "@/utils/responsive";
 import CaseStatus from "./CaseStatus";
 
@@ -26,7 +26,7 @@ export default function NotificationCard({
   status = "None"
 }: NotificationCardProps) {
 
-  
+
   return (
     <View style={[styles.Card, isRead ? styles.ReadCard : styles.UnReadCard]}>
       <View style={styles.CardHeader}>
@@ -34,11 +34,11 @@ export default function NotificationCard({
         {!isRead && <View style={styles.Dot} />}
       </View>
       <View style={styles.Footer}>
-      <View style={styles.TimeContainer}>
-        <ClockIcon color={"gray"} size={11} />
-        <Text style={styles.Time}>{date}</Text>
-      </View>
-      {status !== "None" && <CaseStatus status={status} backgroundColor={isRead ? "rgba(216, 216, 216, 0.48)" : "rgba(255, 255, 255, 0.48)"} />}
+        <View style={styles.TimeContainer}>
+          <ClockIcon color={"gray"} size={11} />
+          <Text style={styles.Time}>{date}</Text>
+        </View>
+        {status !== "None" && <CaseStatus status={status} backgroundColor={isRead ? "rgba(216, 216, 216, 0.48)" : "rgba(255, 255, 255, 0.48)"} />}
       </View>
     </View>
   );
@@ -81,18 +81,18 @@ const styles = StyleSheet.create({
   Title: {
     color: colors.primary,
     fontSize: scale(12),
-    fontFamily:Family.FG_Regular,
+    fontFamily: Family.FG_Regular,
     flex: 1,
   },
-  Footer:{
-  flexDirection:'row',
-  alignItems:'center',
-  gap:scale(10)
+  Footer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: scale(10)
   },
   Time: {
     color: "#00000056",
     fontSize: scale(8),
-    fontFamily:Family.HV_Regular
+    fontFamily: Family.HV_Regular
   },
   TimeContainer: {
     flexDirection: "row",

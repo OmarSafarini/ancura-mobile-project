@@ -7,17 +7,17 @@ import {
   ScrollView,
   Image,
 } from "react-native";
-import AppBackground from "@/components/layout/AppBackground";
+import AppBackground from "@/components/base/AppBackground";
 import { scale } from "@/utils/responsive";
 import { Colors, palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import LogoutButton from "@/components/common/LogoutButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import LocationIcon from "../components/Icons/LocationIcoon";
-import EmailIcon from "../components/Icons/EmailIcon";
+import LocationIcon from "../../../assets/icons/LocationIcoon";
+import EmailIcon from "../../../assets/icons/EmailIcon";
 import TickIcon from "@/assets/icons/TickIcon";
 import { IDoctor } from "@/types/IDoctor";
-import IconWrapper from "../components/Icons/IconWrapper";
+import IconWrapper from "../../../components/common/IconWrapper";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 
 export default function DoctorProfile() {
@@ -39,13 +39,13 @@ export default function DoctorProfile() {
   };
 
   const insets = useSafeAreaInsets();
- 
-  const goBack =()=>{
- navigation.goBack();
+
+  const goBack = () => {
+    navigation.goBack();
   }
 
-  const LogOut=()=>{
-        navigation.navigate("DoctorLoginScreen");
+  const LogOut = () => {
+    navigation.navigate("DoctorLoginScreen");
 
   }
   return (
@@ -56,7 +56,7 @@ export default function DoctorProfile() {
             <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
               <Text style={styles.Text}>Profile & Settings</Text>
               <IconWrapper size={scale(33)} bgColor={palette.white} shape="square">
-                  <ArrowLeftIcon size={scale(18)} color={palette.dark} onPress={goBack}/>
+                <ArrowLeftIcon size={scale(18)} color={palette.dark} onPress={goBack} />
               </IconWrapper>
             </SafeAreaView>
 
@@ -134,7 +134,7 @@ export default function DoctorProfile() {
             </View>
 
             <SafeAreaView style={{ paddingBottom: insets.bottom }}>
-              <LogoutButton onPress={LogOut}/>
+              <LogoutButton onPress={LogOut} />
             </SafeAreaView>
           </View>
         </ScrollView>

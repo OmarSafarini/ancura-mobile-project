@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Text, View, StyleSheet, FlatList, Pressable, Animated } from "react-native";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
-import DocumentIcon from "@/features/patient/components/Icons/DoucmentIcon";
-import AppBackground from "@/components/layout/AppBackground";
-import Article from "@/features/patient/components/Buttons/Article";
+import DocumentIcon from "@/assets/icons/DoucmentIcon";
+import AppBackground from "@/components/base/AppBackground";
+import Article from "@/features/patient/components/Article";
 import SelfHelpResource from "@/components/common/SelfHelpResource";
 import { Colors } from "@/utils/colors";
 import { scale } from "@/utils/responsive";
@@ -14,14 +14,14 @@ import { useNavigation } from "@react-navigation/native";
 const ARTICLE_CATEGORIES = ["Articles", "Exercises"];
 
 const RESOURCES = [
-    { id: "1", title: "Breathing Exercises for Stress Relief", tag: "Static Reading", tagColor: Colors.primary, bgTagColor: `${Colors.primaryLight}50`, Icon: DocumentIcon,},
-    { id: "2", title: "Breathing Exercises for Stress Relief", tag: "Youtube video", tagColor: Colors.darkPink, bgTagColor: `${Colors.pink}50`, Icon: YoutubeIcon,},
-    { id: "3", title: "Breathing Exercises for Stress Relief", tag: "Static Reading", tagColor: Colors.primary, bgTagColor: `${Colors.primaryLight}50`, Icon: DocumentIcon,},
+    { id: "1", title: "Breathing Exercises for Stress Relief", tag: "Static Reading", tagColor: Colors.primary, bgTagColor: `${Colors.primaryLight}50`, Icon: DocumentIcon, },
+    { id: "2", title: "Breathing Exercises for Stress Relief", tag: "Youtube video", tagColor: Colors.darkPink, bgTagColor: `${Colors.pink}50`, Icon: YoutubeIcon, },
+    { id: "3", title: "Breathing Exercises for Stress Relief", tag: "Static Reading", tagColor: Colors.primary, bgTagColor: `${Colors.primaryLight}50`, Icon: DocumentIcon, },
 ];
 
 export function BaseKnowledge() {
     const fadeAnim = useRef(new Animated.Value(0)).current;
-    const translateY = useRef(new Animated.Value(20)).current; 
+    const translateY = useRef(new Animated.Value(20)).current;
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const navigation = useNavigation();
 
@@ -45,7 +45,7 @@ export function BaseKnowledge() {
         } else if (selectedCategory === "Exercises") {
             return item.tag === "Youtube video";
         }
-        return true; 
+        return true;
     });
 
     const renderHeader = () => (
@@ -59,7 +59,7 @@ export function BaseKnowledge() {
             <View style={styles.articleContainer}>
                 {ARTICLE_CATEGORIES.map((title) => (
                     <View key={title} style={styles.articleItem}>
-                        <Article title={title} isSelected={selectedCategory === title} 
+                        <Article title={title} isSelected={selectedCategory === title}
                             onPress={() => setSelectedCategory(prev => prev === title ? null : title)} />
                     </View>
                 ))}
@@ -77,8 +77,8 @@ export function BaseKnowledge() {
                 ItemSeparatorComponent={() => <View style={styles.separator} />}
                 renderItem={({ item }) => (
                     <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY }] }}>
-                        <Pressable 
-                            android_ripple={{ color: Colors.formBackground }} 
+                        <Pressable
+                            android_ripple={{ color: Colors.formBackground }}
                             style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.97 : 1 }] }]}>
                             <SelfHelpResource title={item.title} tag={item.tag} tagColor={item.tagColor}
                                 bgTagColor={item.bgTagColor} Icon={item.Icon}
@@ -88,20 +88,20 @@ export function BaseKnowledge() {
                 )}
             />
         </AppBackground>
-    );  
+    );
 }
 
 const styles = StyleSheet.create({
     screen: {
         paddingTop: scale(50),
-        flex: 1, 
+        flex: 1,
     },
     listContent: {
-        paddingBottom: scale(40), 
+        paddingBottom: scale(40),
         paddingHorizontal: scale(51),
     },
     headerWrapper: {
-        marginHorizontal: -scale(51), 
+        marginHorizontal: -scale(51),
         marginBottom: scale(25),
     },
     header: {
@@ -129,12 +129,12 @@ const styles = StyleSheet.create({
     articleItem: {
         width: "30%",
         marginTop: scale(6),
-        paddingVertical: scale(8), 
-        borderRadius: scale(8),    
+        paddingVertical: scale(8),
+        borderRadius: scale(8),
         alignItems: "center",
         justifyContent: "center",
     },
     separator: {
-        height: scale(17), 
+        height: scale(17),
     },
 });

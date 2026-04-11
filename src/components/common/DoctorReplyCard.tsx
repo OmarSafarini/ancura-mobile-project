@@ -1,5 +1,5 @@
-import ChatIcon from "@/features/doctor/components/Icons/ChatIcon";
-import HandLikeIcon from "@/features/doctor/components/Icons/HandLikeIcon";
+import ChatIcon from "@/assets/icons/ChatIcon";
+import HandLikeIcon from "@/assets/icons/HandLikeIcon";
 import { palette, Colors as colors } from "../../utils/colors";
 import { Family } from "../../utils/typography";
 import React from "react";
@@ -19,8 +19,8 @@ type DoctorReplyCardProps = {
   message: string;
   time: string;
   avatar?: string;
-  CardOnPress:()=>void;
-  ChatOnPress:()=>void;
+  CardOnPress: () => void;
+  ChatOnPress: () => void;
 };
 // ________________ COMPONENT ________________
 export default function DoctorReplyCard({
@@ -102,10 +102,10 @@ const styles = StyleSheet.create({
     fontSize: scale(16),
     fontWeight: "600",
     marginRight: scale(6),
-    fontFamily:Family.FG_Bold
+    fontFamily: Family.FG_Bold
   },
   major: {
-     fontFamily: Family.HV_Regular,
+    fontFamily: Family.HV_Regular,
     fontSize: scale(8),
     color: "#9F9DA1",
     marginTop: scale(2),
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     fontSize: scale(14),
     lineHeight: scale(20),
     color: palette.dark,
-    fontFamily:Family.FG_Regular
+    fontFamily: Family.FG_Regular
   },
   footer: {
     flexDirection: "row",
@@ -133,16 +133,16 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexDirection: "row",
-    gap:scale(10),
+    gap: scale(10),
   },
   ReplyContainer: {
     flexDirection: "row",
-    gap:scale(5),
+    gap: scale(5),
     alignItems: "center",
   },
   reply: {
     fontSize: scale(10),
     color: "#707070",
-    fontFamily:Family.FG_Medium
+    fontFamily: Family.FG_Medium
   },
 });

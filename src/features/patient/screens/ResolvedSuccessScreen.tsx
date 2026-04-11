@@ -6,7 +6,7 @@ import {
   Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import AppBackground from '../../../components/layout/AppBackground';
+import AppBackground from '../../../components/base/AppBackground';
 import TickIcon from '../../../assets/icons/TickIcon';
 import NormalButton from '../../../components/common/NormalButton';
 import ArrowLeftIcon from '../../../assets/icons/ArrowLeftIcon';

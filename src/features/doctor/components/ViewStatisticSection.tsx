@@ -1,13 +1,10 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import StatisticsChart, { BarData } from "./StatisticsChart";
+import StatisticsChart from "./StatisticsChart";
 import Statistics from "./ViewMoreStatistics";
 import { scale } from "@/utils/responsive";
-
-interface StatisticsSectionProps {
-  data: BarData[];
-  onPress: () => void;
-}
+import { StatisticsSectionProps } from "../../../types/IViewStatisticSectionProps";
+import { BarData } from "../../../types/IStatisticsChartProps";
 
 export default function StatisticsSection({ data, onPress }: StatisticsSectionProps) {
   return (

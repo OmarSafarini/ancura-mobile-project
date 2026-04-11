@@ -3,24 +3,9 @@ import { CommentCard } from "./CommentCard";
 import { TimeCard } from "./TimeCard";
 import { ScoreCard } from "./ScoreCard";
 
-type CommentsProps = {
-  type: "comments";
-  value: string | number;
-};
+import { StatisticCardProps } from "../../../types/IStatisticCardProps";
 
-type TimeProps = {
-  type: "time";
-  value: string | number;
-};
-
-type ScoreProps = {
-  type: "score";
-  value: string | number;
-};
-
-type Props = CommentsProps | TimeProps | ScoreProps;
-
-const StatsCard = (props: Props) => {
+const StatsCard = (props: StatisticCardProps) => {
   switch (props.type) {
     case "comments":
       return (
