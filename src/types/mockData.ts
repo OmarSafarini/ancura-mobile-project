@@ -1,169 +1,189 @@
 import { CaseData, ReplyData, CommentData } from "./ICaseData";
-
-
+import { BarData } from "./IStatisticsChartProps";
 
 //This is only fake data for testing purposes
+
 export const dummyCases: CaseData[] = [
   {
     id: 1,
-    patient_id: 101,
+    patient_id: "a1b2c3d4-0001-0000-0000-000000000001",
     title: "Headache and fever",
     description: "Patient has been experiencing continuous headache and mild fever for 2 days. Panadol is not helping.",
-    created_at: "2026-04-02",
+    timestamp: "2026-04-02",
     status: "Under Review",
     isEmergency: false,
+    isReplied: false,
   },
   {
     id: 2,
-    patient_id: 102,
+    patient_id: "a1b2c3d4-0001-0000-0000-000000000002",
     title: "Skin Rash",
     description: "Severe red rash appeared suddenly on both arms and neck after eating seafood.",
-    created_at: "2026-04-01",
+    timestamp: "2026-04-01",
     status: "Doctor Replied",
     isEmergency: true,
+    isReplied: true,
   },
   {
     id: 3,
-    patient_id: 103,
+    patient_id: "a1b2c3d4-0001-0000-0000-000000000003",
     title: "Lower Back Pain",
     description: "Sharp shooting pain in the lower back radiating to the left leg.",
-    created_at: "2026-03-31",
+    timestamp: "2026-03-31",
     status: "Resolved",
     isEmergency: false,
+    isReplied: true,
   },
   {
     id: 4,
-    patient_id: 104,
+    patient_id: "a1b2c3d4-0001-0000-0000-000000000004",
     title: "Anxiety and Panic Attacks",
     description: "Shortness of breath and rapid heartbeat during the night.",
-    created_at: "2026-04-03",
+    timestamp: "2026-04-03",
     status: "Doctor Replied",
     isEmergency: true,
+    isReplied: true,
   },
   {
     id: 5,
-    patient_id: 105,
+    patient_id: "a1b2c3d4-0001-0000-0000-000000000005",
     title: "Blurry Vision",
     description: "Sudden blurriness in the right eye, struggling to read screens.",
-    created_at: "2026-04-04",
+    timestamp: "2026-04-04",
     status: "Under Review",
     isEmergency: true,
+    isReplied: false,
   },
   {
     id: 6,
-    patient_id: 106,
+    patient_id: "a1b2c3d4-0001-0000-0000-000000000006",
     title: "Dry Cough",
     description: "Persistent dry cough for 2 weeks, worse at night.",
-    created_at: "2026-03-25",
+    timestamp: "2026-03-25",
     status: "Resolved",
     isEmergency: false,
+    isReplied: true,
   },
   {
     id: 7,
-    patient_id: 107,
+    patient_id: "a1b2c3d4-0001-0000-0000-000000000007",
     title: "Toothache",
     description: "Extreme pain in the lower left molar when drinking cold water.",
-    created_at: "2026-04-05",
+    timestamp: "2026-04-05",
     status: "Doctor Replied",
     isEmergency: false,
+    isReplied: true,
   },
 ];
 
 export const allDummyReplies: ReplyData[] = [
-  // Replies for Case 1 (Headache & fever)
   {
-    id: "reply_1",
+    id: 1,
     case_id: 1,
-    title: "Dr. Ahmed Mansour",
-    major: "General Practitioner",
-    message: "Since Panadol isn't helping, please monitor your temperature. If it exceeds 39°C, go to the nearest ER.",
-    time: "2 hours ago",
+    doctor_id: "b2c3d4e5-0002-0000-0000-000000000001",
+    doctor_name: "Dr. Ahmed Mansour",
+    doctor_major: "General Practitioner",
+    body: "Since Panadol isn't helping, please monitor your temperature. If it exceeds 39°C, go to the nearest ER.",
+    timestamp: "2026-04-02T10:00:00",
   },
-  // Replies for Case 2 (Skin Rash)
   {
-    id: "reply_2",
+    id: 2,
     case_id: 2,
-    title: "Dr. Khaled Youssef",
-    major: "Dermatologist & Allergist",
-    message: "This sounds like an allergic reaction to seafood. Do you have any difficulty breathing or swelling in your lips?",
-    time: "1 hour ago",
+    doctor_id: "b2c3d4e5-0002-0000-0000-000000000002",
+    doctor_name: "Dr. Khaled Youssef",
+    doctor_major: "Dermatologist & Allergist",
+    body: "This sounds like an allergic reaction to seafood. Do you have any difficulty breathing or swelling in your lips?",
+    timestamp: "2026-04-01T09:00:00",
   },
   {
-    id: "reply_3",
+    id: 3,
     case_id: 2,
-    title: "Dr. Khaled Youssef",
-    major: "Dermatologist & Allergist",
-    message: "If the rash spreads, take an antihistamine like Claritin immediately and use calamine lotion.",
-    time: "50 mins ago",
+    doctor_id: "b2c3d4e5-0002-0000-0000-000000000002",
+    doctor_name: "Dr. Khaled Youssef",
+    doctor_major: "Dermatologist & Allergist",
+    body: "If the rash spreads, take an antihistamine like Claritin immediately and use calamine lotion.",
+    timestamp: "2026-04-01T09:50:00",
   },
-  // Replies for Case 3 (Lower back pain)
   {
-    id: "reply_4",
+    id: 4,
     case_id: 3,
-    title: "Dr. Yaser Kamal",
-    major: "Orthopedic Surgeon",
-    message: "This might be sciatica. Rest flat on a firm mattress and apply hot packs. Avoid lifting anything heavy.",
-    time: "3 days ago",
+    doctor_id: "b2c3d4e5-0002-0000-0000-000000000003",
+    doctor_name: "Dr. Yaser Kamal",
+    doctor_major: "Orthopedic Surgeon",
+    body: "This might be sciatica. Rest flat on a firm mattress and apply hot packs. Avoid lifting anything heavy.",
+    timestamp: "2026-03-31T14:00:00",
   },
-  // Replies for Case 4 (Anxiety)
   {
-    id: "reply_5",
+    id: 5,
     case_id: 4,
-    title: "Dr. Sarah Ahmed",
-    major: "Clinical Psychologist",
-    message: "I understand how scary this feels. Try the 4-7-8 breathing technique when you feel an attack coming.",
-    time: "10 mins ago",
+    doctor_id: "b2c3d4e5-0002-0000-0000-000000000004",
+    doctor_name: "Dr. Sarah Ahmed",
+    doctor_major: "Clinical Psychologist",
+    body: "I understand how scary this feels. Try the 4-7-8 breathing technique when you feel an attack coming.",
+    timestamp: "2026-04-03T08:50:00",
   },
-  // Replies for Case 7 (Toothache)
   {
-    id: "reply_6",
+    id: 6,
     case_id: 7,
-    title: "Dr. Rami Nabil",
-    major: "Dentist",
-    message: "Avoid cold or hot drinks. You can take Ibuprofen for the pain. Book an appointment for an X-ray as soon as possible.",
-    time: "Just now",
+    doctor_id: "b2c3d4e5-0002-0000-0000-000000000005",
+    doctor_name: "Dr. Rami Nabil",
+    doctor_major: "Dentist",
+    body: "Avoid cold or hot drinks. You can take Ibuprofen for the pain. Book an appointment for an X-ray as soon as possible.",
+    timestamp: "2026-04-05T07:00:00",
   },
 ];
 
 export const allDummyComments: CommentData[] = [
-  // Comments related to reply_2 (Dr. Khaled asking about breathing)
+  // Comments related to reply 2 (Dr. Khaled asking about breathing)
   {
-    id: "comment_1",
-    reply_id: "reply_2",
-    title: "You",
-    description: "No difficulty breathing, just severe itching on my arms.",
-    time: "55 mins ago",
-    major: "Patient",
+    id: 1,
+    reply_id: 2,
+    author_name: "You",
+    body: "No difficulty breathing, just severe itching on my arms.",
+    timestamp: "2026-04-01T09:55:00",
+    author_role: "Patient",
+    no_of_likes: 0,
+    no_of_dislikes: 0,
+    no_of_replies: 0,
   },
-  // Comments related to reply_5 (Dr. Sarah on Anxiety)
+  // Comments related to reply 5 (Dr. Sarah on Anxiety)
   {
-    id: "comment_2",
-    reply_id: "reply_5",
-    title: "You",
-    description: "Could you send a more detailed plan on how to start this breathing technique?",
-    time: "5 mins ago",
-    major: "Patient",
+    id: 2,
+    reply_id: 5,
+    author_name: "You",
+    body: "Could you send a more detailed plan on how to start this breathing technique?",
+    timestamp: "2026-04-03T08:55:00",
+    author_role: "Patient",
+    no_of_likes: 0,
+    no_of_dislikes: 0,
+    no_of_replies: 1,
   },
   {
-    id: "comment_3",
-    reply_id: "reply_5",
-    title: "Dr. Sarah Ahmed",
-    major: "Clinical Psychologist",
-    description: "Inhale for 4 seconds, hold for 7 seconds, exhale slowly for 8 seconds. Repeat 4 times.",
-    time: "Just now",
+    id: 3,
+    reply_id: 5,
+    author_name: "Dr. Sarah Ahmed",
+    author_role: "Clinical Psychologist",
+    body: "Inhale for 4 seconds, hold for 7 seconds, exhale slowly for 8 seconds. Repeat 4 times.",
+    timestamp: "2026-04-03T09:00:00",
+    no_of_likes: 2,
+    no_of_dislikes: 0,
+    no_of_replies: 0,
   },
-  // Comments related to reply_6 (Dr. Rami on Toothache)
+  // Comments related to reply 6 (Dr. Rami on Toothache)
   {
-    id: "comment_4",
-    reply_id: "reply_6",
-    title: "You",
-    description: "Thank you Dr. Rami, is there any specific toothpaste I should use in the meantime?",
-    time: "Just now",
-    major: "Patient",
+    id: 4,
+    reply_id: 6,
+    author_name: "You",
+    body: "Thank you Dr. Rami, is there any specific toothpaste I should use in the meantime?",
+    timestamp: "2026-04-05T07:10:00",
+    author_role: "Patient",
+    no_of_likes: 0,
+    no_of_dislikes: 0,
+    no_of_replies: 0,
   },
 ];
 
-export const dashboardChartData = [
+export const dashboardChartData: BarData[] = [
   { label: "Sat", value: 20 },
   { label: "Sun", value: 45 },
   { label: "Mon", value: 30 },
@@ -173,7 +193,12 @@ export const dashboardChartData = [
   { label: "Fri", value: 60 },
 ];
 
-export const doctorPeriodData = {
+export const doctorPeriodData: Record<'Weekly' | 'Monthly' | 'All Time', {
+  comments: number;
+  time: number;
+  score: number;
+  chart: BarData[];
+}> = {
   Weekly: {
     comments: 48,
     time: 24,
@@ -213,4 +238,3 @@ export const doctorPeriodData = {
     ],
   },
 };
-

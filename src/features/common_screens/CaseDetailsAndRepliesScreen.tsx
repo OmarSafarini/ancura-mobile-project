@@ -26,10 +26,10 @@ type FormData = {
   doctorReply: string;
 };
 
-const STATUS_MAP: Record<string, "under_review" | "doctor_replied" | "resolved"> = {
-  "Under Review": "under_review",
-  "Doctor Replied": "doctor_replied",
-  "Resolved": "resolved",
+const STATUS_MAP: Record<string, "Under Review" | "Doctor Replied" | "Resolved"> = {
+  "Under Review": "Under Review",
+  "Doctor Replied": "Doctor Replied",
+  "Resolved": "Resolved",
 };
 
 export default function CaseDetailScreen({ navigation, route }: any) {
@@ -106,13 +106,13 @@ export default function CaseDetailScreen({ navigation, route }: any) {
             age={28}
             title={caseData?.title || "Anxiety and sleep problem"}
             description={caseData?.description || "Patient reports severe anxiety and insomnia for the past 3 weeks."}
-            date={caseData?.created_at || "2 hours ago"}
+            date={caseData?.timestamp || "2 hours ago"}
             status={
               isDoctor
                 ? undefined
                 : caseData?.status
                   ? STATUS_MAP[caseData.status as string]
-                  : "under_review"
+                  : "Under Review"
             }
           />
 
@@ -122,7 +122,7 @@ export default function CaseDetailScreen({ navigation, route }: any) {
             <FlatList
               ref={flatListRef}
               data={replies}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item) => String(item.id)}
               showsVerticalScrollIndicator={false}
               style={styles.list}
               contentContainerStyle={styles.listContent}
@@ -131,10 +131,10 @@ export default function CaseDetailScreen({ navigation, route }: any) {
               )}
               renderItem={({ item }) => (
                 <DoctorReplyCard
-                  title={item.title}
-                  major={item.major}
-                  message={item.message}
-                  time={item.time}
+                  title={item.doctor_name}
+                  major={item.doctor_major}
+                  message={item.body}
+                  time={item.timestamp}
                   CardOnPress={handleViewDoctorReplies}
                   ChatOnPress={() => handleViewAllReplies(item)}
                 />

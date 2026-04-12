@@ -55,10 +55,10 @@ export default function AllRepliesScreen({ navigation, route }: any) {
 
         <View style={styles.staticContent}>
           <DoctorReplyCard
-            title={replyData?.title || "Dr. Sarah Ahmed"}
-            major={replyData?.major || "Clinical Psychologist"}
-            message={replyData?.message || "Reply details."}
-            time={replyData?.time || "Just now"}
+            title={replyData?.doctor_name || "Dr. Sarah Ahmed"}
+            major={replyData?.doctor_major || "Clinical Psychologist"}
+            message={replyData?.body || "Reply details."}
+            time={replyData?.timestamp || "Just now"}
             CardOnPress={() => { }}
             ChatOnPress={() => { }}
           />
@@ -71,7 +71,7 @@ export default function AllRepliesScreen({ navigation, route }: any) {
           <FlatList
             ref={listRef}
             data={comments}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => String(item.id)}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.listContent}
             ItemSeparatorComponent={() => (
@@ -80,11 +80,11 @@ export default function AllRepliesScreen({ navigation, route }: any) {
             ListFooterComponent={<View style={{ height: scale(120) }} />}
             renderItem={({ item }) => (
               <DoctorCommentCard
-                title={item.title}
-                discreption={item.description}
-                time={item.time}
+                title={item.author_name}
+                discreption={item.body}
+                time={item.timestamp}
                 avatar={undefined}
-                major={item.major}
+                major={item.author_role}
               />
             )}
           />
