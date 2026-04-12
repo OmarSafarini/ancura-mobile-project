@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet, FlatList, TouchableOpacity, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 import { Colors } from "@/utils/colors";
@@ -12,7 +12,7 @@ import StartwithTickIcon from "@/assets/icons/StartwithTickIcon";
 import ArrowIcon from "@/assets/icons/ArrowIcon";
 import HandLikeIcon from "@/assets/icons/HandLikeIcon";
 import StarIcon from "@/assets/icons/StarIcon";
-import { useNavigation } from "@react-navigation/native";
+
 
 const ACTIVITY_DATA = [
     {
