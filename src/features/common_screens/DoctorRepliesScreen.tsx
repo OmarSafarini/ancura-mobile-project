@@ -72,7 +72,7 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
         <FlatList
           ref={flatListRef}
           data={replies}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => String(item.id)}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
           ItemSeparatorComponent={() => (
@@ -80,10 +80,10 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
           )}
           renderItem={({ item }) => (
             <DoctorReplyCard
-              title={item.title}
-              major={item.major}
-              message={item.message}
-              time={item.time}
+              title={item.doctor_name}
+              major={item.doctor_major}
+              message={item.body}
+              time={item.timestamp}
               CardOnPress={() => handleViewAllReplies(item)}
               ChatOnPress={() => handleViewAllReplies(item)}
             />

@@ -23,7 +23,7 @@ type CaseDetailCardProps = {
   description: string;
   date: string;
   avatar?: string;
-  status?: "under_review" | "doctor_replied" | "resolved";
+  status?: "Under Review" | "Doctor Replied" | "Resolved";
 };
 
 // ________________ COMPONENT ________________
