@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL;
@@ -12,3 +13,45 @@ export const supabaseClient = axios.create({
     Prefer: 'return=representation',
   },
 });
+
+supabaseClient.interceptors.request.use(
+  async (config) => {
+    try {
+      const token = await AsyncStorage.getItem("access_token");
+
+      config.headers.Authorization = token
+        ? `Bearer ${token}`
+        : `Bearer ${SUPABASE_ANON_KEY}`;
+
+      return config;
+    } catch (error) {
+      return config;
+    }
+  },
+  (error) => Promise.reject(error)
+);
+
+supabaseClient.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    const status = error.response?.status;
+
+    if (status === 401) {
+      console.log("Unauthorized - token expired or missing");
+      //need to be modified
+     //if unAuthrized should log out 
+    }
+
+    if (status === 403) {
+      console.log("Forbidden - no permission");
+    }
+
+    if (status >= 500) {
+      console.log("Server error");
+    }
+
+    return Promise.reject(error);
+  }
+);
