@@ -1,68 +1,58 @@
-import React from "react";
-import { Text, View, StyleSheet, FlatList , Pressable } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Text, View, StyleSheet, FlatList, Pressable, ActivityIndicator } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
+import { supabaseApi } from "@/store/supabaseConfig"; // IMPORT YOUR AXIOS SETUP HERE
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 import { Colors } from "@/utils/colors";
 import { scale } from "@/utils/responsive";
 import { Family } from "@/utils/typography";
 import AppBackground from "@/components/layout/AppBackground";
-import ChatIcon from "@/features/doctor/components/Icons/ChatIcon";
 import ActivityLogCard from "@/features/doctor/components/ActivityLogCard";
+
+import ChatIcon from "@/features/doctor/components/Icons/ChatIcon";
 import StartwithTickIcon from "@/features/doctor/components/Icons/StartwithTickIcon";
 import ArrowIcon from "@/features/doctor/components/Icons/ArrowIcon";
 import HandLikeIcon from "@/features/doctor/components/Icons/HandLikeIcon";
 import StarIcon from "@/features/doctor/components/Icons/StarIcon";
-import { useNavigation } from "@react-navigation/native";
 
-const ACTIVITY_DATA = [
-    {
-        id: '1',
-        title: "Commented on #Case1",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
-        time: "2 hours ago",
-        isResolved: true,
-        Icon: ChatIcon,
-        color: Colors.primary
-    },
-    {
-        id: '2',
-        title: "Commented on #Case1",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
-        time: "2 hours ago",
-        isResolved: false,
-        Icon: StartwithTickIcon,
-        color: Colors.secondary
-    },
-    {
-        id: '3',
-        title: "Commented on #Case1",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
-        time: "2 hours ago",
-        isResolved: false,
-        Icon: ArrowIcon,
-        color: Colors.primaryLight
-    },
-    {
-        id: '4',
-        title: "Commented on #Case1",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
-        time: "2 hours ago",
-        isResolved: false,
-        Icon: HandLikeIcon,
-        color: Colors.secondaryLight
-    },
-    {
-        id: '5',
-        title: "Commented on #Case1",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
-        time: "2 hours ago",
-        isResolved: false,
-        Icon: StarIcon,
-        color: Colors.shieldBackground
-    }
-];
+// Maps to the 'status' column in your database
+const ACTIVITY_UI_MAP = {
+    'comment': { Icon: ChatIcon, color: Colors.primary },
+    'resolved': { Icon: StartwithTickIcon, color: Colors.secondary },
+    'alert': { Icon: ArrowIcon, color: Colors.primaryLight },
+    'like': { Icon: HandLikeIcon, color: Colors.secondaryLight },
+    'star': { Icon: StarIcon, color: Colors.shieldBackground },
+    'default': { Icon: ChatIcon, color: Colors.primary }, 
+};
 
 export default function ActivityLog() {
     const navigation = useNavigation();
+    
+    const [activities, setActivities] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // Fetch data when the screen loads
+    useEffect(() => {
+        const fetchActivities = async () => {
+            try {
+                // IMPORTANT: Replace 'activity_logs' with your exact table name if it is different
+                // Fetching all columns, ordered by the 'date' column you provided
+                const response = await supabaseApi.get('/activity_log?select=*');
+                console.log(response)
+                setActivities(response.data);
+            } catch (err) {
+                console.error("Error fetching activity logs:", err);
+                setError("Failed to load activities.");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchActivities();
+    }, []);
+
     return (
         <AppBackground variant="clean" style={styles.screen}>
             <View style={styles.header}>
@@ -74,27 +64,48 @@ export default function ActivityLog() {
             
             <View style={styles.timelineContainer}>
                 <View style={styles.timelineLine} />
-                <FlatList
-                    data={ACTIVITY_DATA}
-                    keyExtractor={(item) => item.id}
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={styles.listContent}
-                    renderItem={({ item }) => (
-                        <View style={styles.itemWrapper}>
-                            <View style={[styles.iconWrapper, { backgroundColor: item.color }]}>
-                                <item.Icon color={Colors.formBackground} size={scale(24)} />
-                            </View>
-                            <View style={styles.cardContainer}>
-                                <ActivityLogCard 
-                                    title={item.title} 
-                                    description={item.description} 
-                                    time={item.time} 
-                                    isResolved={item.isResolved} 
-                                />
-                            </View>
-                        </View>
-                    )}
-                />
+                
+                {/* Loading State */}
+                {isLoading && (
+                    <ActivityIndicator size="large" color={Colors.primary} style={{ marginTop: scale(40) }} />
+                )}
+
+                {/* Error State */}
+                {error && (
+                    <Text style={{ textAlign: 'center', marginTop: scale(20), color: 'red' }}>{error}</Text>
+                )}
+
+                {/* Data State */}
+                {!isLoading && !error && (
+                    <FlatList
+                        data={activities}
+                        keyExtractor={(item) => item.id.toString()}
+                        showsVerticalScrollIndicator={false}
+                        contentContainerStyle={styles.listContent}
+                        renderItem={({ item }) => {
+                            // Safely grab the status, convert to lowercase to ensure it matches the map keys
+                            const itemStatus = item.status ? item.status.toLowerCase() : 'default';
+                            const uiConfig = ACTIVITY_UI_MAP[itemStatus] || ACTIVITY_UI_MAP['default'];
+                            const ItemIcon = uiConfig.Icon;
+
+                            return (
+                                <View style={styles.itemWrapper}>
+                                    <View style={[styles.iconWrapper, { backgroundColor: uiConfig.color }]}>
+                                        <ItemIcon color={Colors.formBackground} size={scale(24)} />
+                                    </View>
+                                    <View style={styles.cardContainer}>
+                                        <ActivityLogCard 
+                                            title={item.history_title} 
+                                            description={item.body} 
+                                            time={item.date} 
+                                            isResolved={itemStatus === 'resolved'} 
+                                        />
+                                    </View>
+                                </View>
+                            );
+                        }}
+                    />
+                )}
             </View>
         </AppBackground>
     );
