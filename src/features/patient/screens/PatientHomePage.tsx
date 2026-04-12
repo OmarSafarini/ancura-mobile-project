@@ -48,7 +48,12 @@ export default function PatientHomePage() {
     ? dummyCases.filter((c) => c.status === filterStatus)
     : dummyCases;
 
-  const STATUS_OPTIONS = ["All", "Under Review", "Doctor Replied", "Resolved"];
+  const STATUS_OPTIONS = [
+    { label: "All", value: "All" },
+    { label: "Under Review", value: "under_review" },
+    { label: "Doctor Replied", value: "doctor_replied" },
+    { label: "Resolved", value: "resolved" },
+  ];
 
   return (
     <AppBackground variant="logo">
@@ -72,12 +77,12 @@ export default function PatientHomePage() {
             <View style={styles.filterRow}>
               {STATUS_OPTIONS.map((status) => (
                 <FilterButton
-                  key={status}
-                  title={status}
-                  isActive={selected === status}
+                  key={status.value}
+                  title={status.label}
+                  isActive={selected === status.value}
                   onPress={() => {
-                    setSelcted(status);
-                    setFilterStatus(status === "All" ? null : status);
+                    setSelcted(status.value);
+                    setFilterStatus(status.value === "All" ? null : status.value);
                   }}
                 />
               ))}

@@ -14,29 +14,35 @@ type Props = {
 };
 
 const STATUS_CONFIG = {
-  "Under Review": {
+  under_review: {
+    label: "Under Review",
     containerColor: "rgba(232,112,0 , 0.24)",
     IconComponent: UnderViewIcon,
     iconBackground: Colors.underReview,
   },
-  "Doctor Replied": {
+  doctor_replied: {
+    label: "Doctor Replied",
     containerColor: "rgba(8, 7, 14 , 0.13)",
     IconComponent: DoctorRepliedIcon,
     iconBackground: Colors.secondary,
   },
-  "Resolved": {
+  resolved: {
+    label: "Resolved",
     containerColor: Colors.secondaryLight,
     IconComponent: ResolvedIcon,
     iconBackground: Colors.secondary,
   },
-  "Empty": {
+  Empty: {
+    label: "None",
     containerColor: "rgba(8, 7, 14 , 0.13)",
+    IconComponent: null,
+    iconBackground: "transparent",
   }
 };
 
 export default function CaseCard({ data, onPress }: Props) {
   const status = data.status || "Empty";
-  const config = STATUS_CONFIG[status];
+  const config = STATUS_CONFIG[status as keyof typeof STATUS_CONFIG] || STATUS_CONFIG["Empty"];
 
   return (
     <Pressable onPress={onPress} style={[styles.container, { backgroundColor: "#FFFFFF" }, data.isEmergency && styles.emergencyShadow,]}>
@@ -52,7 +58,7 @@ export default function CaseCard({ data, onPress }: Props) {
             <View style={[styles.iconCircle, { backgroundColor: config.iconBackground }]}>
               <config.IconComponent width={scale(10)} height={scale(10)} />
             </View>
-            <Text style={[styles.reviewText, { color: config.iconBackground }]}>{status}</Text>
+            <Text style={[styles.reviewText, { color: config.iconBackground }]}>{config.label}</Text>
           </View>
         )}
       </View>
