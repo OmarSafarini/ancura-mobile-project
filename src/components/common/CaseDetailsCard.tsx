@@ -9,6 +9,7 @@ import ClockIcon from "@/assets/icons/ClockIcon";
 import FileBar from "./FileBar";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 import IconWrapper from "./IconWrapper";
+import { Status } from "@/types/ICaseStatusProps";
 
 // ________________ CONSTANTS ________________
 const AVATAR_SIZE = scale(25);
@@ -23,7 +24,7 @@ type CaseDetailCardProps = {
   description: string;
   date: string;
   avatar?: string;
-  status?: "Under Review" | "Doctor Replied" | "Resolved";
+  status?: Status;
 };
 
 // ________________ COMPONENT ________________
