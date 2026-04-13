@@ -20,8 +20,6 @@ import DeleteIconButton from "../components/Buttons/DeleteIconButton";
 import { scale } from "@/utils/responsive";
 import { Colors, palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
-import ToggleButton from "@/components/common/ToggleButton";
-import PencilIcon from "@/assets/icons/PencilIcon";
 import FileBar from "@/components/common/FileBar";
 import IconWrapper from "@/features/doctor/components/Icons/IconWrapper";
 

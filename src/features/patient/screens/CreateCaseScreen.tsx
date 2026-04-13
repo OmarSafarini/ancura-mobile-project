@@ -1,23 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  SafeAreaView,
 } from "react-native";
-import {useForm} from "react-hook-form"
+import { useForm } from "react-hook-form";
 import * as DocumentPicker from "expo-document-picker";
 import AppBackground from "@/components/layout/AppBackground";
 import InputField from "@/components/forms/InputFeild";
 import AttachmentsField from "@/components/forms/AttachmentFeild";
 import NormalButton from "@/components/common/NormalButton";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
+import DeleteIconButton from "../components/Buttons/DeleteIconButton";
 import { scale } from "@/utils/responsive";
-import { Colors, palette } from "@/utils/colors";
+import { Colors } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import EmergencyCheckBox from "../components/Buttons/EmergencyCheckBox";
+import FileBar from "@/components/common/FileBar";
+import IconWrapper from "@/features/doctor/components/Icons/IconWrapper";
 
 
 type FormValues = {
@@ -27,8 +29,15 @@ type FormValues = {
   files: DocumentPicker.DocumentPickerAsset[];
 };
 
+type CaseFileItem = {
+  id: string;
+  title: string;
+};
+
 const CreateCase = ({ navigation }: any) => {
-  const { control, handleSubmit, setValue, watch } = useForm<any>({
+  const [caseFiles, setCaseFiles] = useState<CaseFileItem[]>([]);
+
+  const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
     defaultValues: {
       title: "",
       description: "",
@@ -38,166 +47,222 @@ const CreateCase = ({ navigation }: any) => {
   });
 
   const isEmergency = watch("isEmergency");
+  const pickedFiles = watch("files");
 
   const onSubmit = (data: FormValues) => {
-    console.log("Form Data:", data);
+    console.log("Created Case:", data);
   };
+
+  const deleteFile = (id: string) => {
+    setCaseFiles((prevFiles) => prevFiles.filter((file) => file.id !== id));
+    const remainingPickedFiles = pickedFiles.filter(
+      (file) => (file.uri || file.name) !== id
+    );
+    setValue("files", remainingPickedFiles);
+  };
+
+  useEffect(() => {
+    if (!pickedFiles?.length) return;
+
+    setCaseFiles((prevFiles) => {
+      const existingIds = new Set(prevFiles.map((file) => file.id));
+      const newItems = pickedFiles
+        .map((file) => ({
+          id: file.uri || file.name,
+          title: file.name,
+        }))
+        .filter((file) => !existingIds.has(file.id));
+
+      return [...prevFiles, ...newItems];
+    });
+  }, [pickedFiles]);
 
   return (
     <AppBackground variant="clean">
-      <View style={styles.safeArea}>
-        <ScrollView 
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={styles.header}>
-            <View style={styles.headerTextContainer}>
-              <Text style={styles.headerTitle}>Hi USR-XXXXX</Text>
-              <Text style={styles.headerSubtitle}>
-                Your identity will remain 100% anonymous, and your name will not be shown to the doctors
-              </Text>
-            </View>
-            <TouchableOpacity 
+      <ScrollView
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.header}>
+          <View style={styles.headerTitleRow}>
+            <Text style={styles.headerText}>Hi USR-XXXXX</Text>
+            <TouchableOpacity
               style={styles.backButton}
-              onPress={() => navigation?.goBack()}
+              onPress={() => navigation.goBack()}
               activeOpacity={0.7}
             >
-              <ArrowLeftIcon color={Colors.textDark} size={scale(18)} />
+              <ArrowLeftIcon size={18} color={Colors.textDark} />
             </TouchableOpacity>
           </View>
+          <Text style={styles.headerSubtitle}>
+            Your identity will remain 100% anonymous, and your name will not be
+            shown to the doctors
+          </Text>
+        </View>
 
-          <View style={styles.formContainer}>
-            <InputField
-              control={control as any}
-              name="title"
-              label="Subject / Title"
-              placeholder="Type here"
-              rules={{ required: "Title is required" }}
-            />
+        <View style={styles.form}>
+          <InputField
+            control={control as any}
+            name="title"
+            label="Subject / Title"
+            placeholder="Type here"
+            isEdit
+            textStyle={{
+              fontSize: scale(20),
+              fontFamily: Family.FG_Medium,
+              color: "#000",
+            }}
+            rules={{ required: "Title is required" }}
+          />
 
-            <InputField
-              control={control as any}
-              name="description"
-              label="Description"
-              placeholder="Type here"
-              multiline
-              numberOfLines={4}
-              rules={{ required: "Description is required" }}
-            />
+          <InputField
+            control={control as any}
+            name="description"
+            label="Description"
+            placeholder="Type here"
+            isEdit
+            multiline
+            numberOfLines={4}
+            textStyle={{
+              fontSize: scale(14),
+              fontFamily: Family.FG_Regular,
+              color: "#6D7EB5",
+            }}
+            rules={{ required: "Description is required" }}
+          />
 
-            <View style={styles.attachmentSection}>
-              <AttachmentsField
-                files={watch("files")}
-                onFilesChange={(files) => setValue("files", files)}
-              />
-            </View>
+          <AttachmentsField
+            files={watch("files")}
+            onFilesChange={(files) => setValue("files", files)}
+          />
 
-            <View style={styles.emergencyContainer}>
-              <Text style={styles.emergencyText}>
-                Is this case considered a critical emergency that requires immediate intervention?
-              </Text>
-              <EmergencyCheckBox onPress={() => setValue("isEmergency", !isEmergency)} isActive={isEmergency} />
-            </View>
+          <View style={styles.tagsContainer}>
+            {caseFiles.map((file) => (
+              <View key={file.id} style={styles.fileRow}>
+                <View style={{ flex: 1 }}>
+                  <FileBar
+                    title={file.title}
+                    icon={
+                      <IconWrapper
+                        size={13}
+                        bgColor="#ffffff"
+                        shape="circle"
+                        border="#6D7EB5"
+                      >
+                        <ArrowLeftIcon size={8} color="#6D7EB5" />
+                      </IconWrapper>
+                    }
+                  />
+                </View>
+                <DeleteIconButton onPress={() => deleteFile(file.id)} />
+              </View>
+            ))}
           </View>
 
-          <View style={styles.footer}>
-            <NormalButton
-              title="Submit Case"
-              onPress={handleSubmit(onSubmit)}
-              bgColor={Colors.secondary}
-              textColor={palette.white}
+          <View style={styles.emergencyContainer}>
+            <Text style={styles.emergencyText}>
+              Is this case considered a critical emergency that requires
+              immediate intervention?
+            </Text>
+
+            <EmergencyCheckBox
+              isActive={isEmergency}
+              onPress={() => setValue("isEmergency", !isEmergency)}
             />
           </View>
-        </ScrollView>
-      </View>
+        </View>
+
+        <View style={styles.footer}>
+          <NormalButton
+            title="Create Case"
+            onPress={handleSubmit(onSubmit)}
+            bgColor="#8EB392"
+            textColor="#fff"
+            textStyle={{
+              fontSize: scale(20),
+              fontFamily: Family.FG_Regular,
+            }}
+          />
+        </View>
+      </ScrollView>
     </AppBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
-  scrollContent: {
+  container: {
     paddingHorizontal: scale(52),
-    paddingTop: scale(49),
-    paddingBottom: scale(60),
+    paddingTop: scale(60),
+    paddingBottom: scale(40),
+    gap: scale(30),
   },
+
   header: {
+    marginBottom: scale(24),
+  },
+
+  headerTitleRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: scale(32),
+    alignItems: "center",
+    gap: scale(12),
+    marginBottom: scale(12),
   },
-  headerTextContainer: {
+
+  headerText: {
     flex: 1,
-    paddingRight: scale(16),
-  },
-  headerTitle: {
     fontSize: scale(20),
     fontFamily: Family.FG_Regular,
     color: Colors.textDark,
     lineHeight: scale(23),
   },
+
   headerSubtitle: {
-    fontSize: scale(20),
+    marginTop: scale(6),
+    fontSize: scale(12),
     fontFamily: Family.FG_Regular,
-    color: Colors.textDark,
-    lineHeight: scale(23),
-    marginTop: scale(2),
+    color: "#6D7EB5",
+    lineHeight: scale(16),
   },
+
   backButton: {
     width: scale(33),
     height: scale(33),
-    backgroundColor: palette.white,
+    backgroundColor: "#fff",
     borderRadius: scale(7),
     justifyContent: "center",
     alignItems: "center",
-    // Shadow for premium feel
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
-  formContainer: {
-    gap: scale(32),
+
+  form: {
+    gap: scale(24),
   },
-  attachmentSection: {
-    marginTop: scale(8),
+
+  tagsContainer: {
+    gap: scale(8),
   },
-  emergencyContainer: {
+
+  fileRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: scale(8),
+    gap: scale(8),
   },
+
+  emergencyContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
   emergencyText: {
     flex: 1,
     fontSize: scale(13),
-    fontFamily: Family.FG_Regular,
-    color: palette.dark,
-    lineHeight: scale(15),
-    paddingRight: scale(16),
+    color: "#08070E",
+    paddingRight: scale(12),
   },
-  toggleOuter: {
-    width: scale(24),
-    height: scale(24),
-    borderRadius: scale(12),
-    borderWidth: scale(1),
-    backgroundColor: palette.white,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  toggleInner: {
-    width: scale(16),
-    height: scale(16),
-    borderRadius: scale(8),
-    backgroundColor: "rgba(230, 93, 95, 0.88)",
-  },
+
   footer: {
-    marginTop: scale(48),
-    marginBottom: scale(20),
+    marginTop: scale(40),
   },
 });
 
