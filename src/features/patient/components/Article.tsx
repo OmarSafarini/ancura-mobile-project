@@ -4,11 +4,11 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Dimensions, 
+  Dimensions,
   Pressable,
 } from "react-native";
-import { Colors as colors, palette } from "../../../../utils/colors";
-import DocumentIcon from "../Icons/DoucmentIcon";
+import { Colors as colors, palette } from "../../../utils/colors";
+import DocumentIcon from "../../../assets/icons/DoucmentIcon";
 import { scale } from "@/utils/responsive";
 import { Family } from "@/utils/typography";
 import { Colors } from "@/utils/colors";
@@ -20,7 +20,7 @@ const Card_Radius = scale(11);
 type ArticleProps = {
   title: string;
   onPress?: () => void;
-  isSelected : boolean;
+  isSelected: boolean;
 };
 
 // ________________ COMPONENT __________________
@@ -31,7 +31,7 @@ export default function Article({ title, onPress, isSelected }: ArticleProps) {
       onPress={onPress}
     >
       <DocumentIcon size={12} color={isSelected ? Colors.formBackground : colors.primary} />
-      <Text style={[styles.text, isSelected && styles.selectedText]}>{title}</Text> 
+      <Text style={[styles.text, isSelected && styles.selectedText]}>{title}</Text>
     </Pressable>
   );
 }
@@ -39,19 +39,19 @@ export default function Article({ title, onPress, isSelected }: ArticleProps) {
 // __________________  STYLES __________________ 
 const styles = StyleSheet.create({
   button: {
-  width: scale(95),     
-  height: scale(29),    
-  flexDirection: "row",
-  justifyContent: "center", 
-  alignItems: "center", 
-  borderWidth: 1,
-  borderColor: colors.primary,
-  borderRadius: Card_Radius,
-  paddingHorizontal: scale(10), 
-  paddingVertical: 0,           
-  gap: scale(5),
-  backgroundColor: palette.white,
-},
+    width: scale(95),
+    height: scale(29),
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: colors.primary,
+    borderRadius: Card_Radius,
+    paddingHorizontal: scale(10),
+    paddingVertical: 0,
+    gap: scale(5),
+    backgroundColor: palette.white,
+  },
 
   icon: {
     justifyContent: "center",
@@ -69,11 +69,11 @@ const styles = StyleSheet.create({
   text: {
     fontSize: scale(10),
     color: palette.dark,
-    fontFamily:Family.FG_Regular,
-    justifyContent:"center",
-    alignItems:"center",
-    textAlignVertical: "center", 
-    includeFontPadding: false, 
-    marginTop: scale(4),       
+    fontFamily: Family.FG_Regular,
+    justifyContent: "center",
+    alignItems: "center",
+    textAlignVertical: "center",
+    includeFontPadding: false,
+    marginTop: scale(4),
   },
 });

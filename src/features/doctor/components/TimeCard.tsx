@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import IconWrapper from "./Icons/IconWrapper";
-import ClockIcon from "./Icons/ClockIcon";
+import IconWrapper from "../../../components/common/IconWrapper";
+import ClockIcon from "../../../assets/icons/ClockIcon";
 import { Colors, palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
-import {scale} from "@/utils/responsive";
+import { scale } from "@/utils/responsive";
 
 export const TimeCard = ({ value }: {
   value: string | number;

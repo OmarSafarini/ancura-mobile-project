@@ -9,20 +9,7 @@ import { palette } from '../../../utils/colors';
 import { Family } from '../../../utils/typography';
 import { scale } from '@utils/responsive';
 
-export interface BarData {
-  label: string;
-  value: number;
-  active?: boolean;
-}
-
-interface StatisticsChartProps {
-  data: BarData[];
-  height?: number;
-  showLabels?: boolean;
-  barWidth?: number;      
-  spacing?: 'space-between' | 'space-around' | 'space-evenly';
-  noPadding?: boolean;
-}  
+import { BarData, StatisticsChartProps } from "../../../types/IStatisticsChartProps";
 
 
 const DESIGN_MAX_BAR_HEIGHT = scale(160);

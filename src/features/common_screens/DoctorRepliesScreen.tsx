@@ -1,12 +1,12 @@
 import React, { useRef, useState } from "react";
 import { View, FlatList, StyleSheet, Text } from "react-native";
 
-import AppBackground from "@/components/layout/AppBackground";
+import AppBackground from "@/components/base/AppBackground";
 import BackButton from "@/components/common/BackButton";
 import ReplyText from "@/components/common/ReplyText";
 import DoctorReplyCard from "@/components/common/DoctorReplyCard";
 import ResolvedSlideButton from "../patient/components/ResolvedSlideButton";
-import ScrollToBottomButton from "../patient/components/Buttons/ScrollToBottom";
+import ScrollToBottomButton from "../patient/components/ScrollToBottom";
 import ReplyField from "@/components/forms/ReplyFeild";
 import ArrowInCircle from "@/assets/icons/SubmitButton";
 
@@ -14,21 +14,30 @@ import { scale } from "@/utils/responsive";
 import { Colors } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import { Control, useForm } from "react-hook-form";
+import { allDummyReplies } from "@/types/mockData";
 
 type FormData = { doctorReply: string };
 
-export default function DoctorRepliesScreen(navigation: any) {
-  const [role, setRole] = useState<"patient" | "doctor" | null>(null);
+export default function DoctorRepliesScreen({ navigation, route }: any) {
+  const caseData = route?.params?.caseData;
+  const role = route?.params?.role || 'patient';
+
   const isDoctor = role === "doctor";
   const isPatient = role === "patient";
 
-  const handleViewAllReplies = () => {
-      navigation.navigate('AllRepliesScreen');
-    };
-  
-    const handleViewGoBack = () => {
-      navigation.navigate('CaseDetailsAndRepliesScreen');
-    };
+  const handleViewAllReplies = (reply: any) => {
+    navigation.navigate('AllRepliesScreen', {
+      caseId: route?.params?.caseId,
+      caseData,
+      role,
+      replyId: reply.id,
+      replyData: reply
+    });
+  };
+
+  const handleViewGoBack = () => {
+    navigation.navigate('CaseDetailsAndRepliesScreen');
+  };
 
   const { control } = useForm<FormData>({
     defaultValues: { doctorReply: "" },
@@ -44,43 +53,15 @@ export default function DoctorRepliesScreen(navigation: any) {
     console.log("Case marked as resolved");
   };
 
-  const replies = [
-    {
-      id: "1",
-      title:"Dr. Sarah Ahmed" ,
-      major:"Clinical Psychologist" ,
-      message:"Based on the symptoms you described, I recommend starting with cognitive behavioral therapy techniques for sleep. I'll send you a detailed plan within 24 hours." ,
-      time:"Just now",
-    },
-    {
-      id: "2",
-      title:"Dr. Sarah Ahmed" ,
-      major:"Clinical Psychologist" ,
-      message:"Based on the symptoms you described, I recommend starting with cognitive behavioral therapy techniques for sleep. I'll send you a detailed plan within 24 hours." ,
-      time:"Just now",
-    },
-    {
-      id: "3",
-      title:"Dr. Sarah Ahmed" ,
-      major:"Clinical Psychologist" ,
-      message:"Based on the symptoms you described, I recommend starting with cognitive behavioral therapy techniques for sleep. I'll send you a detailed plan within 24 hours." ,
-      time:"Just now",
-    },
-    {
-      id: "4",
-      title:"Dr. Sarah Ahmed" ,
-      major:"Clinical Psychologist" ,
-      message:"Based on the symptoms you described, I recommend starting with cognitive behavioral therapy techniques for sleep. I'll send you a detailed plan within 24 hours." ,
-      time:"Just now",
-    }
-  ];
+  const caseId = route?.params?.caseId || caseData?.id;
+  const replies = allDummyReplies.filter((reply) => reply.case_id === caseId);
 
   return (
     <AppBackground style={{ flex: 1 }}>
-      
+
       <View style={styles.fixedHeader}>
         <View style={styles.header}>
-          <Text style={styles.title}>Coping with work pressure</Text>
+          <Text style={styles.title}>{caseData?.title || "Case Title"}</Text>
           <BackButton onPress={handleViewGoBack} />
         </View>
 
@@ -91,7 +72,7 @@ export default function DoctorRepliesScreen(navigation: any) {
         <FlatList
           ref={flatListRef}
           data={replies}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => String(item.id)}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
           ItemSeparatorComponent={() => (
@@ -99,12 +80,12 @@ export default function DoctorRepliesScreen(navigation: any) {
           )}
           renderItem={({ item }) => (
             <DoctorReplyCard
-              title={item.title}
-              major={item.major}
-              message={item.message}
-              time={item.time}
-              CardOnPress={handleViewAllReplies}
-              ChatOnPress={handleViewAllReplies}
+              title={item.doctor_name}
+              major={item.doctor_major}
+              message={item.body}
+              time={item.timestamp}
+              CardOnPress={() => handleViewAllReplies(item)}
+              ChatOnPress={() => handleViewAllReplies(item)}
             />
           )}
         />
@@ -163,7 +144,7 @@ const styles = StyleSheet.create({
   },
 
   scrollWrapper: {
-     height: "60%",
+    height: "60%",
   },
 
   scrollContent: {
@@ -176,8 +157,8 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingBottom: scale(30),
     paddingHorizontal: scale(24),
-    position:"absolute",
-    bottom:scale(30),
+    position: "absolute",
+    bottom: scale(30),
   },
 
   patientBottom: {

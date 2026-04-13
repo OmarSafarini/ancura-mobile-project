@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import { useForm } from 'react-hook-form';
-import AppBackground from '../../../components/layout/AppBackground';
+import AppBackground from '../../../components/base/AppBackground';
 import Logo from '../../../assets/icons/Logo';
 import FadeInView from '../../../utils/FadeInView';
 import InputField from '../../../components/forms/InputFeild';
@@ -53,7 +53,7 @@ export default function DoctorNewPasswordScreen({ navigation }: any) {
               name="newPassword"
               label="Enter New Password"
               placeholder="Enter Password"
-              rules={{ 
+              rules={{
                 required: "New Password is required",
                 minLength: { value: 8, message: "Password must be at least 8 characters" },
                 maxLength: { value: 13, message: "Password cannot exceed 13 characters" }
@@ -68,7 +68,7 @@ export default function DoctorNewPasswordScreen({ navigation }: any) {
               name="confirmPassword"
               label="Confirm Password"
               placeholder="Enter Password"
-              rules={{ 
+              rules={{
                 required: "Confirm Password is required",
                 minLength: { value: 8, message: "Password must be at least 8 characters" },
                 maxLength: { value: 13, message: "Password cannot exceed 13 characters" }

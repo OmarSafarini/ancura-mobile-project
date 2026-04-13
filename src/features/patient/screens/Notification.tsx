@@ -4,12 +4,14 @@ import { Text, View, StyleSheet, FlatList, Animated, Pressable } from "react-nat
 import { Colors } from "@/utils/colors";
 import { scale } from "@/utils/responsive";
 import { Family } from "@/utils/typography";
-import AppBackground from "@/components/layout/AppBackground";
+import AppBackground from "@/components/base/AppBackground";
 import NotificationCard from "@/components/common/NotificationCard";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Notification() {
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const translateY = useRef(new Animated.Value(20)).current; 
+    const navigation = useNavigation();
 
     useEffect(() => {
         Animated.parallel([
@@ -30,23 +32,23 @@ export default function Notification() {
         { id: "1", title: "A doctor has provided guidance on your case Feeling anxious about work", date: "2/24/2026", isRead: false, status: "doctor_replied" },
         { id: "2", title: "A doctor has provided guidance on your case Feeling anxious about work", date: "2/24/2026", isRead: false, status: "doctor_replied" },
         { id: "3", title: "A doctor has provided guidance on your case Feeling anxious about work", date: "2/24/2026", isRead: true, status: "resolved" },
-        { id: "4", title: "A doctor has provided guidance on your case Feeling anxious about work", date: "2/24/2026", isRead: true, status: "None"}
+        { id: "4", title: "A doctor has provided guidance on your case Feeling anxious about work", date: "2/24/2026", isRead: true, status: "None" }
     ];
 
     const renderHeader = () => (
         <View style={styles.header}>
             <Text style={styles.title}>Notifications</Text>
-            <View style={styles.iconWrapper}>
+            <Pressable style={styles.iconWrapper} onPress={() => navigation.goBack()}>
                 <ArrowLeftIcon color={Colors.textDark2} size={scale(18)} />
-            </View>
+            </Pressable>
         </View>
     );
 
-    {/*i tested if it bring an error but it doesn't */}
+    {/*i tested if it bring an error but it doesn't */ }
     const renderItem = ({ item }) => (
         <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY }] }}>
-            <Pressable 
-                android_ripple={{ color: Colors.formBackground }} 
+            <Pressable
+                android_ripple={{ color: Colors.formBackground }}
                 style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.97 : 1 }] }]}>
                 <NotificationCard {...item} />
             </Pressable>
@@ -76,7 +78,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: scale(56), 
+        marginBottom: scale(56),
     },
     iconWrapper: {
         borderRadius: scale(6),
@@ -90,7 +92,7 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         paddingHorizontal: scale(51),
-        paddingBottom: scale(30), 
+        paddingBottom: scale(30),
         gap: scale(19),
     },
 });

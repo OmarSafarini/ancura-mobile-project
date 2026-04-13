@@ -1,17 +1,18 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
 
-import AppBackground from "@/components/layout/AppBackground"; 
+import AppBackground from "@/components/base/AppBackground";
 import DoctorGreeting from "../components/DoctorGreeting";
 import CaseCard from "@/components/common/CaseCard";
-import IconWrapper from "@/features/doctor/components/Icons/IconWrapper";
-import ClockIcon from "@/features/doctor/components/Icons/ClockIcon";
-import ChatIcon from "../components/Icons/ChatIcon";
-import StartwithTickIcon from "../components/Icons/StartwithTickIcon";
+import { dummyCases, dashboardChartData } from "@/types/mockData";
+import IconWrapper from "@/components/common/IconWrapper";
+import ClockIcon from "@/assets/icons/ClockIcon";
+import ChatIcon from "../../../assets/icons/ChatIcon";
+import StartwithTickIcon from "../../../assets/icons/StartwithTickIcon";
 import StatisticsSection from "../components/ViewStatisticSection";
 import DoctorBNB from "../components/DoctorBNB";
 
-import { Colors,palette } from "@/utils/colors";
+import { Colors, palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import { scale } from "@/utils/responsive";
 
@@ -25,24 +26,7 @@ export default function DoctorDashboardAndCases({ navigation }: any) {
     navigation.navigate('DashboardScreen');
   };
 
-  const cases = [
-    { title: "Anxiety and sleep problem", created_at: "2h ago", status: "Under Review"},
-    { title: "Headache after work", created_at: "5h ago", status: "Doctor Replied" },
-    { title: "Stomach pain", created_at: "1d ago", status: "Resolved" },
-    { title: "Back pain", created_at: "3d ago", status: "", isEmergency: true },
-    { title: "Stomach pain", created_at: "1d ago", status: "Resolved" },
-    { title: "Back pain", created_at: "3d ago", status: "" },
-  ];
-
-  const chartData = [
-    { label: "Sat", value: 20 },
-    { label: "Sun", value: 45 },
-    { label: "Mon", value: 30 },
-    { label: "Tue", value: 70, active: true },
-    { label: "Wed", value: 50 },
-    { label: "Thu", value: 35 },
-    { label: "Fri", value: 60 },
-  ];
+  const doctorCases = dummyCases.filter(c => c.status !== "Resolved");
 
   return (
     <AppBackground>
@@ -58,7 +42,7 @@ export default function DoctorDashboardAndCases({ navigation }: any) {
 
           <View style={styles.box}>
             <View style={styles.chartBox}>
-              <StatisticsSection data={chartData} onPress={handleViewDashboardScreen} />
+              <StatisticsSection data={dashboardChartData} onPress={handleViewDashboardScreen} />
             </View>
 
             <View style={styles.iconsColumn}>
@@ -78,21 +62,18 @@ export default function DoctorDashboardAndCases({ navigation }: any) {
 
           <View style={styles.casesContainer}>
             <View style={styles.grid}>
-              <View style={styles.column}>
-                {cases.slice(0, 3).map((item, index) => (
-                  <CaseCard key={index} data={item as any} />
-                ))}
-              </View>
-
-              <View style={styles.column}>
-                {cases.slice(3, 6).map((item, index) => (
-                  <CaseCard key={index} data={item as any} />
-                ))}
-              </View>
+              {doctorCases.slice(0, 6).map((item) => (
+                <View key={item.id} style={styles.cardContainer}>
+                  <CaseCard
+                    data={{ ...item, status: undefined } as any}
+                    onPress={() => navigation.navigate("CaseDetailsAndRepliesScreen", { caseId: item.id, caseData: item, role: 'doctor' })}
+                  />
+                </View>
+              ))}
             </View>
 
-            <Pressable 
-              style={styles.viewCasesContainer} 
+            <Pressable
+              style={styles.viewCasesContainer}
               onPress={handleViewAllCases}
             >
               <Text style={styles.viewCases}>View all cases</Text>
@@ -117,9 +98,9 @@ const styles = StyleSheet.create({
   },
 
   greetingContainer: {
-    alignSelf: 'flex-start',   
-    marginLeft: -scale(20),           
-    marginBottom: scale(20),  
+    alignSelf: 'flex-start',
+    marginLeft: -scale(20),
+    marginBottom: scale(20),
   },
 
   box: {
@@ -153,18 +134,18 @@ const styles = StyleSheet.create({
 
   grid: {
     flexDirection: "row",
+    flexWrap: "wrap",
     justifyContent: "space-between",
   },
 
-  column: {
+  cardContainer: {
     width: scale(160),
-    flexDirection: "column",
-    gap: scale(15),
+    marginBottom: scale(15),
   },
 
   viewCasesContainer: {
     marginTop: scale(15),
-    alignSelf: 'flex-end',    
+    alignSelf: 'flex-end',
   },
 
   viewCases: {

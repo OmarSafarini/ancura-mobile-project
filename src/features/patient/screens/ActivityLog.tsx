@@ -1,16 +1,18 @@
 import React from "react";
-import { Text, View, StyleSheet, FlatList } from "react-native";
+import { Text, View, StyleSheet, FlatList, TouchableOpacity, Pressable } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 import { Colors } from "@/utils/colors";
 import { scale } from "@/utils/responsive";
 import { Family } from "@/utils/typography";
-import AppBackground from "@/components/layout/AppBackground";
-import ChatIcon from "@/features/doctor/components/Icons/ChatIcon";
+import AppBackground from "@/components/base/AppBackground";
+import ChatIcon from "@/assets/icons/ChatIcon";
 import ActivityLogCard from "@/features/doctor/components/ActivityLogCard";
-import StartwithTickIcon from "@/features/doctor/components/Icons/StartwithTickIcon";
-import ArrowIcon from "@/features/doctor/components/Icons/ArrowIcon";
-import HandLikeIcon from "@/features/doctor/components/Icons/HandLikeIcon";
-import StarIcon from "@/features/doctor/components/Icons/StarIcon";
+import StartwithTickIcon from "@/assets/icons/StartwithTickIcon";
+import ArrowIcon from "@/assets/icons/ArrowIcon";
+import HandLikeIcon from "@/assets/icons/HandLikeIcon";
+import StarIcon from "@/assets/icons/StarIcon";
+
 
 const ACTIVITY_DATA = [
     {
@@ -61,15 +63,16 @@ const ACTIVITY_DATA = [
 ];
 
 export default function ActivityLog() {
+    const navigation = useNavigation();
     return (
         <AppBackground variant="clean" style={styles.screen}>
             <View style={styles.header}>
                 <Text style={styles.title}>Activity Log</Text>
-                <View style={styles.backWrapper}>
+                <Pressable style={styles.backWrapper} onPress={() => navigation.goBack()}>
                     <ArrowLeftIcon color={Colors.textDark2} size={scale(18)} />
-                </View>
+                </Pressable>
             </View>
-            
+
             <View style={styles.timelineContainer}>
                 <View style={styles.timelineLine} />
                 <FlatList
@@ -83,11 +86,11 @@ export default function ActivityLog() {
                                 <item.Icon color={Colors.formBackground} size={scale(24)} />
                             </View>
                             <View style={styles.cardContainer}>
-                                <ActivityLogCard 
-                                    title={item.title} 
-                                    description={item.description} 
-                                    time={item.time} 
-                                    isResolved={item.isResolved} 
+                                <ActivityLogCard
+                                    title={item.title}
+                                    description={item.description}
+                                    time={item.time}
+                                    isResolved={item.isResolved}
                                 />
                             </View>
                         </View>
@@ -101,7 +104,7 @@ export default function ActivityLog() {
 const styles = StyleSheet.create({
     screen: {
         paddingTop: scale(50),
-        flex: 1, 
+        flex: 1,
     },
 
     header: {
@@ -124,28 +127,28 @@ const styles = StyleSheet.create({
     },
 
     timelineContainer: {
-        flex: 1, 
+        flex: 1,
         position: "relative",
-        marginTop: scale(40), 
+        marginTop: scale(40),
     },
 
     timelineLine: {
         position: "absolute",
         top: 0,
         bottom: 0,
-        left: scale(43) + scale(35) / 2 - scale(1), 
+        left: scale(43) + scale(35) / 2 - scale(1),
         width: scale(3),
         borderRadius: scale(30),
         backgroundColor: "#FFFFFF",
-        zIndex: -1, 
+        zIndex: -1,
     },
 
     listContent: {
-        paddingBottom: scale(40), 
+        paddingBottom: scale(40),
     },
 
     itemWrapper: {
-        marginBottom: scale(20), 
+        marginBottom: scale(20),
     },
 
     iconWrapper: {
@@ -160,6 +163,6 @@ const styles = StyleSheet.create({
     cardContainer: {
         marginLeft: scale(78),
         width: scale(120),
-        marginTop: -scale(30), 
+        marginTop: -scale(30),
     }
 });

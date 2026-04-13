@@ -6,9 +6,8 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { useForm } from "react-hook-form";
-import * as DocumentPicker from "expo-document-picker";
-import AppBackground from "@/components/layout/AppBackground";
+import { useForm } from "react-hook-form"
+import AppBackground from "@/components/base/AppBackground";
 import InputField from "@/components/forms/InputFeild";
 import AttachmentsField from "@/components/forms/AttachmentFeild";
 import NormalButton from "@/components/common/NormalButton";
@@ -17,9 +16,7 @@ import DeleteIconButton from "../components/Buttons/DeleteIconButton";
 import { scale } from "@/utils/responsive";
 import { Colors } from "@/utils/colors";
 import { Family } from "@/utils/typography";
-import EmergencyCheckBox from "../components/Buttons/EmergencyCheckBox";
-import FileBar from "@/components/common/FileBar";
-import IconWrapper from "@/features/doctor/components/Icons/IconWrapper";
+import EmergencyCheckBox from "../components/EmergencyCheckBox";
 
 
 type FormValues = {
@@ -79,13 +76,18 @@ const CreateCase = ({ navigation }: any) => {
 
   return (
     <AppBackground variant="clean">
-      <ScrollView
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.header}>
-          <View style={styles.headerTitleRow}>
-            <Text style={styles.headerText}>Hi USR-XXXXX</Text>
+      <View style={styles.safeArea}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.header}>
+            <View style={styles.headerTextContainer}>
+              <Text style={styles.headerTitle}>Hi USR-XXXXX</Text>
+              <Text style={styles.headerSubtitle}>
+                Your identity will remain 100% anonymous, and your name will not be shown to the doctors
+              </Text>
+            </View>
             <TouchableOpacity
               style={styles.backButton}
               onPress={() => navigation.goBack()}

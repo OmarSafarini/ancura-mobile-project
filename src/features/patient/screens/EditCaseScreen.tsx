@@ -9,19 +9,19 @@ import {
 import { useForm } from "react-hook-form";
 import * as DocumentPicker from "expo-document-picker";
 
-import AppBackground from "@/components/layout/AppBackground";
+import AppBackground from "@/components/base/AppBackground";
 import InputField from "@/components/forms/InputFeild";
 import AttachmentsField from "@/components/forms/AttachmentFeild";
 import NormalButton from "@/components/common/NormalButton";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
-import EmergencyCheckBox from "../components/Buttons/EmergencyCheckBox";
+import EmergencyCheckBox from "../components/EmergencyCheckBox";
 import DeleteIconButton from "../components/Buttons/DeleteIconButton";
 
 import { scale } from "@/utils/responsive";
 import { Colors, palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import FileBar from "@/components/common/FileBar";
-import IconWrapper from "@/features/doctor/components/Icons/IconWrapper";
+import IconWrapper from "@/components/common/IconWrapper";
 
 type FormValues = {
   title: string;

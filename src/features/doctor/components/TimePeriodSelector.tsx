@@ -8,12 +8,7 @@ import {
 import { palette } from '../../../utils/colors';
 import { Family } from '../../../utils/typography';
 
-export type TimePeriod = 'Weekly' | 'Monthly' | 'All Time';
-
-interface TimePeriodSelectorProps {
-  selectedPeriod: TimePeriod;
-  onPeriodChange: (period: TimePeriod) => void;
-}
+import { TimePeriod, TimePeriodSelectorProps } from "../../../types/ITimePeriodSelectorProps";
 
 const PERIODS: TimePeriod[] = ['Weekly', 'Monthly', 'All Time'];
 

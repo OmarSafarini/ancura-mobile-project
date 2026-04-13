@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import { useForm } from 'react-hook-form';
-import AppBackground from '../../../components/layout/AppBackground';
+import AppBackground from '../../../components/base/AppBackground';
 import Logo from '../../../assets/icons/Logo';
 import FadeInView from '../../../utils/FadeInView';
 import AuthToggle from '../../../components/common/AuthToggle';
@@ -31,8 +31,6 @@ export default function PatientAuthScreen({ navigation }: any) {
 
   const onSubmit = (data: any) => {
     console.log("Form Data: ", { mode: authMode, ...data });
-    // Assuming backend connection is successful, navigate to the PatientApp 
-    // and replace the current auth stack so the user cannot navigate back
     navigation.reset({
       index: 0,
       routes: [{ name: 'PatientApp' }],
@@ -84,7 +82,7 @@ export default function PatientAuthScreen({ navigation }: any) {
               name="password"
               label="Password"
               placeholder="Enter Password"
-              rules={{ 
+              rules={{
                 required: "Password is required",
                 minLength: { value: 8, message: "Password must be at least 8 characters" },
                 maxLength: { value: 13, message: "Password cannot exceed 13 characters" }
