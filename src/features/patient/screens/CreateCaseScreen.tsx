@@ -6,13 +6,16 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { useForm } from "react-hook-form"
+import { useForm } from "react-hook-form";
+import type { DocumentPickerAsset } from "expo-document-picker";
 import AppBackground from "@/components/base/AppBackground";
 import InputField from "@/components/forms/InputFeild";
 import AttachmentsField from "@/components/forms/AttachmentFeild";
 import NormalButton from "@/components/common/NormalButton";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 import DeleteIconButton from "../components/Buttons/DeleteIconButton";
+import FileBar from "@/components/common/FileBar";
+import IconWrapper from "@/components/common/IconWrapper";
 import { scale } from "@/utils/responsive";
 import { Colors } from "@/utils/colors";
 import { Family } from "@/utils/typography";
@@ -23,7 +26,7 @@ type FormValues = {
   title: string;
   description: string;
   isEmergency: boolean;
-  files: DocumentPicker.DocumentPickerAsset[];
+  files: DocumentPickerAsset[];
 };
 
 type CaseFileItem = {
@@ -76,18 +79,13 @@ const CreateCase = ({ navigation }: any) => {
 
   return (
     <AppBackground variant="clean">
-      <View style={styles.safeArea}>
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={styles.header}>
-            <View style={styles.headerTextContainer}>
-              <Text style={styles.headerTitle}>Hi USR-XXXXX</Text>
-              <Text style={styles.headerSubtitle}>
-                Your identity will remain 100% anonymous, and your name will not be shown to the doctors
-              </Text>
-            </View>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.header}>
+          <View style={styles.headerTitleRow}>
+            <Text style={styles.headerText}>Hi USR-XXXXX</Text>
             <TouchableOpacity
               style={styles.backButton}
               onPress={() => navigation.goBack()}
