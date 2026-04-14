@@ -23,14 +23,13 @@ export default function DoctorLoginScreen({ navigation }: any) {
   const onSubmit = async (data: any) => {
   try {
     const { user } = await doctorLogin(data.email, data.password);
-    console.log("✅ Logged in:", user.id);
+    console.log("Logged in:", user.id);
     navigation.reset({
       index: 0,
       routes: [{ name: 'DoctorApp' }],
     });
   } catch (error: any) {
-    console.error("❌ Login failed:", error.response?.data || error.message);
-    // هون تقدر تعرض error message للمستخدم
+    console.error("Login failed:", error.response?.data || error.message);
   }
 };
 

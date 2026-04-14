@@ -7,13 +7,12 @@ import DoctorDashboardAndCases from '@/features/doctor/screens/DashboardAndCases
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-// 2. إنشاء QueryClient مرة واحدة خارج الكومبوننت
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 2,
-      staleTime: 5 * 60 * 1000,    // 5 دقائق
-      gcTime: 10 * 60 * 1000,      // 10 دقائق (كان يسمى cacheTime)
+      staleTime: 5 * 60 * 1000,    
+      gcTime: 10 * 60 * 1000,      
     },
   },
 });
@@ -29,13 +28,11 @@ export default function App() {
     <>
       <QueryClientProvider client={queryClient}>
       <NavigationContainer>
-        <RootNavigator />          {/* ننصح نرجع RootNavigator لاحقاً
-        {/* <DoctorDashboardAndCases /> */}
+        <RootNavigator />         
       </NavigationContainer>
 
       <FlashMessage position="top" />
 
-      {/* DevTools - فقط أثناء التطوير (سيتم تجاهله في الـ Production) */}
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
     </>
