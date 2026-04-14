@@ -9,8 +9,9 @@ import LogoutButton from "@/components/common/LogoutButton";
 import ArrowLeftIcon from "./../../../assets/icons/ArrowLeftIcon";
 import CopyIcon from "../../../assets/icons/CopyIcon";
 import FlashMessage, { showMessage } from "react-native-flash-message";
+import { signOut } from "../../../services/authService";
 
-export default function PaitentSettings() {
+export default function PaitentSettings({ navigation }: any) {
   const insets = useSafeAreaInsets();
   const id = "USR-XXXXX";
   const CopyId = () => {
@@ -25,10 +26,11 @@ export default function PaitentSettings() {
   const goBack = () => {
     navigation.goBack();
   }
-  const LogOut = () => {
-    navigation.navigate("PatientAuthScreen");
 
+  const LogOut = async () => {
+    await signOut();
   }
+
   return (
     <AppBackground variant="logo">
       <View style={styles.container}>

@@ -9,16 +9,36 @@ import HIPAAFooter from '../../../components/common/Footer';
 import { Colors, palette } from '../../../utils/colors';
 import { Family } from '../../../utils/typography';
 import { scale } from '../../../utils/responsive';
+import { verifyOTP } from '../../../services/authService';
+import { useState } from 'react';
 
-export default function DoctorVerificationScreen({ navigation }: any) {
+export default function DoctorVerificationScreen({ navigation, route }: any) {
+  const email = route.params?.email || '';
+
+  const [otp, setOtp] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
   const onCodeFilled = (code: string) => {
-    console.log("Verification Code entered: ", code);
+    setOtp(code);
   };
 
-  const handleSend = () => {
-    console.log("Send clicked");
-    // Navigate to the next step, assuming verification is successful
-    navigation.navigate('DoctorNewPasswordScreen');
+  const handleSend = async () => {
+    if (otp.length < 8) {
+      setError("Please enter the full 8-digit verification code");
+      return;
+    }
+    try {
+      setLoading(true);
+      setError('');
+      const tempToken = await verifyOTP(email, otp);
+      
+      navigation.navigate('DoctorNewPasswordScreen', { tempToken, email });
+    } catch (e: any) {
+      setError("Invalid verification code or expired.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -45,7 +65,8 @@ export default function DoctorVerificationScreen({ navigation }: any) {
 
           {/* Form Section (OTP) */}
           <FadeInView delay={300} style={styles.formContainer}>
-            <AuthOTPInput length={4} onCodeFilled={onCodeFilled} />
+            <AuthOTPInput length={8} onCodeFilled={onCodeFilled} />
+            {error ? <Text style={{ color: Colors.error, marginTop: 10 }}>{error}</Text> : null}
 
             <View style={styles.resendContainer}>
               <Text style={styles.resendText}>if you didn't receive a code. </Text>
@@ -58,9 +79,11 @@ export default function DoctorVerificationScreen({ navigation }: any) {
           {/* Actions Section */}
           <FadeInView delay={450} style={styles.actionsContainer}>
             <NormalButton
-              title="Send"
+              title="Verify"
               onPress={handleSend}
               bgColor={Colors.primary}
+              loading={loading}
+              disabled={loading}
             />
 
             <View style={styles.dividerContainer}>

@@ -9,7 +9,7 @@ interface AuthOTPInputProps {
   onCodeFilled?: (code: string) => void;
 }
 
-export default function AuthOTPInput({ length = 4, onCodeFilled }: AuthOTPInputProps) {
+export default function AuthOTPInput({ length = 8, onCodeFilled }: AuthOTPInputProps) {
   const [code, setCode] = useState<string[]>(new Array(length).fill(''));
   const inputs = useRef<Array<TextInput | null>>([]);
 
@@ -64,18 +64,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: scale(16),
+    gap: scale(8),
     marginVertical: scale(20),
     width: "100%",
   },
   input: {
-    width: scale(60),
-    height: scale(60),
-    borderRadius: scale(30),
+    width: scale(38),
+    height: scale(45),
+    borderRadius: scale(10),
     borderWidth: scale(1.5),
     borderColor: Colors.primary,
     textAlign: 'center',
-    fontSize: scale(22),
+    fontSize: scale(20),
     fontFamily: Family.FG_Medium,
     color: Colors.textDark,
     backgroundColor: Colors.formBackground,
