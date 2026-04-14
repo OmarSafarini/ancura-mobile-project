@@ -15,6 +15,8 @@ import { Colors, palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import { scale } from "@/utils/responsive";
 import { CaseData } from "@/types/ICaseData";
+import { getDoctorBasicInfo } from "@/services/Doctor/Doctor";
+import { getSupabaseSession } from "@/services/supabase";
 
 export default function DoctorDashboardAndCases({ navigation }: any) {
 
@@ -25,6 +27,23 @@ export default function DoctorDashboardAndCases({ navigation }: any) {
   const handleViewDashboardScreen = () => {
     navigation.navigate('DashboardScreen');
   };
+
+  const { data: doctorId } = useQuery({
+    queryKey: ['doctorSession'],
+    queryFn: async () => {
+      const session = await getSupabaseSession();
+      if (!session?.id) throw new Error('No session found');
+      return session.id as string;
+    },
+    staleTime: Infinity,
+  });
+
+  const { data: doctorInfo } = useQuery({
+    queryKey: ['doctorBasicInfo', doctorId],
+    queryFn: () => getDoctorBasicInfo(doctorId!),
+    enabled: !!doctorId,
+    staleTime: 30 * 60 * 1000, 
+  });
 
  const {
   data: casesData,
@@ -50,7 +69,8 @@ const doctorCases: CaseData[] = casesData ?? [];
         <View style={styles.contentWrapper}>
 
           <View style={styles.greetingContainer}>
-            <DoctorGreeting name="Smith" image={undefined} />
+            <DoctorGreeting name={doctorInfo?.fullname || "Doctor"} 
+            image={doctorInfo?.avatar_url ? { uri: doctorInfo.avatar_url } : undefined} />
           </View>
 
           <View style={styles.box}>
