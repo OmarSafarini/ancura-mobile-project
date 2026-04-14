@@ -48,7 +48,8 @@
             "./src/assets/fonts/Helvetica.ttf"
           ]
         }
-      ]
+      ],
+      "expo-secure-store"
     ]
   }
 }

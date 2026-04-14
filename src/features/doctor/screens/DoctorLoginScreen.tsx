@@ -10,28 +10,25 @@ import HIPAAFooter from '../../../components/common/Footer';
 import { Colors, palette } from '../../../utils/colors';
 import { Family } from '../../../utils/typography';
 import { scale } from '../../../utils/responsive';
-import { doctorLogin } from '@/services/Auth/Auth';
+import { signIn } from '../../../services/authService';
+import { useAuthStore } from '../../../store/authStore';
 
 export default function DoctorLoginScreen({ navigation }: any) {
+  const { isAuthenticating, error } = useAuthStore();
+
   const { control, handleSubmit } = useForm({
     defaultValues: {
       email: '',
       password: '',
-    }
+    },
   });
 
   const onSubmit = async (data: any) => {
-  try {
-    const { user } = await doctorLogin(data.email, data.password);
-    console.log("Logged in:", user.id);
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'DoctorApp' }],
-    });
-  } catch (error: any) {
-    console.error("Login failed:", error.response?.data || error.message);
-  }
-};
+    try {
+      await signIn(data.email, data.password, 'doctor');
+    } catch {
+    }
+  };
 
   return (
     <AppBackground variant="clean">
@@ -88,10 +85,17 @@ export default function DoctorLoginScreen({ navigation }: any) {
 
           {/* Actions Section */}
           <FadeInView delay={450} style={styles.actionsContainer}>
+            {/* Error Message */}
+            {error && (
+              <Text style={styles.errorText}>{error}</Text>
+            )}
+
             <NormalButton
               title="Login"
               onPress={handleSubmit(onSubmit)}
               bgColor={Colors.primary}
+              loading={isAuthenticating}
+              disabled={isAuthenticating}
             />
 
             <View style={styles.dividerContainer}>
@@ -104,6 +108,7 @@ export default function DoctorLoginScreen({ navigation }: any) {
               title="Apply as a Licensed Professional"
               onPress={() => navigation.navigate('DoctorProfileAndSettings')}
               bgColor={Colors.secondary}
+              disabled={isAuthenticating}
             />
           </FadeInView>
 
@@ -160,6 +165,19 @@ const styles = StyleSheet.create({
     fontFamily: Family.FG_Regular,
     fontSize: scale(14),
     color: Colors.secondary,
+  },
+  errorText: {
+    width: '100%',
+    marginBottom: scale(12),
+    paddingHorizontal: scale(12),
+    paddingVertical: scale(10),
+    backgroundColor: 'rgba(255, 80, 80, 0.12)',
+    borderRadius: scale(8),
+    borderLeftWidth: 3,
+    borderLeftColor: '#FF5050',
+    color: '#FF5050',
+    fontFamily: Family.FG_Regular,
+    fontSize: scale(13),
   },
   spacer: {
     flex: 1,

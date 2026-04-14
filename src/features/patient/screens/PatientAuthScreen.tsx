@@ -11,6 +11,8 @@ import NormalButton from '../../../components/common/NormalButton';
 import { Colors, palette } from '../../../utils/colors';
 import { Family } from '../../../utils/typography';
 import { scale } from '../../../utils/responsive';
+import { signIn, signUp } from '../../../services/authService';
+import { useAuthStore } from '../../../store/authStore';
 
 const genderData = [
   { label: 'Male', value: 'Male' },
@@ -19,22 +21,39 @@ const genderData = [
 
 export default function PatientAuthScreen({ navigation }: any) {
   const [authMode, setAuthMode] = useState<"signin" | "signup">("signin");
+  const { isAuthenticating, error, setError } = useAuthStore();
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, reset } = useForm({
     defaultValues: {
-      nickname: '',
+      email: '',
       password: '',
       age: '',
       gender: '',
-    }
+    },
   });
 
-  const onSubmit = (data: any) => {
-    console.log("Form Data: ", { mode: authMode, ...data });
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'PatientApp' }],
-    });
+  const handleModeChange = (mode: "signin" | "signup") => {
+    setAuthMode(mode);
+    setError(null);
+    reset();
+  };
+
+  const onSubmit = async (data: any) => {
+    console.log("Form Submitted! Data:", data);
+    try {
+      if (authMode === 'signin') {
+        console.log("Attempting to sign in...");
+        await signIn(data.email, data.password, 'patient');
+      } else {
+        console.log("Attempting to sign up...");
+        await signUp(data.email, data.password, 'patient', {
+          age: parseInt(data.age, 10),
+          gender: data.gender ? data.gender.toLowerCase() : 'male',
+        });
+      }
+    } catch (err: any) {
+      console.error("Auth Error:", err);
+    }
   };
 
   return (
@@ -62,17 +81,22 @@ export default function PatientAuthScreen({ navigation }: any) {
 
           {/* Toggle Section */}
           <FadeInView delay={300} style={styles.toggleContainer}>
-            <AuthToggle value={authMode} onChange={setAuthMode} />
+            <AuthToggle value={authMode} onChange={handleModeChange} />
           </FadeInView>
 
           {/* Form Section */}
           <FadeInView delay={450} style={styles.formContainer}>
             <InputField
               control={control}
-              name="nickname"
-              label="Nickname"
-              placeholder="USR-978896"
-              rules={{ required: "Nickname is required" }}
+              name="email"
+              label="Email"
+              placeholder="your@email.com"
+              rules={{
+                required: "Email is required",
+                pattern: { value: /\S+@\S+\.\S+/, message: "Invalid email format" },
+              }}
+              keyboardType="email-address"
+              autoCapitalize="none"
             />
 
             <View style={{ height: scale(15) }} />
@@ -85,7 +109,7 @@ export default function PatientAuthScreen({ navigation }: any) {
               rules={{
                 required: "Password is required",
                 minLength: { value: 8, message: "Password must be at least 8 characters" },
-                maxLength: { value: 13, message: "Password cannot exceed 13 characters" }
+                maxLength: { value: 13, message: "Password cannot exceed 13 characters" },
               }}
               secureTextEntry={true}
             />
@@ -102,6 +126,7 @@ export default function PatientAuthScreen({ navigation }: any) {
                       label="Age"
                       placeholder="Enter Age"
                       rules={{ required: "Age is required" }}
+                      keyboardType="numeric"
                     />
                   </View>
 
@@ -125,10 +150,17 @@ export default function PatientAuthScreen({ navigation }: any) {
 
           {/* Actions Section */}
           <FadeInView delay={600} style={styles.actionsContainer}>
+            {/* Error Message */}
+            {error && (
+              <Text style={styles.errorText}>{error}</Text>
+            )}
+
             <NormalButton
-              title="Continue"
+              title={authMode === 'signin' ? 'Sign In' : 'Create Account'}
               onPress={handleSubmit(onSubmit)}
               bgColor={Colors.primary}
+              loading={isAuthenticating}
+              disabled={isAuthenticating}
             />
 
             <View style={styles.dividerContainer}>
@@ -142,6 +174,7 @@ export default function PatientAuthScreen({ navigation }: any) {
               onPress={() => console.log('Generate ID')}
               bgColor={palette.darkGray2}
               textColor={Colors.textDark}
+              disabled={isAuthenticating}
             />
           </FadeInView>
 
@@ -229,5 +262,18 @@ const styles = StyleSheet.create({
     color: Colors.textGray,
     fontFamily: Family.FG_Regular,
     fontSize: scale(14),
+  },
+  errorText: {
+    width: '100%',
+    marginBottom: scale(12),
+    paddingHorizontal: scale(12),
+    paddingVertical: scale(10),
+    backgroundColor: 'rgba(255, 80, 80, 0.12)',
+    borderRadius: scale(8),
+    borderLeftWidth: 3,
+    borderLeftColor: '#FF5050',
+    color: '#FF5050',
+    fontFamily: Family.FG_Regular,
+    fontSize: scale(13),
   },
 });
