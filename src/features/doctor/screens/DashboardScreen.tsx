@@ -11,7 +11,7 @@ import StatisticsChart from "@/features/doctor/components/StatisticsChart";
 
 import { scale } from "@/utils/responsive";
 import { useQuery } from "@tanstack/react-query";
-import { getSupabaseSession } from "@/services/supabase";
+import { useAuthStore } from "@/store/authStore";
 import { getDoctorDashboardStats } from "@/services/Doctor/DoctorDashboard";
 
 // --- Animated Counter Hook ---
@@ -47,21 +47,7 @@ export default function DoctorDashboard({ navigation }: any) {
   const [selectedPeriod, setSelectedPeriod] = useState<'Weekly' | 'Monthly' | 'All Time'>('Weekly');
   
 
-  function useDoctorId() {
-  return useQuery({
-    queryKey: ['doctorSession'],
-    queryFn: async () => {
-      const user = await getSupabaseSession();
-      if (!user?.id) throw new Error('No session found');
-      return user.id as string;
-    },
-    staleTime: Infinity,
-    retry: 1,
-  });
-}
-
-
- const { data: doctorId } = useDoctorId();
+  const doctorId = useAuthStore((state) => state.session?.id);
 
   const {
     data: stats = { comments: 0, time: 0, score: 0, chart: [] },
