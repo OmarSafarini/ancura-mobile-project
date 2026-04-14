@@ -1,17 +1,17 @@
-import { supabaseClient } from '@services/supabase';   // اللي فيه axios
-import type { TimePeriod } from '@/types/ITimePeriodSelectorProps';           // أو المسار الصحيح عندك
-import type { BarData } from '@/types/IStatisticsChartProps';             // نفس الشيء
+import { supabaseClient } from '@services/supabase';   
+import type { TimePeriod } from '@/types/ITimePeriodSelectorProps';          
+import type { BarData } from '@/types/IStatisticsChartProps';           
 
 export interface DashboardStats {
   comments: number;
   time: number;
   score: number;
-  chart: BarData[];           // استخدمنا الـ interface اللي عندك
+  chart: BarData[];          
 }
 
 export const getDoctorDashboardStats = async (
   doctorId: string,
-  period: TimePeriod = 'Weekly'     // استخدمنا TimePeriod اللي عندك
+  period: TimePeriod = 'Weekly'     
 ): Promise<DashboardStats> => {
   try {
     const now = new Date();
@@ -25,7 +25,6 @@ export const getDoctorDashboardStats = async (
       startDate = firstDayOfMonth.toISOString();
     }
 
-    // 1. جلب نقاط الدكتور
     const { data: doctorRes } = await supabaseClient.get('/doctor', {
       params: { 
         id: `eq.${doctorId}`, 
@@ -35,7 +34,6 @@ export const getDoctorDashboardStats = async (
 
     const basePoints = doctorRes?.[0]?.points || 0;
 
-    // 2. عدد الـ replies (comments + time)
     const replyParams: any = {
       doctor_id: `eq.${doctorId}`,
       select: 'id',
@@ -52,7 +50,6 @@ export const getDoctorDashboardStats = async (
 
     const repliesCount = parseInt(headers['content-range']?.split('/')[1] || '0', 10) || 0;
 
-    // 3. بيانات الـ Chart
     const chartParams: any = {
       doctor_id: `eq.${doctorId}`,
       select: 'timestamp',
@@ -79,12 +76,11 @@ export const getDoctorDashboardStats = async (
       chart,
     };
   } catch (error: any) {
-    console.error('❌ Error fetching dashboard stats:', error?.response?.data || error.message);
+    console.error('Error fetching dashboard stats:', error?.response?.data || error.message);
     throw error;
   }
 };
 
-// دالة معالجة الـ Chart (مستخدمة BarData)
 const processChartData = (replies: any[], period: TimePeriod): BarData[] => {
   const grouped = new Map<string, number>();
 
@@ -110,8 +106,8 @@ const processChartData = (replies: any[], period: TimePeriod): BarData[] => {
     active: index === arr.length - 1,
   }));
 
-  // Fallback data إذا ما في بيانات
-  if (chartArray.length === 0) {
+  // Fallback data
+    if (chartArray.length === 0) {
     if (period === 'Weekly') {
       chartArray = [
         { label: 'Sat', value: 12 },
