@@ -3,7 +3,7 @@ import { Control, useForm } from "react-hook-form";
 import { View, FlatList, StyleSheet } from "react-native";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getRepliesByPostId, postReply } from '@/services/common_services/ReplyService';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuthStore } from '@/store/authStore';
 import AppBackground from "@/components/base/AppBackground";
 import BackButton from "@/components/common/BackButton";
 import ToggleButton from "@/components/common/ToggleButton";
@@ -81,7 +81,7 @@ const { mutate: submitReply, isPending } = useMutation({
 
 const onSend = async (data: FormData) => {
   if (!data.doctorReply.trim()) return;
-  const doctorId = await AsyncStorage.getItem('doctor_id');
+  const doctorId = useAuthStore.getState().session?.id;
   if (!doctorId) return;
 
   submitReply({
