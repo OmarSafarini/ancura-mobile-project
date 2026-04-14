@@ -10,6 +10,7 @@ import HIPAAFooter from '../../../components/common/Footer';
 import { Colors, palette } from '../../../utils/colors';
 import { Family } from '../../../utils/typography';
 import { scale } from '../../../utils/responsive';
+import { doctorLogin } from '@/services/Auth/Auth';
 
 export default function DoctorLoginScreen({ navigation }: any) {
   const { control, handleSubmit } = useForm({
@@ -19,14 +20,19 @@ export default function DoctorLoginScreen({ navigation }: any) {
     }
   });
 
-  const onSubmit = (data: any) => {
-    console.log("Doctor Login Data: ", data);
-    // Navigate to the DoctorApp stack and reset the history so the user cannot go back
+  const onSubmit = async (data: any) => {
+  try {
+    const { user } = await doctorLogin(data.email, data.password);
+    console.log("✅ Logged in:", user.id);
     navigation.reset({
       index: 0,
       routes: [{ name: 'DoctorApp' }],
     });
-  };
+  } catch (error: any) {
+    console.error("❌ Login failed:", error.response?.data || error.message);
+    // هون تقدر تعرض error message للمستخدم
+  }
+};
 
   return (
     <AppBackground variant="clean">

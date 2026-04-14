@@ -1,7 +1,9 @@
 import React, { useRef, useState } from "react";
-import { Control, useForm } from "react-hook-form";
+import { Control, useForm, handleSubmit } from "react-hook-form";
 import { View, FlatList, StyleSheet } from "react-native";
-
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getRepliesByPostId, postReply } from '@/services/ReplyService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppBackground from "@/components/base/AppBackground";
 import BackButton from "@/components/common/BackButton";
 import ToggleButton from "@/components/common/ToggleButton";
@@ -10,7 +12,7 @@ import DoctorReplyCard from "@/components/common/DoctorReplyCard";
 import ResolvedSlideButton from "../patient/components/ResolvedSlideButton";
 import ReplyText from "@/components/common/ReplyText";
 import ReplyField from "@/components/forms/ReplyFeild";
-import ArrowInCircle from "@/assets/icons/SubmitButton";
+import ArrowInCircle from "@/components/common/SubmitButton";
 import ScrollToBottomButton from "../patient/components/ScrollToBottom";
 
 import { scale } from "@/utils/responsive";
@@ -58,7 +60,41 @@ export default function CaseDetailScreen({ navigation, route }: any) {
     navigation.navigate('DoctorHomeScreen');
   };
 
-  const { control } = useForm<FormData>({
+
+  const queryClient = useQueryClient();
+
+// جلب الـ replies
+const { data: replies = [] } = useQuery({
+  queryKey: ['replies', caseId],
+  queryFn: () => getRepliesByPostId(caseId),
+  enabled: !!caseId,
+});
+
+// إضافة reply
+const { mutate: submitReply, isPending } = useMutation({
+  mutationFn: postReply,
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['replies', caseId] });
+    resetField('doctorReply');
+  },
+  onError: (error: any) => {
+    console.error('❌ Failed to post reply:', error?.response?.data || error.message);
+  },
+});
+
+const onSend = async (data: FormData) => {
+  if (!data.doctorReply.trim()) return;
+  const doctorId = await AsyncStorage.getItem('doctor_id');
+  if (!doctorId) return;
+
+  submitReply({
+    postId: caseId,
+    doctorId,
+    patientId: caseData?.patient_id,
+    body: data.doctorReply.trim(),
+  });
+};
+  const { control, handleSubmit, resetField  } = useForm<FormData>({
     defaultValues: { doctorReply: "" },
   });
 
@@ -69,7 +105,7 @@ export default function CaseDetailScreen({ navigation, route }: any) {
   };
 
 
-  const replies = allDummyReplies.filter(reply => reply.case_id === caseId);
+  //const replies = allDummyReplies.filter(reply => reply.case_id === caseId);
 
 
   return (
@@ -168,7 +204,7 @@ export default function CaseDetailScreen({ navigation, route }: any) {
                   />
                 </View>
 
-                <ArrowInCircle />
+                <ArrowInCircle onPress={handleSubmit(onSend)}/>
               </View>
             </View>
           )}
