@@ -14,8 +14,7 @@ import ArrowInCircle from "@/components/common/SubmitButton";
 import { scale } from "@/utils/responsive";
 import { Colors } from "@/utils/colors";
 import { Family } from "@/utils/typography";
-import { allDummyReplies } from "@/types/mockData";
-import { getRepliesByPostId, postReply } from "@/services/ReplyService";
+import { getRepliesByPostId, postReply } from "@/services/common_services/ReplyService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
@@ -24,26 +23,24 @@ type FormData = { doctorReply: string };
 export default function DoctorRepliesScreen({ navigation, route }: any) {
   const caseData = route?.params?.caseData;
   const role = route?.params?.role || 'doctor';
-const caseId = route?.params?.caseId || caseData?.id; // ✅ فوق
+const caseId = route?.params?.caseId || caseData?.id; 
 
   const isDoctor = role === "doctor";
   const isPatient = role === "patient";
 
-  const queryClient = useQueryClient(); // ✅ مش ناقص
+  const queryClient = useQueryClient(); 
   const flatListRef = useRef<FlatList>(null);
 
-  const { control, handleSubmit, resetField } = useForm<FormData>({ // ✅ مرة وحدة
+  const { control, handleSubmit, resetField } = useForm<FormData>({ 
     defaultValues: { doctorReply: "" },
   });
 
-  // ✅ جلب الـ replies
   const { data: replies = [] } = useQuery({
     queryKey: ['replies', caseId],
     queryFn: () => getRepliesByPostId(caseId),
     enabled: !!caseId,
   });
 
-  // ✅ إضافة reply
   const { mutate: submitReply } = useMutation({
     mutationFn: postReply,
     onSuccess: () => {
@@ -54,7 +51,7 @@ const caseId = route?.params?.caseId || caseData?.id; // ✅ فوق
       }, 300);
     },
     onError: (error: any) => {
-      console.error('❌ Failed to post reply:', error?.response?.data || error.message);
+      console.error('Failed to post reply:', error?.response?.data || error.message);
     },
   });
 
@@ -95,8 +92,6 @@ const caseId = route?.params?.caseId || caseData?.id; // ✅ فوق
     console.log("Case marked as resolved");
   };
 
-  //const caseId = route?.params?.caseId || caseData?.id;
-  //const replies = allDummyReplies.filter((reply) => reply.case_id === caseId);
 
   return (
     <AppBackground style={{ flex: 1 }}>

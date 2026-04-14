@@ -8,7 +8,6 @@ import TimePeriodSelector from "../components/TimePeriodSelector";
 import StatsCard from "../components/StatisticCard";
 import ActivityLogButton from "../components/ActivityLogButton";
 import StatisticsChart from "@/features/doctor/components/StatisticsChart";
-//import { doctorPeriodData } from "@/types/mockData";
 
 import { scale } from "@/utils/responsive";
 import { useQuery } from "@tanstack/react-query";
@@ -64,7 +63,6 @@ export default function DoctorDashboard({ navigation }: any) {
 
  const { data: doctorId } = useDoctorId();
 
-  // ✅ جلب الـ stats
   const {
     data: stats = { comments: 0, time: 0, score: 0, chart: [] },
     isPending,
@@ -79,7 +77,6 @@ export default function DoctorDashboard({ navigation }: any) {
   const time = useAnimatedCounter(stats.time);
   const score = useAnimatedCounter(stats.score);
 
-  // Re-animate every time the screen comes into focus
   useFocusEffect(
     useCallback(() => {
       comments.animate();

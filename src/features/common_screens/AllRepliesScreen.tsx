@@ -13,7 +13,6 @@ import { Family } from "@/utils/typography";
 import ArrowInCircle from "@/components/common/SubmitButton";
 import ReplyField from "@/components/forms/ReplyFeild";
 import { Control, useForm } from "react-hook-form";
-import { allDummyComments } from "@/types/mockData";
 import { supabaseClient } from "@/services/supabase";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -34,7 +33,6 @@ const getCommentsByReplyId = async (replyId: number) => {
   return data ?? [];
 };
 
-// ✅ إضافة comment جديد
 const postComment = async ({ replyId, body }: { replyId: number; body: string }) => {
   const { data } = await supabaseClient.post('/comment', {
     reply_id: replyId,
@@ -52,26 +50,23 @@ export default function AllRepliesScreen({ navigation, route }: any) {
 
   const isPatient = role === "patient";
 
-  // ✅ جلب الـ comments بـ React Query
   const { data: comments = [], isLoading } = useQuery({
     queryKey: ['comments', replyId],
     queryFn: () => getCommentsByReplyId(replyId),
     enabled: !!replyId,
   });
 
-  // ✅ إضافة comment بـ mutation
   const { mutate: submitComment, isPending } = useMutation({
     mutationFn: postComment,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comments', replyId] });
       resetField('doctorReply');
-      // scroll للأسفل بعد الإضافة
       setTimeout(() => {
         listRef.current?.scrollToEnd({ animated: true });
       }, 300);
     },
     onError: (error: any) => {
-      console.error('❌ Failed to post comment:', error?.response?.data || error.message);
+      console.error('Failed to post comment:', error?.response?.data || error.message);
     },
   });
 
@@ -93,7 +88,6 @@ export default function AllRepliesScreen({ navigation, route }: any) {
 
   const listRef = useRef<FlatList>(null);
 
-  //const comments = allDummyComments.filter(c => c.reply_id === replyId);
 
   return (
     <AppBackground>

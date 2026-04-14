@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
 import { useQuery } from '@tanstack/react-query';
 import AppBackground from "@/components/base/AppBackground";
@@ -10,7 +10,7 @@ import ClockIcon from "@/assets/icons/ClockIcon";
 import ChatIcon from "../../../assets/icons/ChatIcon";
 import StartwithTickIcon from "../../../assets/icons/StartwithTickIcon";
 import StatisticsSection from "../components/ViewStatisticSection";
-import { getAllCases } from "@/services/Case";
+import { getAllCases } from "@/services/common_services/Case";
 import { Colors, palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import { scale } from "@/utils/responsive";
@@ -26,7 +26,6 @@ export default function DoctorDashboardAndCases({ navigation }: any) {
     navigation.navigate('DashboardScreen');
   };
 
-  //const doctorCases = dummyCases.filter(c => c.status !== "Resolved");
  const {
   data: casesData,
   isPending,
@@ -41,7 +40,6 @@ export default function DoctorDashboardAndCases({ navigation }: any) {
   retry: 2,
 });
 
-// هنا نضمن النوع بشكل واضح
 const doctorCases: CaseData[] = casesData ?? [];
   return (
     <AppBackground>

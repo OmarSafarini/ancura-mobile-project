@@ -1,4 +1,3 @@
-// services/Auth/DoctorAuth.ts
 import { supabaseClient } from '@/services/supabase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -13,7 +12,6 @@ export const doctorLogin = async (email: string, password: string) => {
 
   const { access_token, refresh_token, user } = response.data;
 
-  // ✅ خزن الـ token
   await AsyncStorage.setItem('access_token', access_token);
   await AsyncStorage.setItem('refresh_token', refresh_token);
   await AsyncStorage.setItem('doctor_id', user.id);

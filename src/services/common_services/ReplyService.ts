@@ -4,7 +4,7 @@ export const getRepliesByPostId = async (postId: number) => {
   const { data } = await supabaseClient.get('/reply', {
     params: {
       post_id: `eq.${postId}`,
-      select: '*',        // ← شيل الـ join مع doctor
+      select: '*',        
       order: 'timestamp.asc',
     },
   });

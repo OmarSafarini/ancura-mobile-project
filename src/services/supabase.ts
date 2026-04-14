@@ -13,7 +13,6 @@ export const supabaseClient = axios.create({
   },
 });
 
-// ✅ interceptor يحط الـ token تلقائياً بكل request
 supabaseClient.interceptors.request.use(async (config) => {
   const token = await AsyncStorage.getItem('access_token');
   config.headers.Authorization = `Bearer ${token ?? SUPABASE_ANON_KEY}`;
@@ -32,23 +31,19 @@ supabaseClient.interceptors.response.use(
         const refreshToken = await AsyncStorage.getItem('refresh_token');
         if (!refreshToken) throw new Error('No refresh token');
 
-        // طلب token جديد
         const { data } = await axios.post(
           `${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`,
           { refresh_token: refreshToken },
           { headers: { apikey: SUPABASE_ANON_KEY } }
         );
 
-        // خزن الـ tokens الجديدة
         await AsyncStorage.setItem('access_token', data.access_token);
         await AsyncStorage.setItem('refresh_token', data.refresh_token);
 
-        // أعد الـ request الأصلي بالـ token الجديد
         originalRequest.headers.Authorization = `Bearer ${data.access_token}`;
         return supabaseClient(originalRequest);
 
       } catch (refreshError) {
-        // لو الـ refresh فشل، امسح الـ tokens وارجع للـ login
         await AsyncStorage.multiRemove(['access_token', 'refresh_token', 'doctor_id']);
         return Promise.reject(refreshError);
       }

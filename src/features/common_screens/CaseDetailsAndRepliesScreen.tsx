@@ -1,8 +1,8 @@
 import React, { useRef, useState } from "react";
-import { Control, useForm, handleSubmit } from "react-hook-form";
+import { Control, useForm } from "react-hook-form";
 import { View, FlatList, StyleSheet } from "react-native";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getRepliesByPostId, postReply } from '@/services/ReplyService';
+import { getRepliesByPostId, postReply } from '@/services/common_services/ReplyService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppBackground from "@/components/base/AppBackground";
 import BackButton from "@/components/common/BackButton";
@@ -20,7 +20,6 @@ import { Colors } from "@/utils/colors";
 
 import PencilIcon from "@/assets/icons/PencilIcon";
 import TrashIcon from "@/assets/icons/TrashIcon";
-import { allDummyReplies } from "@/types/mockData";
 
 
 
@@ -63,14 +62,12 @@ export default function CaseDetailScreen({ navigation, route }: any) {
 
   const queryClient = useQueryClient();
 
-// جلب الـ replies
 const { data: replies = [] } = useQuery({
   queryKey: ['replies', caseId],
   queryFn: () => getRepliesByPostId(caseId),
   enabled: !!caseId,
 });
 
-// إضافة reply
 const { mutate: submitReply, isPending } = useMutation({
   mutationFn: postReply,
   onSuccess: () => {
@@ -78,7 +75,7 @@ const { mutate: submitReply, isPending } = useMutation({
     resetField('doctorReply');
   },
   onError: (error: any) => {
-    console.error('❌ Failed to post reply:', error?.response?.data || error.message);
+    console.error('Failed to post reply:', error?.response?.data || error.message);
   },
 });
 
@@ -103,10 +100,6 @@ const onSend = async (data: FormData) => {
   const scrollToBottom = () => {
     flatListRef.current?.scrollToEnd({ animated: true });
   };
-
-
-  //const replies = allDummyReplies.filter(reply => reply.case_id === caseId);
-
 
   return (
     <AppBackground>
