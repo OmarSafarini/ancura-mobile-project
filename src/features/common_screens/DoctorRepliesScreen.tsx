@@ -15,7 +15,7 @@ import { scale } from "@/utils/responsive";
 import { Colors } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import { getRepliesByPostId, postReply } from "@/services/common_services/ReplyService";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAuthStore } from "@/store/authStore";
 
 
 type FormData = { doctorReply: string };
@@ -57,7 +57,7 @@ const caseId = route?.params?.caseId || caseData?.id;
 
   const onSend = async (data: FormData) => {
     if (!data.doctorReply.trim()) return;
-    const doctorId = await AsyncStorage.getItem('doctor_id');
+    const doctorId = useAuthStore.getState().session?.id;
     if (!doctorId) return;
     submitReply({
       postId: caseId,
