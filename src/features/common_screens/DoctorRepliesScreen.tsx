@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { View, FlatList, StyleSheet, Text } from "react-native";
-
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Control, useForm } from "react-hook-form";
 import AppBackground from "@/components/base/AppBackground";
 import BackButton from "@/components/common/BackButton";
 import ReplyText from "@/components/common/ReplyText";
@@ -8,22 +9,64 @@ import DoctorReplyCard from "@/components/common/DoctorReplyCard";
 import ResolvedSlideButton from "../patient/components/ResolvedSlideButton";
 import ScrollToBottomButton from "../patient/components/ScrollToBottom";
 import ReplyField from "@/components/forms/ReplyFeild";
-import ArrowInCircle from "@/assets/icons/SubmitButton";
+import ArrowInCircle from "@/components/common/SubmitButton";
 
 import { scale } from "@/utils/responsive";
 import { Colors } from "@/utils/colors";
 import { Family } from "@/utils/typography";
-import { Control, useForm } from "react-hook-form";
-import { allDummyReplies } from "@/types/mockData";
+import { getRepliesByPostId, postReply } from "@/services/common_services/ReplyService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 type FormData = { doctorReply: string };
 
 export default function DoctorRepliesScreen({ navigation, route }: any) {
   const caseData = route?.params?.caseData;
-  const role = route?.params?.role || 'patient';
+  const role = route?.params?.role || 'doctor';
+const caseId = route?.params?.caseId || caseData?.id; 
 
   const isDoctor = role === "doctor";
   const isPatient = role === "patient";
+
+  const queryClient = useQueryClient(); 
+  const flatListRef = useRef<FlatList>(null);
+
+  const { control, handleSubmit, resetField } = useForm<FormData>({ 
+    defaultValues: { doctorReply: "" },
+  });
+
+  const { data: replies = [] } = useQuery({
+    queryKey: ['replies', caseId],
+    queryFn: () => getRepliesByPostId(caseId),
+    enabled: !!caseId,
+  });
+
+  const { mutate: submitReply } = useMutation({
+    mutationFn: postReply,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['replies', caseId] });
+      resetField('doctorReply');
+      setTimeout(() => {
+        flatListRef.current?.scrollToEnd({ animated: true });
+      }, 300);
+    },
+    onError: (error: any) => {
+      console.error('Failed to post reply:', error?.response?.data || error.message);
+    },
+  });
+
+  const onSend = async (data: FormData) => {
+    if (!data.doctorReply.trim()) return;
+    const doctorId = await AsyncStorage.getItem('doctor_id');
+    if (!doctorId) return;
+    submitReply({
+      postId: caseId,
+      doctorId,
+      patientId: caseData?.patient_id,
+      body: data.doctorReply.trim(),
+    });
+  };
+
 
   const handleViewAllReplies = (reply: any) => {
     navigation.navigate('AllRepliesScreen', {
@@ -39,11 +82,7 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
     navigation.navigate('CaseDetailsAndRepliesScreen');
   };
 
-  const { control } = useForm<FormData>({
-    defaultValues: { doctorReply: "" },
-  });
-
-  const flatListRef = useRef<FlatList>(null);
+ 
 
   const scrollToBottom = () => {
     flatListRef.current?.scrollToEnd({ animated: true });
@@ -53,8 +92,6 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
     console.log("Case marked as resolved");
   };
 
-  const caseId = route?.params?.caseId || caseData?.id;
-  const replies = allDummyReplies.filter((reply) => reply.case_id === caseId);
 
   return (
     <AppBackground style={{ flex: 1 }}>
@@ -109,7 +146,7 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
                 <ReplyField name="doctorReply" control={control as Control<any>} />
               </View>
 
-              <ArrowInCircle />
+              <ArrowInCircle onPress={handleSubmit(onSend)}/>
             </View>
           </View>
         )}
