@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
-import { Colors, palette } from "@/utils/colors";
 import { scale } from "@/utils/responsive";
 import { Family } from "@/utils/typography";
 
@@ -9,14 +8,27 @@ interface Props {
   image: any; 
 }
 
+function greeting() {
+    const now = new Date();
+    const hour = now.getHours();
+
+    if (hour < 12) {
+      return "Good Morning";
+    } else if (hour < 18) {
+      return "Good Afternoon";
+    } else {
+      return "Good Evening";
+    }
+  }
+
 const DoctorGreeting = ({ name, image }: Props) => {
   return (
     <View style={styles.container}>
       <Image source={image} style={styles.avatar} />
 
       <View style={styles.textContainer}>
-        <Text style={styles.greeting}>Good morning</Text>
-        <Text style={styles.name}>Dr. {name}</Text>
+        <Text style={styles.greeting}>{greeting()}</Text>
+        <Text style={styles.name}>{name}</Text>
       </View>
     </View>
   );

@@ -13,6 +13,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getPatintProfile } from "@/services/Patient/PatinetService";
 import AnimatedLogoScreen from "@/components/base/AnimatedLogoScreen";
 import * as Clipboard from "expo-clipboard";
+export default function PaitentSettings() {
+
 import { signOut } from "../../../services/authService";
 
 export default function PaitentSettings({ navigation }: any) {
