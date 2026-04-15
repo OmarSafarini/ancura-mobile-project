@@ -13,6 +13,20 @@ import { scale } from "@/utils/responsive";
 import { useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/authStore";
 import { getDoctorDashboardStats } from "@/services/Doctor/DoctorDashboard";
+import { getDoctorBasicInfo } from "@/services/Doctor/Doctor";
+
+function useDoctorId() {
+  return useQuery({
+    queryKey: ['doctorSession'],
+    queryFn: async () => {
+      const user = await getSupabaseSession();
+      if (!user?.id) throw new Error('No session found');
+      return user.id as string;
+    },
+    staleTime: Infinity,
+    retry: 1,
+  });
+}
 
 // --- Animated Counter Hook ---
 function useAnimatedCounter(target: number, duration = 700) {
@@ -24,6 +38,7 @@ function useAnimatedCounter(target: number, duration = 700) {
     const listener = animValue.addListener(({ value }) => {
       setDisplay(Math.floor(value));
     });
+
     Animated.timing(animValue, {
       toValue: target,
       duration,
@@ -32,6 +47,7 @@ function useAnimatedCounter(target: number, duration = 700) {
       animValue.removeListener(listener);
       setDisplay(target);
     });
+
     return listener;
   }, [target, duration]);
 
@@ -45,9 +61,15 @@ function useAnimatedCounter(target: number, duration = 700) {
 
 export default function DoctorDashboard({ navigation }: any) {
   const [selectedPeriod, setSelectedPeriod] = useState<'Weekly' | 'Monthly' | 'All Time'>('Weekly');
-  
 
-  const doctorId = useAuthStore((state) => state.session?.id);
+  const { data: doctorId } = useDoctorId();
+
+  const { data: doctorInfo } = useQuery({
+    queryKey: ['doctorBasicInfo', doctorId],
+    queryFn: () => getDoctorBasicInfo(doctorId!),
+    enabled: !!doctorId,
+    staleTime: 30 * 60 * 1000,
+  });
 
   const {
     data: stats = { comments: 0, time: 0, score: 0, chart: [] },
@@ -82,7 +104,11 @@ export default function DoctorDashboard({ navigation }: any) {
         contentContainerStyle={styles.scrollContent}
       >
         <View style={styles.headerContainer}>
-          <DoctorGreeting name="Lian Sawalha" image={undefined} />
+          <DoctorGreeting
+            name={doctorInfo?.fullname || "Doctor"}
+            image={doctorInfo?.avatar_url ? { uri: doctorInfo.avatar_url } : undefined}
+          />
+
           <TimePeriodSelector
             selectedPeriod={selectedPeriod}
             onPeriodChange={(period) => {
@@ -94,6 +120,7 @@ export default function DoctorDashboard({ navigation }: any) {
         <View style={styles.statisticsGrid}>
           <View style={styles.leftColumn}>
             <StatsCard type="comments" value={comments.display} />
+
             <ActivityLogButton
               label="Activity Log"
               style={styles.activityButton}
@@ -138,8 +165,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
 
-  selectorContainer: {
-  },
+  selectorContainer: {},
 
   statisticsGrid: {
     flexDirection: 'row',
@@ -163,6 +189,7 @@ const styles = StyleSheet.create({
   activityButton: {
     width: '100%',
   },
+
   chartContainer: {
     width: '100%',
   },
