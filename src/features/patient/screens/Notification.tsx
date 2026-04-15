@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
-import { Text, View, StyleSheet, FlatList, Animated, Pressable } from "react-native";
+import { Text, View, StyleSheet, FlatList, Animated, Pressable, SafeAreaView } from "react-native";
 import { Colors } from "@/utils/colors";
 import { scale } from "@/utils/responsive";
 import { Family } from "@/utils/typography";
@@ -55,29 +55,35 @@ export default function Notification() {
     );
 
     return (
-        <AppBackground variant="clean" style={styles.screen}>
-            <FlatList
-                data={notifications}
-                keyExtractor={(item, index) => item.id || index.toString()}
-                renderItem={renderItem}
-                ListHeaderComponent={renderHeader}
-                contentContainerStyle={styles.listContainer}
-                showsVerticalScrollIndicator={false}
-            />
+        <AppBackground variant="clean" style={styles.background}>
+            <SafeAreaView style={styles.safeArea}>
+                <FlatList
+                    data={notifications}
+                    keyExtractor={(item, index) => item.id || index.toString()}
+                    renderItem={renderItem}
+                    ListHeaderComponent={renderHeader}
+                    contentContainerStyle={styles.listContainer}
+                    showsVerticalScrollIndicator={false}
+                />
+            </SafeAreaView>
         </AppBackground>
     );
 }
 
 const styles = StyleSheet.create({
-    screen: {
+    background: {
         flex: 1,
-        paddingTop: scale(50),
+    },
+    safeArea: {
+        flex: 1,
     },
     header: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
         marginBottom: scale(56),
+        // Added a bit of top margin in case the SafeArea is too close to the very top on Android
+        marginTop: scale(10), 
     },
     iconWrapper: {
         borderRadius: scale(6),

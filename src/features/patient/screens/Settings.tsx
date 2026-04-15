@@ -18,6 +18,7 @@ import { getUserMeta } from "@/services/tokenService";
 
 export default function PaitentSettings({ navigation }: any) {
   const insets = useSafeAreaInsets();
+  const id = "9b3cb633-dad5-4e14-aa24-71daa6c17b58";
   const CopyId = async (copiedId: string) => {
     await Clipboard.setStringAsync(copiedId);
     showMessage({

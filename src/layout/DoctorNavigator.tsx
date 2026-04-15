@@ -12,7 +12,7 @@ import AllRepliesScreen from '../features/common_screens/AllRepliesScreen';
 import {BaseKnowledge} from '../features/patient/screens/BaseKnowledge';
 
 // --- Screens for Tab 2 (Activity Log) ---
-import ActivityLogScreen from '../features/patient/screens/ActivityLog';
+import ActivityLogScreen from '../features/doctor/screens/ActivityLog';
 
 // --- Screens for Tab 3 (Notifications) ---
 import NotificationScreen from '../features/patient/screens/Notification';
