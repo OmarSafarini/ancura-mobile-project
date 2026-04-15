@@ -12,9 +12,9 @@ export default function RoleSelectionScreen({ navigation }: any) {
 
     const handleContinue = () => {
         if (selectedRole === "patient") {
-            navigation.navigate("PatientAuthScreen");
+            navigation.navigate("PatientApp");
         } else if (selectedRole === "doctor") {
-            navigation.navigate("DoctorLoginScreen");
+            navigation.navigate("LicenseVerification");
         }
     };
 

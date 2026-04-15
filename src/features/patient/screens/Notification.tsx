@@ -44,7 +44,6 @@ export default function Notification() {
         </View>
     );
 
-    {/*i tested if it bring an error but it doesn't */ }
     const renderItem = ({ item }) => (
         <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY }] }}>
             <Pressable
