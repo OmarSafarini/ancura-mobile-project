@@ -24,6 +24,8 @@ import {
 } from "@/services/Patient/PatinetService";
 import AnimatedLogoScreen from "@/components/base/AnimatedLogoScreen";
 import { Status } from "@/types/ICaseStatusProps";
+import userBase from "../../../../assets/icon.png";
+import { getUserMeta } from "@/services/tokenService";
 
 export default function PatientHomePage() {
   const navigation = useNavigation<any>();
@@ -31,14 +33,17 @@ export default function PatientHomePage() {
   const [filterStatus, setFilterStatus] = useState<Status | null>(null);
   const [selected, setSelcted] = useState("All");
 
-  const id = "9b3cb633-dad5-4e14-aa24-71daa6c17b58";
   const {
     data: patient,
     isLoading: patientLoading,
     isError: patientError,
   } = useQuery({
-    queryKey: ["patient", id],
-    queryFn: () => getPatintProfile(id),
+    queryKey: ["patient"],
+    queryFn: async () => {
+      const meta = await getUserMeta();
+      console.log(meta!.id);
+      return getPatintProfile(meta!.id);
+    },
   });
 
   const {
@@ -46,8 +51,12 @@ export default function PatientHomePage() {
     isLoading: patientPstLoading,
     isError: patientPostError,
   } = useQuery({
-    queryKey: ["patientPost", id],
-    queryFn: () => getPatintPosts(id),
+    queryKey: ["patientPost"],
+    queryFn: async () => {
+      const meta = await getUserMeta();
+      console.log(meta!.id);
+      return getPatintPosts(meta!.id);
+    },
   });
 
   if (patientLoading || patientPstLoading) {
@@ -73,11 +82,12 @@ export default function PatientHomePage() {
     { label: "Resolved", value: "resolved" },
   ];
 
+  const profilePic = patient?.profilePic ?? userBase;
   return (
     <AppBackground variant="logo">
       <View style={styles.container}>
         <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
-          <Image style={styles.img} source={patient?.profilePic} />
+          <Image style={styles.img} source={profilePic} />
           <IconWrapper shape="square" bgColor={palette.white} size={33}>
             <NotificationsIcon size={16} color={palette.black} />
           </IconWrapper>
@@ -159,8 +169,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   img: {
-    width: scale(33),
-    height: scale(33),
+    width: scale(40),
+    height: scale(40),
   },
   container: {
     padding: scale(40),

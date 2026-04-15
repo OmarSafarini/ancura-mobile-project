@@ -10,6 +10,7 @@ export type CaseData = {
   description: string;
   file?: string;               // attached image/pdf URL
   timestamp: string;           // was: created_at (matches SQL column name)
+  time_ago:string;
   isEmergency: boolean;
   isReplied: boolean;          // was: missing entirely
 
