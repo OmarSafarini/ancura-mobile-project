@@ -193,7 +193,7 @@ export function LicenseVerification({ navigation }: any) {
                 <View style={styles.overlay}>
                     <SuccessScreen
                         subtitle="Your account created successfully and ready now."
-                        onPress={() => { setShowSuccess(false); navigation.replace('DoctorApp') }}
+                        onPress={() => { setShowSuccess(false); navigation.navigate('DoctorLoginScreen') }}
                     />
                 </View>
             </Modal>
