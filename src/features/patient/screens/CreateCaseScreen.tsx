@@ -22,6 +22,7 @@ import { Colors } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import EmergencyCheckBox from "../components/EmergencyCheckBox";
 import { createCase } from "@/services/Patient/Cases";
+import { useAuthStore } from "@/store/authStore";
 
 
 type FormValues = {
@@ -38,6 +39,7 @@ type CaseFileItem = {
 
 const CreateCase = ({ navigation }: any) => {
   const [caseFiles, setCaseFiles] = useState<CaseFileItem[]>([]);
+  const user = useAuthStore((state) => state.user);
 
   const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
     defaultValues: {
@@ -53,12 +55,17 @@ const CreateCase = ({ navigation }: any) => {
 
   const onSubmit = async (data: FormValues) => {
     try {
+      if (!user?.id) {
+        Alert.alert("Error", "You must be signed in to create a case.");
+        return;
+      }
+
       const files = data.files
         .map((file) => file.uri || file.name)
         .filter(Boolean) as string[];
 
       await createCase({
-        patient_id: "19a57f4a-e6be-47ec-94a9-8203c7e0547e",
+        patient_id: user.id,
         title: data.title.trim(),
         description: data.description.trim(),
         file: files[0] ?? null,
