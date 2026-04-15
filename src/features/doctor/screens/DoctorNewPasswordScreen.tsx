@@ -10,8 +10,10 @@ import HIPAAFooter from '../../../components/common/Footer';
 import { Colors } from '../../../utils/colors';
 import { Family } from '../../../utils/typography';
 import { scale } from '../../../utils/responsive';
+import { updatePassword } from '../../../services/authService';
+import { useState } from 'react';
 
-export default function DoctorNewPasswordScreen({ navigation }: any) {
+export default function DoctorNewPasswordScreen({ navigation, route }: any) {
   const { control, handleSubmit } = useForm({
     defaultValues: {
       newPassword: '',
@@ -19,10 +21,29 @@ export default function DoctorNewPasswordScreen({ navigation }: any) {
     }
   });
 
-  const onSubmit = (data: any) => {
-    console.log("New Password Data: ", data);
-    // Assuming backend password change is successful, navigate back to login
-    navigation.navigate('DoctorLoginScreen');
+  const tempToken = route.params?.tempToken || '';
+  const email = route.params?.email || '';
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const onSubmit = async (data: any) => {
+    if (data.newPassword !== data.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError('');
+      
+      await updatePassword(email, data.newPassword, tempToken);
+      
+    } catch (e: any) {
+      setError(e.message || "Error updating password");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -75,6 +96,7 @@ export default function DoctorNewPasswordScreen({ navigation }: any) {
               }}
               secureTextEntry={true}
             />
+            {error ? <Text style={{ color: Colors.error, marginTop: 10 }}>{error}</Text> : null}
           </FadeInView>
 
           {/* Actions Section */}
@@ -83,6 +105,8 @@ export default function DoctorNewPasswordScreen({ navigation }: any) {
               title="Confirm"
               onPress={handleSubmit(onSubmit)}
               bgColor={Colors.primary}
+              loading={loading}
+              disabled={loading}
             />
           </FadeInView>
 

@@ -19,8 +19,9 @@ import TickIcon from "@/assets/icons/TickIcon";
 import { IDoctor } from "@/types/IDoctor";
 import IconWrapper from "../../../components/common/IconWrapper";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
+import { signOut } from "../../../services/authService";
 
-export default function DoctorProfile() {
+export default function DoctorProfile({ navigation }: any) {
   const doctor: IDoctor = {
     id: "d1e2f3a4-0003-0000-0000-000000000001",
     full_name: "Dr. Aprar Ismail",
@@ -51,9 +52,8 @@ export default function DoctorProfile() {
     navigation.goBack();
   }
 
-  const LogOut = () => {
-    navigation.navigate("DoctorLoginScreen");
-
+  const LogOut = async () => {
+    await signOut();
   }
   return (
     <AppBackground variant="clean">
