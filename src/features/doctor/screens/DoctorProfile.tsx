@@ -47,9 +47,13 @@ const {
     isLoading :LicenseLoading ,
     isError: LicenseError,
  } = useQuery<ILicense>({
-  queryKey: ["license", id],
-  queryFn: () => getDoctorLicense(id),
-  enabled: !!id,
+  queryKey: ["license"],
+  queryFn:async () => {
+    const meta =await getUserMeta();
+    console.log(meta!.id);
+    return getDoctorLicense(meta!.id)
+  }
+
 });
 
   const insets = useSafeAreaInsets();
