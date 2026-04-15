@@ -31,6 +31,7 @@ const {
     queryKey: ["doctor"],
     queryFn :async () => {
       const meta = await getUserMeta();
+      
       return getDoctorProfile(meta!.id);
     }
   });
