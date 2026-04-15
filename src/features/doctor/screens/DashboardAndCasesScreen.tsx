@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
-
+import { useQuery } from '@tanstack/react-query';
 import AppBackground from "@/components/base/AppBackground";
 import DoctorGreeting from "../components/DoctorGreeting";
 import CaseCard from "@/components/common/CaseCard";
@@ -10,11 +10,11 @@ import ClockIcon from "@/assets/icons/ClockIcon";
 import ChatIcon from "../../../assets/icons/ChatIcon";
 import StartwithTickIcon from "../../../assets/icons/StartwithTickIcon";
 import StatisticsSection from "../components/ViewStatisticSection";
-import DoctorBNB from "../components/DoctorBNB";
-
+import { getAllCases } from "@/services/common_services/Case";
 import { Colors, palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import { scale } from "@/utils/responsive";
+import { CaseData } from "@/types/ICaseData";
 
 export default function DoctorDashboardAndCases({ navigation }: any) {
 
@@ -26,8 +26,21 @@ export default function DoctorDashboardAndCases({ navigation }: any) {
     navigation.navigate('DashboardScreen');
   };
 
-  const doctorCases = dummyCases.filter(c => c.status !== "Resolved");
+ const {
+  data: casesData,
+  isPending,
+  isError,
+  error,
+  refetch,
+} = useQuery({
+  queryKey: ["doctorCases"],
+  queryFn: getAllCases,
+  staleTime: 5 * 60 * 1000,
+  gcTime: 10 * 60 * 1000,
+  retry: 2,
+});
 
+const doctorCases: CaseData[] = casesData ?? [];
   return (
     <AppBackground>
       <ScrollView
@@ -65,7 +78,16 @@ export default function DoctorDashboardAndCases({ navigation }: any) {
               {doctorCases.slice(0, 6).map((item) => (
                 <View key={item.id} style={styles.cardContainer}>
                   <CaseCard
-                    data={{ ...item, status: undefined } as any}
+                    data={{
+                        id: item.id,
+                        patient_id: item.patient_id,
+                        title: item.title,
+                        description: item.description,
+                        timestamp: item.timestamp,
+                        status: item.isReplied ? "Resolved" : "Under Review",
+                        isEmergency: item.isEmergency ?? false,
+                        isReplied: item.isReplied ?? false,
+                      }}
                     onPress={() => navigation.navigate("CaseDetailsAndRepliesScreen", { caseId: item.id, caseData: item, role: 'doctor' })}
                   />
                 </View>

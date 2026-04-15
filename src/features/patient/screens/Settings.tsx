@@ -14,6 +14,10 @@ import { getPatintProfile } from "@/services/Patient/PatinetService";
 import AnimatedLogoScreen from "@/components/base/AnimatedLogoScreen";
 import * as Clipboard from "expo-clipboard";
 export default function PaitentSettings() {
+
+import { signOut } from "../../../services/authService";
+
+export default function PaitentSettings({ navigation }: any) {
   const insets = useSafeAreaInsets();
   const id = "11111111-1111-1111-1111-111111111111";
   const CopyId = async (copiedId: string) => {
@@ -49,10 +53,12 @@ export default function PaitentSettings() {
 
   const goBack = () => {
     navigation.goBack();
-  };
-  const LogOut = () => {
-    navigation.navigate("PatientAuthScreen");
-  };
+  }
+
+  const LogOut = async () => {
+    await signOut();
+  }
+
   return (
     <AppBackground variant="logo">
       <View style={styles.container}>

@@ -10,6 +10,8 @@ import HIPAAFooter from '../../../components/common/Footer';
 import { Colors } from '../../../utils/colors';
 import { Family } from '../../../utils/typography';
 import { scale } from '../../../utils/responsive';
+import { resetPasswordForEmail } from '../../../services/authService';
+import { useState } from 'react';
 
 export default function DoctorForgotPasswordScreen({ navigation }: any) {
   const { control, handleSubmit } = useForm({
@@ -17,10 +19,20 @@ export default function DoctorForgotPasswordScreen({ navigation }: any) {
       email: '',
     }
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const onSubmit = (data: any) => {
-    console.log("Forgot Password Data: ", data);
-    navigation.navigate('DoctorVerificationScreen');
+  const onSubmit = async (data: any) => {
+    try {
+      setLoading(true);
+      setError('');
+      await resetPasswordForEmail(data.email);
+      navigation.navigate('DoctorVerificationScreen', { email: data.email });
+    } catch (e: any) {
+      setError(e.message || "Error sending code. Please check your email.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -50,9 +62,13 @@ export default function DoctorForgotPasswordScreen({ navigation }: any) {
               control={control}
               name="email"
               label="Email"
-              placeholder="USR-978896"
-              rules={{ required: "Email is required" }}
+              placeholder="doctor@example.com"
+              rules={{ 
+                required: "Email is required", 
+                pattern: { value: /\S+@\S+\.\S+/, message: "Invalid email" }
+              }}
             />
+            {error ? <Text style={{ color: Colors.error, marginTop: 10 }}>{error}</Text> : null}
           </FadeInView>
 
           {/* Actions Section */}
@@ -61,6 +77,8 @@ export default function DoctorForgotPasswordScreen({ navigation }: any) {
               title="Send"
               onPress={handleSubmit(onSubmit)}
               bgColor={Colors.primary}
+              loading={loading}
+              disabled={loading}
             />
 
             <View style={styles.footerTextContainer}>
