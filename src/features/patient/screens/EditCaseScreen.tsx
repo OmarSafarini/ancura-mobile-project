@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
 import { useForm } from "react-hook-form";
 import * as DocumentPicker from "expo-document-picker";
@@ -18,10 +19,11 @@ import EmergencyCheckBox from "../components/EmergencyCheckBox";
 import DeleteIconButton from "../components/Buttons/DeleteIconButton";
 
 import { scale } from "@/utils/responsive";
-import { Colors, palette } from "@/utils/colors";
+import { Colors } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import FileBar from "@/components/common/FileBar";
 import IconWrapper from "@/components/common/IconWrapper";
+import { editCase } from "@/services/Patient/Cases";
 
 type FormValues = {
   title: string;
@@ -35,24 +37,14 @@ type CaseFileItem = {
   title: string;
 };
 
-const EditCaseScreen = ({ navigation }: any) => {
-  const [caseFiles, setCaseFiles] = useState<CaseFileItem[]>([
-    {
-      id: "1",
-      title: "Clinical Psychology License - California Board",
-    },
-    {
-      id: "2",
-      title: "Clinical Psychology License - Hello World",
-    },
-  ]);
+const EditCaseScreen = ({ navigation, route }: any) => {
+  const [caseFiles, setCaseFiles] = useState<CaseFileItem[]>([]);
 
   const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
     defaultValues: {
-      title: "Coping with work pressure",
-      description:
-        "I have been feeling overwhelmed with my workload lately...",
-      isEmergency: true,
+      title: "",
+      description: "",
+      isEmergency: false,
       files: [],
     },
   });
@@ -60,13 +52,55 @@ const EditCaseScreen = ({ navigation }: any) => {
   const isEmergency = watch("isEmergency");
   const pickedFiles = watch("files");
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Updated Case:", data);
+  const onSubmit = async (data: FormValues) => {
+    const rawCaseId = route?.params?.caseId ?? route?.params?.caseData?.id;
+    const caseId = typeof rawCaseId === "string" ? Number(rawCaseId) : rawCaseId;
+
+    if (!caseId || Number.isNaN(caseId)) {
+      Alert.alert("Error", "Case id is missing.");
+      return;
+    }
+
+    try {
+      const files = data.files
+        .map((file) => file.uri || file.name)
+        .filter(Boolean) as string[];
+
+      await editCase(Number(caseId), {
+        title: data.title.trim(),
+        description: data.description.trim(),
+        isEmergency: data.isEmergency,
+        file: files.length ? files : null,
+      });
+
+      Alert.alert("Success", "Case updated successfully.");
+      navigation.goBack();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to update case.";
+      Alert.alert("Error", message);
+    }
   };
 
   const deleteFile = (id: string) => {
     setCaseFiles((prevFiles) => prevFiles.filter((file) => file.id !== id));
   };
+
+  useEffect(() => {
+    const caseData = route?.params?.caseData;
+    if (!caseData) return;
+
+    setValue("title", caseData.title ?? "");
+    setValue("description", caseData.description ?? "");
+    setValue("isEmergency", Boolean(caseData.isEmergency));
+
+    if (caseData.file) {
+      const existingFile = String(caseData.file);
+      setCaseFiles([{ id: existingFile, title: existingFile.split("/").pop() ?? "Attachment" }]);
+    } else {
+      setCaseFiles([]);
+    }
+  }, [route?.params?.caseData, setValue]);
 
   useEffect(() => {
     if (!pickedFiles?.length) return;
@@ -178,10 +212,6 @@ const EditCaseScreen = ({ navigation }: any) => {
             onPress={handleSubmit(onSubmit)}
             bgColor="#8EB392"
             textColor="#fff"
-            textStyle={{
-              fontSize: scale(20),
-              fontFamily: Family.FG_Regular,
-            }}
           />
         </View>
       </ScrollView>

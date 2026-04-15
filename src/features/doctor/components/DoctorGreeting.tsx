@@ -4,7 +4,7 @@ import { scale } from "@/utils/responsive";
 import { Family } from "@/utils/typography";
 
 interface Props {
-  name: string;
+  name: any;
   image: any; 
 }
 

@@ -3,7 +3,6 @@ import IconWrapper from "@/components/common/IconWrapper";
 import {
   StyleSheet,
   View,
-  Image,
   Text,
   SafeAreaView,
   FlatList,
@@ -13,40 +12,64 @@ import { scale } from "@/utils/responsive";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Family } from "@/utils/typography";
 import CaseCard from "@/components/common/CaseCard";
+import AnimatedLogoScreen from "@/components/base/AnimatedLogoScreen";
 import { CaseData } from "@/types/ICaseData";
-import { dummyCases } from "@/types/mockData";
-import DoctorBNB from "../components/DoctorBNB";
+import { IDoctor } from "@/types/IDoctor";
+import { useQuery } from "@tanstack/react-query";
+import { getDoctorProfile } from "@/services/Doctor/DoctorService";
+import { getAllCases } from "@/services/common_services/Case";
+import { getUserMeta } from "@/services/tokenService";
+import DoctorGreeting from "../components/DoctorGreeting";
 
 export default function DoctorHomeScreen({ navigation }: any) {
+
+const {
+  data: doctor,
+   isLoading: doctorLoading,
+    isError: doctorError,
+} = useQuery<IDoctor>({
+    queryKey: ["doctor"],
+    queryFn:async () => {
+      const meta = await getUserMeta();
+      getDoctorProfile(meta!.id);
+    }
+  });
+
+
+const {
+  data: cases,
+  isLoading: casesLoading,
+  isError: casesError,
+} = useQuery<CaseData[]>({
+    queryKey: ["cases"],
+    queryFn: getAllCases,
+  });
+
+
+
+if (doctorLoading || casesLoading) {
+  return (
+    <View style={styles.overlay}>
+      <AnimatedLogoScreen size={scale(432)} />
+    </View>
+  );
+}
+
+if(casesError || doctorError){
+   return <Text>Error loading cases</Text>;
+}
   const insets = useSafeAreaInsets();
 
-  const user = {
-    profilePic: require("../../../../assets/ancura.gif"),
-    name: "Dr.Aprar Ismail",
-  };
+  const doctorCases = cases.filter( (c) => c.status !== "Resolved");
 
-  const doctorCases = dummyCases.filter(c => c.status !== "Resolved");
 
-  function greeting() {
-    const now = new Date();
-    const hour = now.getHours();
-
-    if (hour < 12) {
-      return "Good Morning";
-    } else if (hour < 18) {
-      return "Good Afternoon";
-    } else {
-      return "Good Evening";
-    }
-  }
   return (
     <AppBackground variant="clean">
       <View style={styles.container}>
         <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
-          <Image style={styles.img} source={user.profilePic} />
           <View style={{ marginLeft: scale(5) }}>
-            <Text style={styles.greeting}>{greeting()}</Text>
-            <Text style={styles.userName}>{user.name}</Text>
+            <DoctorGreeting name={doctor?.full_name} image={doctor?.profile_pic}/>
+            <Text style={styles.userName}>{doctor?.full_name}</Text>
           </View>
         </SafeAreaView>
 
@@ -71,7 +94,6 @@ export default function DoctorHomeScreen({ navigation }: any) {
           }}
         />
       </View>
-
     </AppBackground>
   );
 }
@@ -102,4 +124,11 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: palette.dark,
   },
+  overlay: {
+  ...StyleSheet.absoluteFillObject,
+  backgroundColor: "rgba(255,255,255,0.7)",
+  justifyContent: "center",
+  alignItems: "center",
+  zIndex: 999,
+}
 });

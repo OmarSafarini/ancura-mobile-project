@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, StyleSheet, ScrollView, Pressable, Alert, KeyboardAvoidingView, Platform, Modal } from "react-native";
+import { Text, View, StyleSheet, ScrollView, Pressable, Alert, KeyboardAvoidingView, Platform, Modal, ActivityIndicator } from "react-native";
 import { useForm } from "react-hook-form";
 import * as DocumentPicker from 'expo-document-picker';
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
@@ -14,16 +14,15 @@ import WarningInfoIcon from "@/assets/icons/WarningIconInfo";
 import EditPaperclipAttachmentIcon from "@/assets/icons/EditPaperclipAttachment";
 import NormalButton from "@/components/common/NormalButton";
 import SuccessScreen from "@/components/common/SuccessScreen";
+import { supabaseClient } from "@/services/supabase"; 
+import { uploadDocumentToStorage } from "@/services/Doctor/storageService";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-export function LicenseVerification({navigation}: any) {
-    const { control } = useForm();
-    const [selectedDocument, setSelectedDocument] = useState<null | { name: string, uri: string, size?: number }>(null);
+export function LicenseVerification({ navigation }: any) {
+    const { control, handleSubmit } = useForm();
+    const [selectedDocument, setSelectedDocument] = useState<null | { name: string, uri: string, size?: number, mimeType?: string }>(null);
     const [showSuccess, setShowSuccess] = useState(false);
-
-    const handleSuccessPress = () => {
-        setShowSuccess(!showSuccess);
-        console.log("Success");
-    };
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleDocumentUpload = async () => {
         try {
@@ -34,7 +33,6 @@ export function LicenseVerification({navigation}: any) {
 
             if (!result.canceled && result.assets && result.assets.length > 0) {
                 const file = result.assets[0];
-
                 const maxSizeInBytes = 10 * 1024 * 1024; // 10MB limit
 
                 if (file.size && file.size > maxSizeInBytes) {
@@ -46,6 +44,7 @@ export function LicenseVerification({navigation}: any) {
                     name: file.name,
                     uri: file.uri,
                     size: file.size,
+                    mimeType: file.mimeType || 'application/octet-stream',
                 });
             }
         } catch (error) {
@@ -54,8 +53,53 @@ export function LicenseVerification({navigation}: any) {
         }
     };
 
+
+    const formatToSQLDate = (dateStr: string) => {
+        const [day, month, year] = dateStr.split('/');
+        return `${year}-${month}-${day}`;
+    };
+
+    const onSubmit = async (formData: any) => {
+        if (!selectedDocument) {
+            Alert.alert("Missing Document", "Please upload your license document before submitting.");
+            return;
+        }
+
+        setIsLoading(true);
+
+        try {
+            const publicUrl = await uploadDocumentToStorage(
+                selectedDocument.uri, 
+                selectedDocument.name, 
+                selectedDocument.mimeType as string
+            );
+
+            const payload = {
+                doctor_id: "fe1eabcb-fe97-4e32-9303-3cb9dbc79283", // TODO: Replace with auth ID
+                authority: formData.licensingAuthority,
+                yearsexp: parseInt(formData.yearsOfExperience, 10), 
+                license_number: formData.licenseNumber,
+                issue_date: formatToSQLDate(formData.issueDate), 
+                expire_date: formatToSQLDate(formData.expiryDate), 
+                document: publicUrl,
+            };
+
+            const response = await supabaseClient.post('/license', payload);
+            
+            if (response.status === 201 || response.status === 204 || response.status === 200) {
+                setShowSuccess(true);
+            }
+        } catch (error) {
+            console.error("Submission Error:", error);
+            Alert.alert("Submission Failed", "Could not verify your license. Please check your inputs and try again.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <AppBackground variant="clean" style={styles.screen}>
+            <SafeAreaView style={{ flex: 1 }} edges={['top', 'left', 'right']}>
             <KeyboardAvoidingView
                 style={styles.keyboardAvoidingView}
                 behavior={Platform.OS === "ios" ? "padding" : undefined}>
@@ -131,11 +175,15 @@ export function LicenseVerification({navigation}: any) {
                     </View>
 
                     <View style={styles.submitButton}>
-                        <NormalButton title="Submit" onPress={handleSuccessPress} />
+                        {isLoading ? (
+                            <ActivityIndicator size="large" color={Colors.primary} />
+                        ) : (
+                            <NormalButton title="Submit" onPress={handleSubmit(onSubmit)} />
+                        )}
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
-
+            </SafeAreaView>
             <Modal
                 visible={showSuccess}
                 transparent={true}
@@ -143,20 +191,18 @@ export function LicenseVerification({navigation}: any) {
                 onRequestClose={() => setShowSuccess(false)}
             >
                 <View style={styles.overlay}>
-                    <SuccessScreen 
-                        subtitle="Your account created successfully and ready now." 
-                        onPress={() => {setShowSuccess(false); navigation.replace('DoctorApp')}} 
+                    <SuccessScreen
+                        subtitle="Your account created successfully and ready now."
+                        onPress={() => { setShowSuccess(false); navigation.navigate('DoctorLoginScreen') }}
                     />
                 </View>
             </Modal>
-
         </AppBackground>
     );
 }
 
 const styles = StyleSheet.create({
     screen: {
-        paddingTop: scale(50),
         flex: 1,
     },
     overlay: {

@@ -13,7 +13,7 @@ export interface IDoctor {
   license?: ILicense;
 
   // UI-only fields (not in DB — fetched from joined queries or calculated)
-  profile_pic?: ImageSourcePropType;
+  profilePic?: ImageSourcePropType;
   years_exp?: number;          // from license.years_exp
   comments_count?: number;     // aggregated stat
 }

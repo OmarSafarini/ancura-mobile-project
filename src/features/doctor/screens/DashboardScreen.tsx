@@ -11,6 +11,7 @@ import StatisticsChart from "@/features/doctor/components/StatisticsChart";
 
 import { scale } from "@/utils/responsive";
 import { useQuery } from "@tanstack/react-query";
+import { useAuthStore } from "@/store/authStore";
 import { getDoctorDashboardStats } from "@/services/Doctor/DoctorDashboard";
 import { getDoctorBasicInfo } from "@/services/Doctor/Doctor";
 import { useAuthStore } from "@/store/authStore";

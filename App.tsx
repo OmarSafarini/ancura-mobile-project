@@ -5,7 +5,6 @@ import { useAppFonts } from './src/utils/useAppFonts';
 import RootNavigator from './src/layout/RootNavigator';
 import DoctorDashboardAndCases from '@/features/doctor/screens/DashboardAndCasesScreen';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -32,8 +31,6 @@ export default function App() {
       </NavigationContainer>
 
       <FlashMessage position="top" />
-
-      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
     </>
   );

@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
 import { useForm } from "react-hook-form";
 import type { DocumentPickerAsset } from "expo-document-picker";
@@ -20,6 +21,8 @@ import { scale } from "@/utils/responsive";
 import { Colors } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import EmergencyCheckBox from "../components/EmergencyCheckBox";
+import { createCase } from "@/services/Patient/Cases";
+import { useAuthStore } from "@/store/authStore";
 
 
 type FormValues = {
@@ -36,6 +39,7 @@ type CaseFileItem = {
 
 const CreateCase = ({ navigation }: any) => {
   const [caseFiles, setCaseFiles] = useState<CaseFileItem[]>([]);
+  const user = useAuthStore((state) => state.user);
 
   const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
     defaultValues: {
@@ -49,8 +53,32 @@ const CreateCase = ({ navigation }: any) => {
   const isEmergency = watch("isEmergency");
   const pickedFiles = watch("files");
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Created Case:", data);
+  const onSubmit = async (data: FormValues) => {
+    try {
+      if (!user?.id) {
+        Alert.alert("Error", "You must be signed in to create a case.");
+        return;
+      }
+
+      const files = data.files
+        .map((file) => file.uri || file.name)
+        .filter(Boolean) as string[];
+
+      await createCase({
+        patient_id: user.id,
+        title: data.title.trim(),
+        description: data.description.trim(),
+        file: files[0] ?? null,
+        isEmergency: data.isEmergency,
+      });
+
+      Alert.alert("Success", "Case created successfully.");
+      navigation.goBack();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to create case.";
+      Alert.alert("Error", message);
+    }
   };
 
   const deleteFile = (id: string) => {

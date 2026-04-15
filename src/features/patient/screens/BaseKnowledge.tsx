@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Text, View, StyleSheet, FlatList, Pressable, Animated } from "react-native";
+import { Text, View, StyleSheet, FlatList, Pressable, Animated, Modal, SafeAreaView } from "react-native";
+import { WebView } from "react-native-webview"; 
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 import DocumentIcon from "@/assets/icons/DoucmentIcon";
 import AppBackground from "@/components/base/AppBackground";
@@ -14,15 +15,24 @@ import { useNavigation } from "@react-navigation/native";
 const ARTICLE_CATEGORIES = ["Articles", "Exercises"];
 
 const RESOURCES = [
-    { id: "1", title: "Breathing Exercises for Stress Relief", tag: "Static Reading", tagColor: Colors.primary, bgTagColor: `${Colors.primaryLight}50`, Icon: DocumentIcon, },
-    { id: "2", title: "Breathing Exercises for Stress Relief", tag: "Youtube video", tagColor: Colors.darkPink, bgTagColor: `${Colors.pink}50`, Icon: YoutubeIcon, },
-    { id: "3", title: "Breathing Exercises for Stress Relief", tag: "Static Reading", tagColor: Colors.primary, bgTagColor: `${Colors.primaryLight}50`, Icon: DocumentIcon, },
+  { id: "1", title: "Breathing Exercises (UC Berkeley)", tag: "Static Reading", tagColor: Colors.primary, bgTagColor: `${Colors.primaryLight}50`, Icon: DocumentIcon, url: "https://uhs.berkeley.edu/sites/default/files/breathing_exercises_0.pdf" },
+  { id: "2", title: "Deep Breathing Exercises (Mercy Medical)", tag: "Static Reading", tagColor: Colors.primary, bgTagColor: `${Colors.primaryLight}50`, Icon: DocumentIcon, url: "https://www.mercycare.org/app/files/public/59045330-91c8-4b49-b72e-636e726f75dc/5Deep%20breathing%20exercises.pdf" },
+  { id: "3", title: "Two Breathing Techniques (USU Extension)", tag: "Static Reading", tagColor: Colors.primary, bgTagColor: `${Colors.primaryLight}50`, Icon: DocumentIcon, url: "https://extension.usu.edu/mentalhealth/articles/two-breathing-techniques.pdf" },
+  { id: "4", title: "Breathing and Health (UW Integrative)", tag: "Static Reading", tagColor: Colors.primary, bgTagColor: `${Colors.primaryLight}50`, Icon: DocumentIcon, url: "https://www.fammed.wisc.edu/files/webfm-uploads/documents/outreach/im/handout-BreathingAndHealth-Final.pdf" },
+  { id: "5", title: "Stress-Busting Breathing (APTA)", tag: "Static Reading", tagColor: Colors.primary, bgTagColor: `${Colors.primaryLight}50`, Icon: DocumentIcon, url: "https://www.apta.org/contentassets/e7601c54ab3e42ba9acf2ad1ee3b9279/aptahyperice_take-a-breather-with-these-stress-busting-exercises.pdf" },
+  
+  { id: "6", title: "Cleveland Clinic: Five-Finger Breathing", tag: "Youtube video", tagColor: Colors.darkPink, bgTagColor: `${Colors.pink}50`, Icon: YoutubeIcon, url: "https://www.youtube.com/watch?v=oeeWEtiAseA" },
+  { id: "7", title: "Cleveland Clinic: Breathwork for Beginners", tag: "Youtube video", tagColor: Colors.darkPink, bgTagColor: `${Colors.pink}50`, Icon: YoutubeIcon, url: "https://www.youtube.com/watch?v=J7JKQA-F2dg" },
+  { id: "8", title: "City of Hope: 15-Minute Deep Breathing", tag: "Youtube video", tagColor: Colors.darkPink, bgTagColor: `${Colors.pink}50`, Icon: YoutubeIcon, url: "https://www.youtube.com/watch?v=F28MGLlpP90" },
+  { id: "9", title: "Nicklaus Children’s: 5-Min Mindful Breathing", tag: "Youtube video", tagColor: Colors.darkPink, bgTagColor: `${Colors.pink}50`, Icon: YoutubeIcon, url: "https://www.youtube.com/watch?v=he-tQOnDCWw" },
+  { id: "10", title: "UW Medicine: Guided Breathing for Stress", tag: "Youtube video", tagColor: Colors.darkPink, bgTagColor: `${Colors.pink}50`, Icon: YoutubeIcon, url: "https://www.youtube.com/watch?v=Mn4kUw5uXQU" },
 ];
 
 export function BaseKnowledge() {
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const translateY = useRef(new Animated.Value(20)).current;
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const [activeUrl, setActiveUrl] = useState<string | null>(null); // State for WebView
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -48,6 +58,13 @@ export function BaseKnowledge() {
         return true;
     });
 
+    const handleResourcePress = (item: typeof RESOURCES[0]) => {
+        // Instead of Linking.openURL, we set the active URL to display in the WebView
+        if (item.url) {
+            setActiveUrl(item.url);
+        }
+    };
+
     const renderHeader = () => (
         <View style={styles.headerWrapper}>
             <View style={styles.header}>
@@ -68,32 +85,61 @@ export function BaseKnowledge() {
     );
 
     return (
-        <AppBackground variant="clean" style={styles.screen}>
-            <FlatList
-                data={filteredResources}
-                keyExtractor={(item) => item.id}
-                ListHeaderComponent={renderHeader}
-                contentContainerStyle={styles.listContent}
-                ItemSeparatorComponent={() => <View style={styles.separator} />}
-                renderItem={({ item }) => (
-                    <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY }] }}>
-                        <Pressable
-                            android_ripple={{ color: Colors.formBackground }}
-                            style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.97 : 1 }] }]}>
-                            <SelfHelpResource title={item.title} tag={item.tag} tagColor={item.tagColor}
-                                bgTagColor={item.bgTagColor} Icon={item.Icon}
-                            />
+        <AppBackground variant="clean" style={styles.background}>
+            <SafeAreaView style={styles.safeArea}>
+                <FlatList
+                    data={filteredResources}
+                    keyExtractor={(item) => item.id}
+                    ListHeaderComponent={renderHeader}
+                    contentContainerStyle={styles.listContent}
+                    ItemSeparatorComponent={() => <View style={styles.separator} />}
+                    renderItem={({ item }) => (
+                        <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY }] }}>
+                            <Pressable
+                                onPress={() => handleResourcePress(item)}
+                                android_ripple={{ color: Colors.formBackground }}
+                                style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.97 : 1 }] }]}>
+                                <SelfHelpResource title={item.title} tag={item.tag} tagColor={item.tagColor}
+                                    bgTagColor={item.bgTagColor} Icon={item.Icon}
+                                />
+                            </Pressable>
+                        </Animated.View>
+                    )}
+                />
+            </SafeAreaView>
+
+            {/* WebView Modal Overlay */}
+            <Modal
+                visible={activeUrl !== null}
+                animationType="slide"
+                onRequestClose={() => setActiveUrl(null)}
+            >
+                <SafeAreaView style={styles.webViewSafeArea}>
+                    <View style={styles.webViewHeader}>
+                        <Pressable style={styles.iconWrapper} onPress={() => setActiveUrl(null)}>
+                            <ArrowLeftIcon color={Colors.textDark2} size={scale(18)} />
                         </Pressable>
-                    </Animated.View>
-                )}
-            />
+                        <Text style={styles.webViewHeaderTitle} numberOfLines={1}>Resource</Text>
+                        <View style={{ width: scale(34) }} /> {/* Empty view to center the title */}
+                    </View>
+                    {activeUrl && (
+                        <WebView 
+                            source={{ uri: activeUrl }} 
+                            style={styles.webView}
+                            startInLoadingState={true}
+                        />
+                    )}
+                </SafeAreaView>
+            </Modal>
         </AppBackground>
     );
 }
 
 const styles = StyleSheet.create({
-    screen: {
-        paddingTop: scale(50),
+    background: {
+        flex: 1,
+    },
+    safeArea: {
         flex: 1,
     },
     listContent: {
@@ -103,6 +149,7 @@ const styles = StyleSheet.create({
     headerWrapper: {
         marginHorizontal: -scale(51),
         marginBottom: scale(25),
+        marginTop: scale(10),
     },
     header: {
         flexDirection: "row",
@@ -137,4 +184,28 @@ const styles = StyleSheet.create({
     separator: {
         height: scale(17),
     },
+    // WebView Styles
+    webViewSafeArea: {
+        flex: 1,
+        backgroundColor: "#fff", // Adjust to match your app's theme
+    },
+    webViewHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingHorizontal: scale(20),
+        paddingVertical: scale(10),
+        borderBottomWidth: 1,
+        borderBottomColor: "#E5E5E5",
+    },
+    webViewHeaderTitle: {
+        fontSize: scale(16),
+        fontFamily: Family.FG_Medium,
+        color: Colors.textDark,
+        flex: 1,
+        textAlign: 'center',
+    },
+    webView: {
+        flex: 1,
+    }
 });
