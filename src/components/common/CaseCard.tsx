@@ -32,17 +32,17 @@ const STATUS_CONFIG = {
     IconComponent: ResolvedIcon,
     iconBackground: Colors.secondary,
   },
-  Empty: {
+  empty: {   
     label: "None",
     containerColor: "rgba(8, 7, 14 , 0.13)",
     IconComponent: null,
     iconBackground: "transparent",
   }
-};
+} as const;
 
 export default function CaseCard({ data, onPress }: Props) {
-  const status = data.status || "Empty";
-  const config = STATUS_CONFIG[status as keyof typeof STATUS_CONFIG] || STATUS_CONFIG["Empty"];
+  const status = data.status || "empty";
+  const config = STATUS_CONFIG[status as keyof typeof STATUS_CONFIG] || STATUS_CONFIG["empty"];
 
   return (
     <Pressable onPress={onPress} style={[styles.container, { backgroundColor: "#FFFFFF" }, data.isEmergency && styles.emergencyShadow,]}>

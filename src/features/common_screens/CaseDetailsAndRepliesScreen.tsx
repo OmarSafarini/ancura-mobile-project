@@ -1,6 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { Control, useForm } from "react-hook-form";
-import { View, FlatList, StyleSheet } from "react-native";
+import { View, FlatList, StyleSheet, SafeAreaView } from "react-native";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getRepliesByPostId, postReply } from '@/services/common_services/ReplyService';
 import { useAuthStore } from '@/store/authStore';
@@ -20,20 +20,24 @@ import { Colors } from "@/utils/colors";
 
 import PencilIcon from "@/assets/icons/PencilIcon";
 import TrashIcon from "@/assets/icons/TrashIcon";
-
+import { useAuthStore } from "@/store/authStore";
 
 
 type FormData = {
   doctorReply: string;
 };
 
-const STATUS_MAP: Record<string, "Under Review" | "Doctor Replied" | "Resolved"> = {
-  "Under Review": "Under Review",
-  "Doctor Replied": "Doctor Replied",
-  "Resolved": "Resolved",
+const STATUS_MAP: Record<string, "under_review" | "doctor_replied" | "resolved"> = {
+  "Under Review": "under_review",
+  "Doctor Replied": "doctor_replied",
+  "Resolved": "resolved",
+  "under_review": "under_review",
+  "doctor_replied": "doctor_replied",
+  "resolved": "resolved",
 };
 
 export default function CaseDetailScreen({ navigation, route }: any) {
+  const authUser = useAuthStore((state) => state.user);
   const caseId = route?.params?.caseId;
   const caseData = route?.params?.caseData;
   const role = route?.params?.role || 'patient';
@@ -64,7 +68,7 @@ export default function CaseDetailScreen({ navigation, route }: any) {
 
 const { data: replies = [] } = useQuery({
   queryKey: ['replies', caseId],
-  queryFn: () => getRepliesByPostId(caseId),
+  queryFn: () => getRepliesByCaseId(caseId),
   enabled: !!caseId,
 });
 
@@ -85,8 +89,8 @@ const onSend = async (data: FormData) => {
   if (!doctorId) return;
 
   submitReply({
-    postId: caseId,
-    doctorId,
+    caseId: caseId,
+    doctorId: authUser.id,
     patientId: caseData?.patient_id,
     body: data.doctorReply.trim(),
   });
@@ -102,6 +106,7 @@ const onSend = async (data: FormData) => {
   };
 
   return (
+    <SafeAreaView style={{ flex: 1 }}>
     <AppBackground>
       <View style={styles.container}>
 
@@ -141,7 +146,7 @@ const onSend = async (data: FormData) => {
                 ? undefined
                 : caseData?.status
                   ? STATUS_MAP[caseData.status as string]
-                  : "Under Review"
+                  : "under_review"
             }
           />
 
@@ -160,12 +165,15 @@ const onSend = async (data: FormData) => {
               )}
               renderItem={({ item }) => (
                 <DoctorReplyCard
-                  title={item.doctor_name}
+                  id={item.id}
+                  title={item.doctor?.fullname}
                   major={item.doctor_major}
                   message={item.body}
                   time={item.timestamp}
                   CardOnPress={handleViewDoctorReplies}
                   ChatOnPress={() => handleViewAllReplies(item)}
+                  onLike={() =>{}}
+                  onDislike={() =>{}}
                 />
               )}
             />
@@ -202,13 +210,11 @@ const onSend = async (data: FormData) => {
             </View>
           )}
         </View>
-
       </View>
     </AppBackground>
+    </SafeAreaView>
   );
 }
-
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
