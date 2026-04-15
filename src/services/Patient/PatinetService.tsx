@@ -2,20 +2,30 @@ import { supabaseClient } from "../supabase";
 import { CaseData } from '@/types/ICaseData';
 
 
-
-export const getPatintProfile = async (patientId: string)=>{
+export const getPatintProfile = async (id: string) => {
+  try {
   const res = await supabaseClient.get(
-    `/patient?id=eq.${patientId}&select=*`
+    `/patient?id=eq.${id}&select=*`
   );
-  return res.data?.[0] ?? null;
+
+    console.log("PATIENT RES:", res.data);
+
+    return res.data?.[0] || null; 
+  } catch (error) {
+    console.error("getPatintProfile ERROR:", error);
+    throw error; 
+  }
 };
 
 export const getPatintPosts = async (patientId: string):Promise<CaseData[]>=>{
-  const res = await supabaseClient.get(
- `/post?patient_id=eq.${patientId}&select=*&order=timestamp.desc`
+  try{const res = await supabaseClient.get(
+ `/post_with_time?patient_id=eq.${patientId}&select=*&order=timestamp.desc`
   );
-  return (res.data || []).map((c: CaseData) => ({
-    ...c,
-    status: c.isReplied ? "doctor_replied" : "under_review",
-  }));
+    console.log("PATIENT Cases:", res.data);
+    return res.data;
+  }catch(error){
+     console.error("getPatintCases ERROR:", error);
+    throw error; 
+  }
+  
 };

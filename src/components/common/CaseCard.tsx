@@ -52,7 +52,7 @@ export default function CaseCard({ data, onPress }: Props) {
         <Ionicons name="chevron-forward" size={scale(16)} />
       </View>
       <View style={styles.bottomRow}>
-        <Text style={styles.time}>{data.timestamp}</Text>
+        <Text style={styles.time}>{data.time_ago}</Text>
         {status !== "Empty" && config.IconComponent && (
           <View style={styles.reviewContainer}>
             <View style={[styles.iconCircle, { backgroundColor: config.iconBackground }]}>
