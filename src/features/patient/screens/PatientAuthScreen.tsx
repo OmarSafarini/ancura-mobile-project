@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import { useForm } from 'react-hook-form';
-import AppBackground from '../../../components/layout/AppBackground';
+import AppBackground from '../../../components/base/AppBackground';
 import Logo from '../../../assets/icons/Logo';
 import FadeInView from '../../../utils/FadeInView';
 import AuthToggle from '../../../components/common/AuthToggle';
@@ -17,7 +17,7 @@ const genderData = [
   { label: 'Female', value: 'Female' },
 ];
 
-export default function PatientAuthScreen() {
+export default function PatientAuthScreen({ navigation }: any) {
   const [authMode, setAuthMode] = useState<"signin" | "signup">("signin");
 
   const { control, handleSubmit } = useForm({
@@ -31,6 +31,10 @@ export default function PatientAuthScreen() {
 
   const onSubmit = (data: any) => {
     console.log("Form Data: ", { mode: authMode, ...data });
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'PatientApp' }],
+    });
   };
 
   return (
@@ -78,7 +82,7 @@ export default function PatientAuthScreen() {
               name="password"
               label="Password"
               placeholder="Enter Password"
-              rules={{ 
+              rules={{
                 required: "Password is required",
                 minLength: { value: 8, message: "Password must be at least 8 characters" },
                 maxLength: { value: 13, message: "Password cannot exceed 13 characters" }

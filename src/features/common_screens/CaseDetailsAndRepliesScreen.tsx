@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Control, useForm } from "react-hook-form";
 import { View, FlatList, StyleSheet } from "react-native";
 
-import AppBackground from "@/components/layout/AppBackground";
+import AppBackground from "@/components/base/AppBackground";
 import BackButton from "@/components/common/BackButton";
 import ToggleButton from "@/components/common/ToggleButton";
 import CaseDetailsCard from "@/components/common/CaseDetailsCard";
@@ -11,13 +11,14 @@ import ResolvedSlideButton from "../patient/components/ResolvedSlideButton";
 import ReplyText from "@/components/common/ReplyText";
 import ReplyField from "@/components/forms/ReplyFeild";
 import ArrowInCircle from "@/assets/icons/SubmitButton";
-import ScrollToBottomButton from "../patient/components/Buttons/ScrollToBottom";
+import ScrollToBottomButton from "../patient/components/ScrollToBottom";
 
 import { scale } from "@/utils/responsive";
 import { Colors } from "@/utils/colors";
 
 import PencilIcon from "@/assets/icons/PencilIcon";
 import TrashIcon from "@/assets/icons/TrashIcon";
+import { allDummyReplies } from "@/types/mockData";
 
 
 
@@ -25,17 +26,32 @@ type FormData = {
   doctorReply: string;
 };
 
-export default function CaseDetailScreen(navigation: any) {
-  const [role, setRole] = useState<"patient" | "doctor" | null>(null);
+const STATUS_MAP: Record<string, "Under Review" | "Doctor Replied" | "Resolved"> = {
+  "Under Review": "Under Review",
+  "Doctor Replied": "Doctor Replied",
+  "Resolved": "Resolved",
+};
+
+export default function CaseDetailScreen({ navigation, route }: any) {
+  const caseId = route?.params?.caseId;
+  const caseData = route?.params?.caseData;
+  const role = route?.params?.role || 'patient';
+  console.log("Opened Case Details for ID: ", caseId, " as Role: ", role);
+
   const isDoctor = role === "doctor";
   const isPatient = role === "patient";
 
   const handleViewDoctorReplies = () => {
-    navigation.navigate('DoctorRepliesScreen');
+    navigation.navigate('DoctorRepliesScreen', { caseId, caseData });
   };
 
-  const handleViewAllReplies = () => {
-    navigation.navigate('AllRepliesScreen');
+  const handleViewAllReplies = (reply: any) => {
+    navigation.navigate('AllRepliesScreen', {
+      caseId,
+      caseData,
+      replyId: reply.id,
+      replyData: reply
+    });
   };
 
   const handleViewGoBack = () => {
@@ -52,29 +68,8 @@ export default function CaseDetailScreen(navigation: any) {
     flatListRef.current?.scrollToEnd({ animated: true });
   };
 
-  const replies = [
-    {
-      id: "1",
-      title:"Dr. Sarah Ahmed" ,
-      major:"Clinical Psychologist" ,
-      message:"Based on the symptoms you described, I recommend starting with cognitive behavioral therapy techniques for sleep. I'll send you a detailed plan within 24 hours." ,
-      time:"Just now",
-    },
-    {
-      id: "2",
-      title:"Dr. Sarah Ahmed" ,
-      major:"Clinical Psychologist" ,
-      message:"Based on the symptoms you described, I recommend starting with cognitive behavioral therapy techniques for sleep. I'll send you a detailed plan within 24 hours." ,
-      time:"Just now",
-    },
-    {
-      id: "3",
-      title:"Dr. Sarah Ahmed" ,
-      major:"Clinical Psychologist" ,
-      message:"Based on the symptoms you described, I recommend starting with cognitive behavioral therapy techniques for sleep. I'll send you a detailed plan within 24 hours." ,
-      time:"Just now",
-    },
-  ];
+
+  const replies = allDummyReplies.filter(reply => reply.case_id === caseId);
 
 
   return (
@@ -106,22 +101,28 @@ export default function CaseDetailScreen(navigation: any) {
 
         <View style={styles.mainContent}>
           <CaseDetailsCard
-            userId="#124"
+            userId={caseData ? `#${caseData.patient_id}` : "#124"}
             gender="Female"
             age={28}
-            title="Anxiety and sleep problem"
-            description="Patient reports severe anxiety and insomnia for the past 3 weeks."
-            date="2 hours ago"
-            status="under_review"
+            title={caseData?.title || "Anxiety and sleep problem"}
+            description={caseData?.description || "Patient reports severe anxiety and insomnia for the past 3 weeks."}
+            date={caseData?.timestamp || "2 hours ago"}
+            status={
+              isDoctor
+                ? undefined
+                : caseData?.status
+                  ? STATUS_MAP[caseData.status as string]
+                  : "Under Review"
+            }
           />
 
           <View style={styles.replySection}>
-            <ReplyText title="Doctor's Reply" color={Colors.primary} onPress={handleViewDoctorReplies}/>
+            <ReplyText title="Doctor's Reply" color={Colors.primary} onPress={handleViewDoctorReplies} />
 
             <FlatList
               ref={flatListRef}
               data={replies}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item) => String(item.id)}
               showsVerticalScrollIndicator={false}
               style={styles.list}
               contentContainerStyle={styles.listContent}
@@ -130,12 +131,12 @@ export default function CaseDetailScreen(navigation: any) {
               )}
               renderItem={({ item }) => (
                 <DoctorReplyCard
-                  title={item.title}
-                  major={item.major}
-                  message={item.message}
-                  time={item.time}
+                  title={item.doctor_name}
+                  major={item.doctor_major}
+                  message={item.body}
+                  time={item.timestamp}
                   CardOnPress={handleViewDoctorReplies}
-                  ChatOnPress={handleViewAllReplies}
+                  ChatOnPress={() => handleViewAllReplies(item)}
                 />
               )}
             />
@@ -206,7 +207,7 @@ const styles = StyleSheet.create({
   },
 
   replySection: {
-    height:scale(410),
+    height: scale(410),
     gap: scale(41),
   },
 
@@ -222,8 +223,8 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingBottom: scale(30),
     paddingHorizontal: scale(24),
-    position:"absolute",
-    bottom:scale(30),
+    position: "absolute",
+    bottom: scale(30),
   },
 
   patientBottom: {

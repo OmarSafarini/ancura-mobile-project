@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { View, FlatList, StyleSheet, Text } from "react-native";
 
-import AppBackground from "@/components/layout/AppBackground";
+import AppBackground from "@/components/base/AppBackground";
 import BackButton from "@/components/common/BackButton";
 import ReplyText from "@/components/common/ReplyText";
 import DoctorReplyCard from "@/components/common/DoctorReplyCard";
@@ -13,6 +13,7 @@ import { Family } from "@/utils/typography";
 import ArrowInCircle from "@/assets/icons/SubmitButton";
 import ReplyField from "@/components/forms/ReplyFeild";
 import { Control, useForm } from "react-hook-form";
+import { allDummyComments } from "@/types/mockData";
 
 
 
@@ -20,12 +21,20 @@ type FormData = {
   doctorReply: string;
 };
 
-export default function AllRepliesScreen(navigation: any) {
-  const role = "patient";
+export default function AllRepliesScreen({ navigation, route }: any) {
+  const caseData = route?.params?.caseData;
+  const replyId = route?.params?.replyId;
+  const replyData = route?.params?.replyData;
+  const role = route?.params?.role || 'patient';
+
   const isPatient = role === "patient";
   const handleViewGoBack = () => {
-      navigation.navigate('DoctorRepliesScreen');
-    };
+    navigation.navigate('DoctorRepliesScreen', {
+      caseId: route?.params?.caseId,
+      caseData,
+      role
+    });
+  };
 
   const { control } = useForm<FormData>({
     defaultValues: { doctorReply: "" },
@@ -33,63 +42,26 @@ export default function AllRepliesScreen(navigation: any) {
 
   const listRef = useRef<FlatList>(null);
 
-  const comments = [
-    {
-      id: "1",
-      title: "You",
-      discreption:
-        "I have tried that, but it doesn't seem to help much.",
-      time: "Just now",
-      major: "Patient",
-    },
-    {
-      id: "2",
-      title: "You",
-      discreption:
-        "I still feel overwhelmed with my workload and deadlines.",
-      time: "Just now",
-      major: "Patient",
-    },
-    {
-      id: "3",
-      title: "You",
-      discreption:
-        "I have trouble sleeping and concentrating at work.",
-      time: "Just now",
-      major: "Patient",
-    },
-    {
-      id: "4",
-      title: "You",
-      discreption:
-        "I'm not sure what else to try.",
-      time: "Just now",
-      major: "Patient",
-    },
-  ];
+  const comments = allDummyComments.filter(c => c.reply_id === replyId);
 
   return (
     <AppBackground>
       <View style={styles.container}>
 
         <View style={styles.header}>
-          <Text style={styles.title}>Coping with work pressure</Text>
+          <Text style={styles.title}>{caseData?.title || "Case Title"}</Text>
           <BackButton onPress={handleViewGoBack} />
         </View>
 
         <View style={styles.staticContent}>
           <DoctorReplyCard
-              title="Dr. Sarah Ahmed"
-              major="Clinical Psychologist"
-              message="Thank you for sharing. Work-related anxiety is very common. Have you
-                  tried breaking your tasks into smaller, manageable chunks? This can
-                  help reduce the feeling of being overwhelmed
-                  breaking your tasks into smaller, manageable chunks? This can
-                  help reduce the feeling of being overwhelmed."
-              time="Just now"
-              CardOnPress={() => {}}
-              ChatOnPress={() => {}}
-            />
+            title={replyData?.doctor_name || "Dr. Sarah Ahmed"}
+            major={replyData?.doctor_major || "Clinical Psychologist"}
+            message={replyData?.body || "Reply details."}
+            time={replyData?.timestamp || "Just now"}
+            CardOnPress={() => { }}
+            ChatOnPress={() => { }}
+          />
 
 
           <ReplyText title="All Replies" color={Colors.primary} />
@@ -99,7 +71,7 @@ export default function AllRepliesScreen(navigation: any) {
           <FlatList
             ref={listRef}
             data={comments}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => String(item.id)}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.listContent}
             ItemSeparatorComponent={() => (
@@ -108,11 +80,11 @@ export default function AllRepliesScreen(navigation: any) {
             ListFooterComponent={<View style={{ height: scale(120) }} />}
             renderItem={({ item }) => (
               <DoctorCommentCard
-                title={item.title}
-                discreption={item.discreption}
-                time={item.time}
+                title={item.author_name}
+                discreption={item.body}
+                time={item.timestamp}
                 avatar={undefined}
-                major={item.major}
+                major={item.author_role}
               />
             )}
           />
@@ -176,8 +148,8 @@ const styles = StyleSheet.create({
   },
 
   listWrapper: {
-  height: "30%", 
-},
+    height: "30%",
+  },
 
   listContent: {
     paddingBottom: scale(20),
@@ -195,7 +167,7 @@ const styles = StyleSheet.create({
 
   patientBottom: {
     width: "100%",
-   // marginTop: scale(10),
+    // marginTop: scale(10),
   },
 
   doctorBottom: {

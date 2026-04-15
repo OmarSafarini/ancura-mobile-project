@@ -5,27 +5,27 @@ import { scale } from "@/utils/responsive";
 import NormalButton from "@/components/common/NormalButton";
 import SelectUserType from "@/components/common/SelectUserType";
 import PersonIcon from "@/assets/icons/PersonIcon";
-import AppBackground from "@/components/layout/AppBackground";
+import AppBackground from "@/components/base/AppBackground";
 
 export default function RoleSelectionScreen({ navigation }: any) {
     const [selectedRole, setSelectedRole] = useState<"patient" | "doctor" | null>(null);
 
     const handleContinue = () => {
         if (selectedRole === "patient") {
-            navigation.navigate("PatientAuthScreen");
+            navigation.navigate("PatientApp");
         } else if (selectedRole === "doctor") {
-            navigation.replace("DoctorApp");
+            navigation.navigate("LicenseVerification");
         }
     };
 
     return (
         <View style={styles.container}>
-           <AppBackground style={{ position: "absolute", width: "100%", height: "100%" }}/>
+            <AppBackground style={{ position: "absolute", width: "100%", height: "100%" }} />
 
             <View style={styles.safeArea}>
                 <View style={styles.content}>
                     <Text style={styles.title}>How would you like to use the app?</Text>
-                    
+
                     <View style={styles.optionsContainer}>
                         <SelectUserType
                             title="I need help"

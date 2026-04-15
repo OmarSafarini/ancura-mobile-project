@@ -10,8 +10,7 @@ import { caseStatusMap } from "@/types/ICaseStatusMap";
 
 const CaseStatus = ({ status, variant="default",backgroundColor="rgba(216, 216, 216, 0.48)" }: CaseStatusProps) => {
 
-  const config = caseStatusMap[status];
-
+  const config = caseStatusMap[status] || caseStatusMap["None"];
   const { text, color, Icon } = config;
 
   return (

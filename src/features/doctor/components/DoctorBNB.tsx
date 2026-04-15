@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import BottomNavBar, { TabItem } from '../../../components/layout/BottomNavBar';
+import BottomNavBar, { TabItem } from '../../../components/base/BottomNavBar';
 import HomeIcon from '../../../assets/icons/HomeIcon';
 import ActivityLogIcon from '../../../assets/icons/ActivityLogIcon';
 import NotificationsIcon from '../../../assets/icons/NotificationsIcon';
@@ -7,10 +7,10 @@ import ProfileIcon from '../../../assets/icons/ProfileIcon';
 import FabAddIcon from '../../../assets/icons/FabAddIcon';
 
 const TABS: TabItem[] = [
-    { name: 'HomeTab',          label: 'Dashboard',    icon: HomeIcon          },
-    { name: 'ActivityTab',      label: 'Activity Log', icon: ActivityLogIcon   },
-    { name: 'NotificationsTab', label: 'Notifications',icon: NotificationsIcon },
-    { name: 'ProfileTab',       label: 'Profile',      icon: ProfileIcon       },
+    { name: 'HomeTab', label: 'Dashboard', icon: HomeIcon },
+    { name: 'ActivityTab', label: 'Activity Log', icon: ActivityLogIcon },
+    { name: 'NotificationsTab', label: 'Notifications', icon: NotificationsIcon },
+    { name: 'ProfileTab', label: 'Profile', icon: ProfileIcon },
 ];
 
 export default function DoctorBNB(props: any) {

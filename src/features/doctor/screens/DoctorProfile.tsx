@@ -7,45 +7,52 @@ import {
   ScrollView,
   Image,
 } from "react-native";
-import AppBackground from "@/components/layout/AppBackground";
+import AppBackground from "@/components/base/AppBackground";
 import { scale } from "@/utils/responsive";
 import { Colors, palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import LogoutButton from "@/components/common/LogoutButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import LocationIcon from "../components/Icons/LocationIcoon";
-import EmailIcon from "../components/Icons/EmailIcon";
+import LocationIcon from "../../../assets/icons/LocationIcoon";
+import EmailIcon from "../../../assets/icons/EmailIcon";
 import TickIcon from "@/assets/icons/TickIcon";
 import { IDoctor } from "@/types/IDoctor";
-import IconWrapper from "../components/Icons/IconWrapper";
+import IconWrapper from "../../../components/common/IconWrapper";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 
 export default function DoctorProfile() {
   const doctor: IDoctor = {
-    name: "Dr. Aprar Ismail",
+    id: "d1e2f3a4-0003-0000-0000-000000000001",
+    full_name: "Dr. Aprar Ismail",
     email: "aprar@gmail.com",
-    profilePic: require("../../../../assets/ancura.gif"),
+    profile_pic: require("../../../../assets/ancura.gif"),
     location: "Nablus, Palestine",
-    comments: 120,
-    reputation: 150,
-    experience: 4,
+    comments_count: 120,
+    points: 150,
+    years_exp: 4,
+    created_at: "2021-03-15",
     license: {
-      licenseNumber: 1923,
-      licensingAuthority: "Palestinian Medical Council",
-      verificationDate: 20 / 7 / 1998,
-      verified: true,
+      id: 1,
+      doctor_id: "d1e2f3a4-0003-0000-0000-000000000001",
+      license_number: "PMC-1923",
+      authority: "Palestinian Medical Council",
+      years_exp: 4,
+      issue_date: "1998-07-20",
+      expire_date: "2030-07-20",
+      created_at: "2021-03-15",
+      is_verified: true,
     },
     bio: "Experienced doctor specializing in patient care, diagnosis, and treatment with a passion for helping people and improving healthcare outcomes.",
   };
 
   const insets = useSafeAreaInsets();
- 
-  const goBack =()=>{
- navigation.goBack();
+
+  const goBack = () => {
+    navigation.goBack();
   }
 
-  const LogOut=()=>{
-        navigation.navigate("DoctorLoginScreen");
+  const LogOut = () => {
+    navigation.navigate("DoctorLoginScreen");
 
   }
   return (
@@ -56,15 +63,15 @@ export default function DoctorProfile() {
             <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
               <Text style={styles.Text}>Profile & Settings</Text>
               <IconWrapper size={scale(33)} bgColor={palette.white} shape="square">
-                  <ArrowLeftIcon size={scale(18)} color={palette.dark} onPress={goBack}/>
+                <ArrowLeftIcon size={scale(18)} color={palette.dark} onPress={goBack} />
               </IconWrapper>
             </SafeAreaView>
 
             <View style={styles.profileCard}>
               <View style={styles.DoctorInfo}>
-                <Image source={doctor.profilePic} style={styles.image} />
+                <Image source={doctor.profile_pic} style={styles.image} />
                 <View style={{ gap: scale(10) }}>
-                  <Text style={styles.name}>{doctor.name}</Text>
+                  <Text style={styles.name}>{doctor.full_name}</Text>
                   <View style={styles.TextWithIcon}>
                     <LocationIcon />
                     <Text style={styles.sub}> {doctor.location}</Text>
@@ -77,18 +84,18 @@ export default function DoctorProfile() {
               </View>
               <View style={styles.statsRow}>
                 <View style={styles.statItem}>
-                  <Text style={styles.statNumber}>{doctor.comments}</Text>
+                  <Text style={styles.statNumber}>{doctor.comments_count}</Text>
                   <Text style={styles.statLabel}>Comments</Text>
                 </View>
 
                 <View style={styles.statItem}>
-                  <Text style={styles.statNumber}>{doctor.reputation}</Text>
+                  <Text style={styles.statNumber}>{doctor.points}</Text>
                   <Text style={styles.statLabel}>Reputation </Text>
                   <Text style={styles.statLabel}> Score</Text>
                 </View>
 
                 <View style={styles.statItem}>
-                  <Text style={styles.statNumber}>{doctor.experience}</Text>
+                  <Text style={styles.statNumber}>{doctor.years_exp}</Text>
                   <Text style={styles.statLabel}>Years </Text>
                   <Text style={styles.statLabel}> Experence</Text>
                 </View>
@@ -101,26 +108,26 @@ export default function DoctorProfile() {
                 <View style={styles.TextContainer}>
                   <Text style={styles.cardText}>License Number </Text>
                   <Text style={styles.cardText}>
-                    {doctor.license.licenseNumber}
+                    {doctor.license?.license_number}
                   </Text>
                 </View>
 
                 <View style={styles.TextContainer}>
                   <Text style={styles.cardText}>Licensing Authority:</Text>
                   <Text style={styles.cardText}>
-                    {doctor.license.licensingAuthority}
+                    {doctor.license?.authority}
                   </Text>
                 </View>
 
                 <View style={styles.TextContainer}>
-                  <Text style={styles.cardText}>Verification Date</Text>
+                  <Text style={styles.cardText}>Issue Date</Text>
                   <Text style={styles.cardText}>
-                    {doctor.license.verificationDate}
+                    {doctor.license?.issue_date}
                   </Text>
                 </View>
               </View>
 
-              {doctor.license.verified && (
+              {doctor.license?.is_verified && (
                 <View style={styles.VerfiedContainer}>
                   <TickIcon size={20} />
                   <Text style={styles.verified}>Verified by Admin</Text>
@@ -129,12 +136,12 @@ export default function DoctorProfile() {
             </View>
 
             <View style={[styles.card, styles.BioCard]}>
-              <Text style={styles.BioText}>About {doctor.name}</Text>
+              <Text style={styles.BioText}>About {doctor.full_name}</Text>
               <Text style={styles.bio}>{doctor.bio}</Text>
             </View>
 
             <SafeAreaView style={{ paddingBottom: insets.bottom }}>
-              <LogoutButton onPress={LogOut}/>
+              <LogoutButton onPress={LogOut} />
             </SafeAreaView>
           </View>
         </ScrollView>

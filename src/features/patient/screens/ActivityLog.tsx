@@ -1,22 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, FlatList, Pressable, ActivityIndicator } from "react-native";
+import { supabaseClient } from "@/services/supabase"; // IMPORT YOUR AXIOS SETUP HERE
+import { Text, View, StyleSheet, FlatList, TouchableOpacity, Pressable , ActivityIndicator} from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
-import { supabaseApi } from "@/store/supabaseConfig"; // IMPORT YOUR AXIOS SETUP HERE
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 import { Colors } from "@/utils/colors";
 import { scale } from "@/utils/responsive";
 import { Family } from "@/utils/typography";
-import AppBackground from "@/components/layout/AppBackground";
+import AppBackground from "@/components/base/AppBackground";
+import ChatIcon from "@/assets/icons/ChatIcon";
 import ActivityLogCard from "@/features/doctor/components/ActivityLogCard";
+import StartwithTickIcon from "@/assets/icons/StartwithTickIcon";
+import ArrowIcon from "@/assets/icons/ArrowIcon";
+import HandLikeIcon from "@/assets/icons/HandLikeIcon";
+import StarIcon from "@/assets/icons/StarIcon";
 
-import ChatIcon from "@/features/doctor/components/Icons/ChatIcon";
-import StartwithTickIcon from "@/features/doctor/components/Icons/StartwithTickIcon";
-import ArrowIcon from "@/features/doctor/components/Icons/ArrowIcon";
-import HandLikeIcon from "@/features/doctor/components/Icons/HandLikeIcon";
-import StarIcon from "@/features/doctor/components/Icons/StarIcon";
 
-// Maps to the 'status' column in your database
 const ACTIVITY_UI_MAP = {
     'comment': { Icon: ChatIcon, color: Colors.primary },
     'resolved': { Icon: StartwithTickIcon, color: Colors.secondary },
@@ -33,13 +31,10 @@ export default function ActivityLog() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Fetch data when the screen loads
     useEffect(() => {
         const fetchActivities = async () => {
             try {
-                // IMPORTANT: Replace 'activity_logs' with your exact table name if it is different
-                // Fetching all columns, ordered by the 'date' column you provided
-                const response = await supabaseApi.get('/activity_log?select=*');
+                const response = await supabaseClient.get('/activity_log?select=*');
                 console.log(response)
                 setActivities(response.data);
             } catch (err) {
@@ -61,16 +56,13 @@ export default function ActivityLog() {
                     <ArrowLeftIcon color={Colors.textDark2} size={scale(18)} />
                 </Pressable>
             </View>
-            
+
             <View style={styles.timelineContainer}>
                 <View style={styles.timelineLine} />
                 
-                {/* Loading State */}
                 {isLoading && (
                     <ActivityIndicator size="large" color={Colors.primary} style={{ marginTop: scale(40) }} />
                 )}
-
-                {/* Error State */}
                 {error && (
                     <Text style={{ textAlign: 'center', marginTop: scale(20), color: 'red' }}>{error}</Text>
                 )}
@@ -79,11 +71,10 @@ export default function ActivityLog() {
                 {!isLoading && !error && (
                     <FlatList
                         data={activities}
-                        keyExtractor={(item) => item.id.toString()}
+                        keyExtractor={(item, index) => (item?.id ?? index).toString()}
                         showsVerticalScrollIndicator={false}
                         contentContainerStyle={styles.listContent}
                         renderItem={({ item }) => {
-                            // Safely grab the status, convert to lowercase to ensure it matches the map keys
                             const itemStatus = item.status ? item.status.toLowerCase() : 'default';
                             const uiConfig = ACTIVITY_UI_MAP[itemStatus] || ACTIVITY_UI_MAP['default'];
                             const ItemIcon = uiConfig.Icon;
@@ -114,7 +105,7 @@ export default function ActivityLog() {
 const styles = StyleSheet.create({
     screen: {
         paddingTop: scale(50),
-        flex: 1, 
+        flex: 1,
     },
 
     header: {
@@ -137,28 +128,28 @@ const styles = StyleSheet.create({
     },
 
     timelineContainer: {
-        flex: 1, 
+        flex: 1,
         position: "relative",
-        marginTop: scale(40), 
+        marginTop: scale(40),
     },
 
     timelineLine: {
         position: "absolute",
         top: 0,
         bottom: 0,
-        left: scale(43) + scale(35) / 2 - scale(1), 
+        left: scale(43) + scale(35) / 2 - scale(1),
         width: scale(3),
         borderRadius: scale(30),
         backgroundColor: "#FFFFFF",
-        zIndex: -1, 
+        zIndex: -1,
     },
 
     listContent: {
-        paddingBottom: scale(40), 
+        paddingBottom: scale(40),
     },
 
     itemWrapper: {
-        marginBottom: scale(20), 
+        marginBottom: scale(20),
     },
 
     iconWrapper: {
@@ -173,6 +164,6 @@ const styles = StyleSheet.create({
     cardContainer: {
         marginLeft: scale(78),
         width: scale(120),
-        marginTop: -scale(30), 
+        marginTop: -scale(30),
     }
 });

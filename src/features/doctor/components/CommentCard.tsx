@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import IconWrapper from "./Icons/IconWrapper";
-import ChatIcon from "./Icons/ChatIcon";
+import IconWrapper from "../../../components/common/IconWrapper";
+import ChatIcon from "../../../assets/icons/ChatIcon";
 import { Colors } from "@/utils/colors";
 import { Family } from "@/utils/typography";
-import {scale} from "@/utils/responsive";
+import { scale } from "@/utils/responsive";
 
 export const CommentCard = ({ value }: {
   value: string | number;

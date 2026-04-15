@@ -2,61 +2,15 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { View, ScrollView, StyleSheet, Animated } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 
-import AppBackground from "@/components/layout/AppBackground";
+import AppBackground from "@/components/base/AppBackground";
 import DoctorGreeting from "../components/DoctorGreeting";
 import TimePeriodSelector from "../components/TimePeriodSelector";
 import StatsCard from "../components/StatisticCard";
 import ActivityLogButton from "../components/ActivityLogButton";
-import StatisticsChart, { BarData } from "@/features/doctor/components/StatisticsChart";
+import StatisticsChart from "@/features/doctor/components/StatisticsChart";
+import { doctorPeriodData } from "@/types/mockData";
 
 import { scale } from "@/utils/responsive";
-
-// --- Data per period ---
-const PERIOD_DATA: Record<'Weekly' | 'Monthly' | 'All Time', {
-  comments: number;
-  time: number;
-  score: number;
-  chart: BarData[];
-}> = {
-  Weekly: {
-    comments: 48,
-    time: 24,
-    score: 48,
-    chart: [
-      { label: "Sat", value: 45 },
-      { label: "Sun", value: 62 },
-      { label: "Mon", value: 38 },
-      { label: "Tue", value: 75, active: true },
-      { label: "Wed", value: 55 },
-      { label: "Thu", value: 68 },
-      { label: "Fri", value: 42 },
-    ],
-  },
-  Monthly: {
-    comments: 183,
-    time: 97,
-    score: 176,
-    chart: [
-      { label: "W1", value: 55 },
-      { label: "W2", value: 80 },
-      { label: "W3", value: 65, active: true },
-      { label: "W4", value: 70 },
-    ],
-  },
-  'All Time': {
-    comments: 847,
-    time: 412,
-    score: 763,
-    chart: [
-      { label: "Jan", value: 60 },
-      { label: "Feb", value: 75 },
-      { label: "Mar", value: 50 },
-      { label: "Apr", value: 90, active: true },
-      { label: "May", value: 70 },
-      { label: "Jun", value: 85 },
-    ],
-  },
-};
 
 // --- Animated Counter Hook ---
 function useAnimatedCounter(target: number, duration = 700) {
@@ -89,7 +43,7 @@ function useAnimatedCounter(target: number, duration = 700) {
 
 export default function DoctorDashboard({ navigation }: any) {
   const [selectedPeriod, setSelectedPeriod] = useState<'Weekly' | 'Monthly' | 'All Time'>('Weekly');
-  const data = PERIOD_DATA[selectedPeriod];
+  const data = doctorPeriodData[selectedPeriod];
 
   const comments = useAnimatedCounter(data.comments);
   const time = useAnimatedCounter(data.time);
@@ -160,7 +114,7 @@ const styles = StyleSheet.create({
     paddingBottom: scale(100),
     paddingHorizontal: scale(16),
     flexGrow: 1,
-    alignItems: "center", 
+    alignItems: "center",
     justifyContent: "center",
   },
 
