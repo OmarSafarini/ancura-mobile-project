@@ -23,14 +23,16 @@ import DoctorGreeting from "../components/DoctorGreeting";
 
 export default function DoctorHomeScreen({ navigation }: any) {
 
-const id ="002ecaf6-8729-4e14-a270-3598eec6cce8";
 const {
   data: doctor,
    isLoading: doctorLoading,
     isError: doctorError,
 } = useQuery<IDoctor>({
-    queryKey: ["doctor",id],
-    queryFn: () => getDoctorProfile(id),
+    queryKey: ["doctor"],
+    queryFn:async () => {
+      const meta = await getUserMeta();
+      getDoctorProfile(meta!.id);
+    }
   });
 
 
