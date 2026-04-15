@@ -8,9 +8,11 @@ import TimePeriodSelector from "../components/TimePeriodSelector";
 import StatsCard from "../components/StatisticCard";
 import ActivityLogButton from "../components/ActivityLogButton";
 import StatisticsChart from "@/features/doctor/components/StatisticsChart";
-import { doctorPeriodData } from "@/types/mockData";
 
 import { scale } from "@/utils/responsive";
+import { useQuery } from "@tanstack/react-query";
+import { useAuthStore } from "@/store/authStore";
+import { getDoctorDashboardStats } from "@/services/Doctor/DoctorDashboard";
 
 // --- Animated Counter Hook ---
 function useAnimatedCounter(target: number, duration = 700) {
@@ -43,13 +45,24 @@ function useAnimatedCounter(target: number, duration = 700) {
 
 export default function DoctorDashboard({ navigation }: any) {
   const [selectedPeriod, setSelectedPeriod] = useState<'Weekly' | 'Monthly' | 'All Time'>('Weekly');
-  const data = doctorPeriodData[selectedPeriod];
+  
 
-  const comments = useAnimatedCounter(data.comments);
-  const time = useAnimatedCounter(data.time);
-  const score = useAnimatedCounter(data.score);
+  const doctorId = useAuthStore((state) => state.session?.id);
 
-  // Re-animate every time the screen comes into focus
+  const {
+    data: stats = { comments: 0, time: 0, score: 0, chart: [] },
+    isPending,
+  } = useQuery({
+    queryKey: ['doctorDashboard', selectedPeriod, doctorId],
+    queryFn: () => getDoctorDashboardStats(doctorId!, selectedPeriod),
+    enabled: !!doctorId,
+    staleTime: 3 * 60 * 1000,
+  });
+
+  const comments = useAnimatedCounter(stats.comments);
+  const time = useAnimatedCounter(stats.time);
+  const score = useAnimatedCounter(stats.score);
+
   useFocusEffect(
     useCallback(() => {
       comments.animate();
@@ -96,7 +109,7 @@ export default function DoctorDashboard({ navigation }: any) {
 
         <View style={styles.chartContainer}>
           <StatisticsChart
-            data={data.chart}
+            data={stats.chart}
             showLabels={true}
             barWidth={scale(9)}
             spacing="space-around"

@@ -15,7 +15,8 @@ import EditPaperclipAttachmentIcon from "@/assets/icons/EditPaperclipAttachment"
 import NormalButton from "@/components/common/NormalButton";
 import SuccessScreen from "@/components/common/SuccessScreen";
 import { supabaseClient } from "@/services/supabase"; 
-import { uploadDocumentToStorage } from "@/services/storageService";
+import { uploadDocumentToStorage } from "@/services/Doctor/storageService";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export function LicenseVerification({ navigation }: any) {
     const { control, handleSubmit } = useForm();
@@ -98,6 +99,7 @@ export function LicenseVerification({ navigation }: any) {
 
     return (
         <AppBackground variant="clean" style={styles.screen}>
+            <SafeAreaView style={{ flex: 1 }} edges={['top', 'left', 'right']}>
             <KeyboardAvoidingView
                 style={styles.keyboardAvoidingView}
                 behavior={Platform.OS === "ios" ? "padding" : undefined}>
@@ -181,7 +183,7 @@ export function LicenseVerification({ navigation }: any) {
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
-
+            </SafeAreaView>
             <Modal
                 visible={showSuccess}
                 transparent={true}
@@ -201,7 +203,6 @@ export function LicenseVerification({ navigation }: any) {
 
 const styles = StyleSheet.create({
     screen: {
-        paddingTop: scale(50),
         flex: 1,
     },
     overlay: {

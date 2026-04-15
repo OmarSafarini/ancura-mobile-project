@@ -12,13 +12,13 @@ import AllRepliesScreen from '../features/common_screens/AllRepliesScreen';
 import {BaseKnowledge} from '../features/patient/screens/BaseKnowledge';
 
 // --- Screens for Tab 2 (Activity Log) ---
-import ActivityLogScreen from '../features/patient/screens/ActivityLog';
+import ActivityLogScreen from '../features/doctor/screens/ActivityLog';
 
 // --- Screens for Tab 3 (Notifications) ---
 import NotificationScreen from '../features/patient/screens/Notification';
 
 // --- Screens for Tab 4 (Profile & Settings) ---
-import DoctorProfileAndSettings from '../features/doctor/screens/DoctorProfileAndSetting';
+import DoctorProfile from '../features/doctor/screens/DoctorProfile';
 
 // --- Custom Tab Bar ---
 import DoctorBNB from '../features/doctor/components/DoctorBNB';
@@ -73,7 +73,7 @@ export default function DoctorNavigator() {
       {/* Tab 4: Profile & Settings */}
       <Tab.Screen
         name="ProfileTab"
-        component={DoctorProfileAndSettings}
+        component={DoctorProfile}
         options={{ tabBarLabel: 'Profile' }}
       />
     </Tab.Navigator>

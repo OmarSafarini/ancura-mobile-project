@@ -10,10 +10,11 @@ import ResolvedSlideButton from "../patient/components/ResolvedSlideButton";
 import { scale } from "@/utils/responsive";
 import { Colors } from "@/utils/colors";
 import { Family } from "@/utils/typography";
-import ArrowInCircle from "@/assets/icons/SubmitButton";
+import ArrowInCircle from "@/components/common/SubmitButton";
 import ReplyField from "@/components/forms/ReplyFeild";
 import { Control, useForm } from "react-hook-form";
-import { allDummyComments } from "@/types/mockData";
+import { supabaseClient } from "@/services/supabase";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 
 
@@ -21,13 +22,58 @@ type FormData = {
   doctorReply: string;
 };
 
+const getCommentsByReplyId = async (replyId: number) => {
+  const { data } = await supabaseClient.get('/comment', {
+    params: {
+      reply_id: `eq.${replyId}`,
+      order: 'timestamp.asc',
+      select: '*',
+    },
+  });
+  return data ?? [];
+};
+
+const postComment = async ({ replyId, body }: { replyId: number; body: string }) => {
+  const { data } = await supabaseClient.post('/comment', {
+    reply_id: replyId,
+    body,
+  });
+  return data?.[0];
+};
+
 export default function AllRepliesScreen({ navigation, route }: any) {
+  const queryClient = useQueryClient();
   const caseData = route?.params?.caseData;
   const replyId = route?.params?.replyId;
   const replyData = route?.params?.replyData;
   const role = route?.params?.role || 'patient';
 
   const isPatient = role === "patient";
+
+  const { data: comments = [], isLoading } = useQuery({
+    queryKey: ['comments', replyId],
+    queryFn: () => getCommentsByReplyId(replyId),
+    enabled: !!replyId,
+  });
+
+  const { mutate: submitComment, isPending } = useMutation({
+    mutationFn: postComment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['comments', replyId] });
+      resetField('doctorReply');
+      setTimeout(() => {
+        listRef.current?.scrollToEnd({ animated: true });
+      }, 300);
+    },
+    onError: (error: any) => {
+      console.error('Failed to post comment:', error?.response?.data || error.message);
+    },
+  });
+
+  const onSend = (data: FormData) => {
+    if (!data.doctorReply.trim()) return;
+    submitComment({ replyId, body: data.doctorReply.trim() });
+  };
   const handleViewGoBack = () => {
     navigation.navigate('DoctorRepliesScreen', {
       caseId: route?.params?.caseId,
@@ -36,13 +82,12 @@ export default function AllRepliesScreen({ navigation, route }: any) {
     });
   };
 
-  const { control } = useForm<FormData>({
+  const { control ,handleSubmit, resetField } = useForm<FormData>({
     defaultValues: { doctorReply: "" },
   });
 
   const listRef = useRef<FlatList>(null);
 
-  const comments = allDummyComments.filter(c => c.reply_id === replyId);
 
   return (
     <AppBackground>
@@ -100,7 +145,7 @@ export default function AllRepliesScreen({ navigation, route }: any) {
                   control={control as Control<any>}
                 />
               </View>
-              <ArrowInCircle />
+              <ArrowInCircle onPress={handleSubmit(onSend)}/>
             </View>
           </View>
 

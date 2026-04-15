@@ -14,7 +14,7 @@ import DoctorForgotPasswordScreen from '../features/doctor/screens/DoctorForgotP
 import DoctorVerificationScreen from '../features/doctor/screens/DoctorVerificationScreen';
 import DoctorNewPasswordScreen from '../features/doctor/screens/DoctorNewPasswordScreen';
 import DoctorProfileAndSettings from '../features/doctor/screens/DoctorProfileAndSetting';
-import {LicenseVerification} from '../features/patient/screens/LicenseVerification';
+import {LicenseVerification} from '@/features/doctor/screens/LicenseVerification';
 const Stack = createNativeStackNavigator();
 
 export default function AuthNavigator() {

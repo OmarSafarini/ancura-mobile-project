@@ -9,11 +9,17 @@ import LogoutButton from "@/components/common/LogoutButton";
 import ArrowLeftIcon from "./../../../assets/icons/ArrowLeftIcon";
 import CopyIcon from "../../../assets/icons/CopyIcon";
 import FlashMessage, { showMessage } from "react-native-flash-message";
+import { useQuery } from "@tanstack/react-query";
+import { getPatintProfile } from "@/services/Patient/PatinetService";
+import AnimatedLogoScreen from "@/components/base/AnimatedLogoScreen";
+import * as Clipboard from "expo-clipboard";
+import { signOut } from "../../../services/authService";
 
-export default function PaitentSettings() {
+export default function PaitentSettings({ navigation }: any) {
   const insets = useSafeAreaInsets();
-  const id = "USR-XXXXX";
-  const CopyId = () => {
+  const id = "11111111-1111-1111-1111-111111111111";
+  const CopyId = async (copiedId: string) => {
+    await Clipboard.setStringAsync(copiedId);
     showMessage({
       message: "Copied successfully",
       type: "success",
@@ -22,32 +28,68 @@ export default function PaitentSettings() {
     });
   };
 
+  const {
+    data: patient,
+    isLoading: patientLoading,
+    isError: patientError,
+  } = useQuery({
+    queryKey: ["patient", id],
+    queryFn: () => getPatintProfile(id),
+  });
+
+  if (patientLoading) {
+    return (
+      <View style={styles.overlay}>
+        <AnimatedLogoScreen size={scale(432)} />
+      </View>
+    );
+  }
+
+  if (patientError) {
+    return <Text>Error loading cases</Text>;
+  }
+
   const goBack = () => {
     navigation.goBack();
   }
-  const LogOut = () => {
-    navigation.navigate("PatientAuthScreen");
 
+  const LogOut = async () => {
+    await signOut();
   }
+
   return (
     <AppBackground variant="logo">
       <View style={styles.container}>
         <View>
           <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
             <Text style={styles.Text}>Profile & Settings</Text>
-            <IconWrapper size={scale(33)} bgColor={palette.white} shape="square">
-              <ArrowLeftIcon size={scale(18)} color={palette.dark} onPress={goBack} />
+            <IconWrapper
+              size={scale(33)}
+              bgColor={palette.white}
+              shape="square"
+            >
+              <ArrowLeftIcon
+                size={scale(18)}
+                color={palette.dark}
+                onPress={goBack}
+              />
             </IconWrapper>
           </SafeAreaView>
           <View style={styles.Card}>
             <Text style={[styles.CardHeader, styles.CardText]}>
               Your Anonymous ID
             </Text>
-            <Text style={[styles.CardSubtitle, styles.CardText]}>{id}</Text>
+            <Text style={[styles.CardSubtitle, styles.CardText]}>
+              {patient?.id}
+            </Text>
 
             <View style={styles.icon}>
               <IconWrapper shape="circle" bgColor={palette.white} size={33}>
-                <CopyIcon size={16} color={palette.black} onPress={CopyId} />
+                <CopyIcon
+                  size={16}
+                  color={palette.black}
+                  onPress={() => CopyId(patient?.id ?? "")}
+                />
               </IconWrapper>
             </View>
           </View>
@@ -104,5 +146,12 @@ const styles = StyleSheet.create({
   BottomBar: {
     alignSelf: "stretch",
     alignItems: "center",
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(255,255,255,0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999,
   },
 });
