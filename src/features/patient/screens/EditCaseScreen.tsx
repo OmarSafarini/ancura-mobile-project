@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
 import { useForm } from "react-hook-form";
 import * as DocumentPicker from "expo-document-picker";
@@ -22,6 +23,7 @@ import { Colors, palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import FileBar from "@/components/common/FileBar";
 import IconWrapper from "@/components/common/IconWrapper";
+import { editCase } from "@/services/Patient/Cases";
 
 type FormValues = {
   title: string;
@@ -35,7 +37,7 @@ type CaseFileItem = {
   title: string;
 };
 
-const EditCaseScreen = ({ navigation }: any) => {
+const EditCaseScreen = ({ navigation, route }: any) => {
   const [caseFiles, setCaseFiles] = useState<CaseFileItem[]>([
     {
       id: "1",
@@ -60,8 +62,33 @@ const EditCaseScreen = ({ navigation }: any) => {
   const isEmergency = watch("isEmergency");
   const pickedFiles = watch("files");
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Updated Case:", data);
+  const onSubmit = async (data: FormValues) => {
+    const caseId = route?.params?.caseId || route?.params?.caseData?.id;
+
+    if (!caseId) {
+      Alert.alert("Error", "Case id is missing.");
+      return;
+    }
+
+    try {
+      const files = data.files
+        .map((file) => file.uri || file.name)
+        .filter(Boolean) as string[];
+
+      await editCase(Number(caseId), {
+        title: data.title,
+        description: data.description,
+        isEmergency: data.isEmergency,
+        file: files.length ? files : null,
+      });
+
+      Alert.alert("Success", "Case updated successfully.");
+      navigation.goBack();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to update case.";
+      Alert.alert("Error", message);
+    }
   };
 
   const deleteFile = (id: string) => {
