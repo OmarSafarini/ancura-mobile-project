@@ -1,5 +1,5 @@
-import React, { useRef, useState } from "react";
-import { View, FlatList, StyleSheet, Text } from "react-native";
+import React, { useRef } from "react";
+import { View, FlatList, StyleSheet, Text, SafeAreaView } from "react-native";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Control, useForm } from "react-hook-form";
 import AppBackground from "@/components/base/AppBackground";
@@ -10,23 +10,21 @@ import ResolvedSlideButton from "../patient/components/ResolvedSlideButton";
 import ScrollToBottomButton from "../patient/components/ScrollToBottom";
 import ReplyField from "@/components/forms/ReplyFeild";
 import ArrowInCircle from "@/components/common/SubmitButton";
-
 import { scale } from "@/utils/responsive";
 import { Colors } from "@/utils/colors";
 import { Family } from "@/utils/typography";
-import { getRepliesByPostId, postReply } from "@/services/common_services/ReplyService";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { getRepliesByCaseId, postReply } from "@/services/common_services/ReplyService";
+import { useAuthStore } from "@/store/authStore";
 
 type FormData = { doctorReply: string };
 
 export default function DoctorRepliesScreen({ navigation, route }: any) {
   const caseData = route?.params?.caseData;
   const role = route?.params?.role || 'doctor';
-const caseId = route?.params?.caseId || caseData?.id; 
-
+  const caseId = route?.params?.caseId || caseData?.id; 
   const isDoctor = role === "doctor";
   const isPatient = role === "patient";
+  const authUser = useAuthStore((state) => state.user);
 
   const queryClient = useQueryClient(); 
   const flatListRef = useRef<FlatList>(null);
@@ -37,7 +35,7 @@ const caseId = route?.params?.caseId || caseData?.id;
 
   const { data: replies = [] } = useQuery({
     queryKey: ['replies', caseId],
-    queryFn: () => getRepliesByPostId(caseId),
+    queryFn: () => getRepliesByCaseId(caseId),
     enabled: !!caseId,
   });
 
@@ -56,16 +54,17 @@ const caseId = route?.params?.caseId || caseData?.id;
   });
 
   const onSend = async (data: FormData) => {
-    if (!data.doctorReply.trim()) return;
-    const doctorId = await AsyncStorage.getItem('doctor_id');
-    if (!doctorId) return;
-    submitReply({
-      postId: caseId,
-      doctorId,
-      patientId: caseData?.patient_id,
-      body: data.doctorReply.trim(),
-    });
-  };
+   if (!data.doctorReply.trim()) return;
+  if (!authUser?.id) return;
+
+
+  submitReply({
+    caseId: caseId,
+    doctorId: authUser.id,
+    patientId: caseData?.patient_id,
+    body: data.doctorReply.trim(),
+  });
+};
 
 
   const handleViewAllReplies = (reply: any) => {
@@ -94,6 +93,7 @@ const caseId = route?.params?.caseId || caseData?.id;
 
 
   return (
+    <SafeAreaView style={styles.safeArea}>
     <AppBackground style={{ flex: 1 }}>
 
       <View style={styles.fixedHeader}>
@@ -117,12 +117,15 @@ const caseId = route?.params?.caseId || caseData?.id;
           )}
           renderItem={({ item }) => (
             <DoctorReplyCard
-              title={item.doctor_name}
+              id={item.id}
+              title={item.doctor?.fullname}
               major={item.doctor_major}
               message={item.body}
               time={item.timestamp}
               CardOnPress={() => handleViewAllReplies(item)}
               ChatOnPress={() => handleViewAllReplies(item)}
+              onLike={() =>{}}
+              onDislike={() =>{}}
             />
           )}
         />
@@ -153,11 +156,14 @@ const caseId = route?.params?.caseId || caseData?.id;
       </View>
 
     </AppBackground>
+    </SafeAreaView>
   );
 }
 
-
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
   fixedHeader: {
     paddingHorizontal: scale(24),
     paddingTop: scale(50),

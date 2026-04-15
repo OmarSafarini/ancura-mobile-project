@@ -11,20 +11,20 @@ import StatisticsChart from "@/features/doctor/components/StatisticsChart";
 
 import { scale } from "@/utils/responsive";
 import { useQuery } from "@tanstack/react-query";
-import { getSupabaseSession } from "@/services/supabase";
 import { getDoctorDashboardStats } from "@/services/Doctor/DoctorDashboard";
 import { getDoctorBasicInfo } from "@/services/Doctor/Doctor";
+import { useAuthStore } from "@/store/authStore";
 
-function useDoctorId() {
+function useDoctorId(userId?: string) {
   return useQuery({
-    queryKey: ['doctorSession'],
+    queryKey: ['doctorSession', userId],
     queryFn: async () => {
-      const user = await getSupabaseSession();
-      if (!user?.id) throw new Error('No session found');
-      return user.id as string;
+      if (!userId) throw new Error('No session found');
+      return userId;
     },
     staleTime: Infinity,
     retry: 1,
+    enabled: !!userId,
   });
 }
 
@@ -60,9 +60,11 @@ function useAnimatedCounter(target: number, duration = 700) {
 }
 
 export default function DoctorDashboard({ navigation }: any) {
+  const user = useAuthStore((state) => state.user);
+
   const [selectedPeriod, setSelectedPeriod] = useState<'Weekly' | 'Monthly' | 'All Time'>('Weekly');
 
-  const { data: doctorId } = useDoctorId();
+  const { data: doctorId } = useDoctorId(user?.id);
 
   const { data: doctorInfo } = useQuery({
     queryKey: ['doctorBasicInfo', doctorId],
