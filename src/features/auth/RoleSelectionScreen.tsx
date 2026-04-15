@@ -12,7 +12,7 @@ export default function RoleSelectionScreen({ navigation }: any) {
 
     const handleContinue = () => {
         if (selectedRole === "patient") {
-            navigation.navigate("PatientApp");
+            navigation.navigate("PatientAuthScreen");
         } else if (selectedRole === "doctor") {
             navigation.navigate("LicenseVerification");
         }
@@ -20,7 +20,7 @@ export default function RoleSelectionScreen({ navigation }: any) {
 
     return (
         <View style={styles.container}>
-            <AppBackground style={{ position: "absolute", width: "100%", height: "100%" }} />
+            <AppBackground  style={{ position: "absolute", width: "100%", height: "100%" }} />
 
             <View style={styles.safeArea}>
                 <View style={styles.content}>
@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
     },
     safeArea: {
         flex: 1,
+        zIndex:1,
     },
     content: {
         flex: 1,
