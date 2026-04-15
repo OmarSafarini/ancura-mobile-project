@@ -29,9 +29,9 @@ const {
     isError: doctorError,
 } = useQuery<IDoctor>({
     queryKey: ["doctor"],
-    queryFn:async () => {
+    queryFn :async () => {
       const meta = await getUserMeta();
-      getDoctorProfile(meta!.id);
+      return getDoctorProfile(meta!.id);
     }
   });
 
