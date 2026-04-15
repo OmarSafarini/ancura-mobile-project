@@ -13,13 +13,11 @@ import { useQuery } from "@tanstack/react-query";
 import { getPatintProfile } from "@/services/Patient/PatinetService";
 import AnimatedLogoScreen from "@/components/base/AnimatedLogoScreen";
 import * as Clipboard from "expo-clipboard";
-export default function PaitentSettings() {
-
 import { signOut } from "../../../services/authService";
+import { getUserMeta } from "@/services/tokenService";
 
 export default function PaitentSettings({ navigation }: any) {
   const insets = useSafeAreaInsets();
-  const id = "11111111-1111-1111-1111-111111111111";
   const CopyId = async (copiedId: string) => {
     await Clipboard.setStringAsync(copiedId);
     showMessage({
@@ -31,13 +29,17 @@ export default function PaitentSettings({ navigation }: any) {
   };
 
   const {
-    data: patient,
-    isLoading: patientLoading,
-    isError: patientError,
-  } = useQuery({
-    queryKey: ["patient", id],
-    queryFn: () => getPatintProfile(id),
-  });
+     data: patient,
+     isLoading: patientLoading,
+     isError: patientError,
+   } = useQuery({
+     queryKey: ["patient"],
+     queryFn: async () => {
+       const meta = await getUserMeta();
+       console.log(meta!.id);
+       return getPatintProfile(meta!.id);
+     },
+   });
 
   if (patientLoading) {
     return (
@@ -82,7 +84,7 @@ export default function PaitentSettings({ navigation }: any) {
               Your Anonymous ID
             </Text>
             <Text style={[styles.CardSubtitle, styles.CardText]}>
-              {patient?.id}
+              {patient?.nickname}
             </Text>
 
             <View style={styles.icon}>
