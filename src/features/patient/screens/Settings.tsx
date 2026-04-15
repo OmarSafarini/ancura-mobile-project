@@ -13,13 +13,11 @@ import { useQuery } from "@tanstack/react-query";
 import { getPatintProfile } from "@/services/Patient/PatinetService";
 import AnimatedLogoScreen from "@/components/base/AnimatedLogoScreen";
 import * as Clipboard from "expo-clipboard";
-export default function PaitentSettings() {
-
 import { signOut } from "../../../services/authService";
 
 export default function PaitentSettings({ navigation }: any) {
   const insets = useSafeAreaInsets();
-  const id = "11111111-1111-1111-1111-111111111111";
+  const id = "9b3cb633-dad5-4e14-aa24-71daa6c17b58";
   const CopyId = async (copiedId: string) => {
     await Clipboard.setStringAsync(copiedId);
     showMessage({
