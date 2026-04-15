@@ -8,48 +8,66 @@ import {
   Text,
   SafeAreaView,
   FlatList,
-  Pressable,
 } from "react-native";
 import { Colors as colors, palette } from "@/utils/colors";
 import NotificationsIcon from "@/assets/icons/NotificationsIcon";
-import BottomNavBar, { TabItem } from "@/components/base/BottomNavBar";
-import HomeIcon from "@/assets/icons/HomeIcon";
-import ProfileIcon from "@/assets/icons/ProfileIcon";
-import ActivityLogIcon from "@/assets/icons/ActivityLogIcon";
 import { useState } from "react";
 import { scale } from "@/utils/responsive";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import FabAddIcon from "@/assets/icons/FabAddIcon";
 import { Family } from "@/utils/typography";
 import CaseCard from "@/components/common/CaseCard";
 import FilterButton from "@/components/common/FiltterButton";
-import { dummyCases } from "@/types/mockData";
+import { useQuery } from "@tanstack/react-query";
+import {
+  getPatintPosts,
+  getPatintProfile,
+} from "@/services/Patient/PatinetService";
+import AnimatedLogoScreen from "@/components/base/AnimatedLogoScreen";
+import { Status } from "@/types/ICaseStatusProps";
 
 export default function PatientHomePage() {
   const navigation = useNavigation<any>();
-  const [activeTab, setActiveTab] = useState("Dashboard");
   const insets = useSafeAreaInsets();
-  const [filterStatus, setFilterStatus] = useState<null | string>(null);
+  const [filterStatus, setFilterStatus] = useState<Status | null>(null);
   const [selected, setSelcted] = useState("All");
 
-  const TABS: TabItem[] = [
-    { name: "Dashboard", label: "Dashboard", icon: HomeIcon },
-    { name: "ActivityLog", label: "Activity Log", icon: ActivityLogIcon },
-    { name: "Notifications", label: "Notifications", icon: NotificationsIcon },
-    { name: "Profile", label: "Profile", icon: ProfileIcon },
-  ];
+  const id = "11111111-1111-1111-1111-111111111111";
+  const {
+    data: patient,
+    isLoading: patientLoading,
+    isError: patientError,
+  } = useQuery({
+    queryKey: ["patient", id],
+    queryFn: () => getPatintProfile(id),
+  });
 
-  const user = {
-    profilePic: require("../../../../assets/ancura.gif"),
-    name: "USER-XXXX",
-  };
+  const {
+    data: patientPost,
+    isLoading: patientPstLoading,
+    isError: patientPostError,
+  } = useQuery({
+    queryKey: ["patientPost", id],
+    queryFn: () => getPatintPosts(id),
+  });
+
+  if (patientLoading || patientPstLoading) {
+    return (
+      <View style={styles.overlay}>
+        <AnimatedLogoScreen size={scale(432)} />
+      </View>
+    );
+  }
+
+  if (patientError || patientPostError) {
+    return <Text>Error loading cases</Text>;
+  }
 
   const filteredCases = filterStatus
-    ? dummyCases.filter((c) => c.status === filterStatus)
-    : dummyCases;
+    ? patientPost?.filter((c) => c.status === filterStatus)
+    : patientPost;
 
   const STATUS_OPTIONS = [
-    { label: "All", value: "All" },
+    { label: "All", value: null },
     { label: "Under Review", value: "under_review" },
     { label: "Doctor Replied", value: "doctor_replied" },
     { label: "Resolved", value: "resolved" },
@@ -59,34 +77,38 @@ export default function PatientHomePage() {
     <AppBackground variant="logo">
       <View style={styles.container}>
         <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
-          <Image style={styles.img} source={user.profilePic} />
+          <Image style={styles.img} source={patient?.profilePic} />
           <IconWrapper shape="square" bgColor={palette.white} size={33}>
             <NotificationsIcon size={16} color={palette.black} />
           </IconWrapper>
         </SafeAreaView>
 
         <View style={{ marginVertical: scale(20) }}>
-          <Text style={[styles.UserName, styles.Text]}>{user.name}</Text>
+          <Text style={[styles.UserName, styles.Text]}>
+            {patient?.nickname}
+          </Text>
           <Text style={[styles.SubText, styles.Text]}>
             How are you feeling today?
           </Text>
         </View>
-
+        <View style={styles.filterRow}>
+          {STATUS_OPTIONS.map((status) => (
+            <FilterButton
+              key={status.value}
+              title={status.label}
+              isActive={
+                selected === status.value ||
+                (selected === "All" && status.value === null)
+              }
+              onPress={() => {
+                setSelcted(status.value ?? "All");
+                setFilterStatus(status.value);
+              }}
+            />
+          ))}
+        </View>
         {filteredCases.length > 0 ? (
           <View>
-            <View style={styles.filterRow}>
-              {STATUS_OPTIONS.map((status) => (
-                <FilterButton
-                  key={status.value}
-                  title={status.label}
-                  isActive={selected === status.value}
-                  onPress={() => {
-                    setSelcted(status.value);
-                    setFilterStatus(status.value === "All" ? null : status.value);
-                  }}
-                />
-              ))}
-            </View>
             <FlatList
               data={filteredCases}
               keyExtractor={(item) => item.id.toString()}
@@ -99,7 +121,12 @@ export default function PatientHomePage() {
               renderItem={({ item }) => (
                 <CaseCard
                   data={item}
-                  onPress={() => navigation.navigate("CaseDetailsAndRepliesScreen", { caseId: item.id, caseData: item })}
+                  onPress={() =>
+                    navigation.navigate("CaseDetailsAndRepliesScreen", {
+                      caseId: item.id,
+                      caseData: item,
+                    })
+                  }
                 />
               )}
               contentContainerStyle={{
@@ -166,5 +193,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: scale(15),
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(255,255,255,0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999,
   },
 });
