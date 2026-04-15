@@ -19,42 +19,61 @@ import TickIcon from "@/assets/icons/TickIcon";
 import { IDoctor } from "@/types/IDoctor";
 import IconWrapper from "../../../components/common/IconWrapper";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
+import { useQuery } from "@tanstack/react-query";
+import { getDoctorLicense, getDoctorProfile } from "@/services/Doctor/DoctorService";
+import AnimatedLogoScreen from "@/components/base/AnimatedLogoScreen";
+import { ILicense } from "@/types/ILicense";
 import { signOut } from "../../../services/authService";
+import userBase from "../../../../assets/icon.png";
+import { getUserMeta } from "@/services/tokenService";
 
 export default function DoctorProfile({ navigation }: any) {
-  const doctor: IDoctor = {
-    id: "d1e2f3a4-0003-0000-0000-000000000001",
-    full_name: "Dr. Aprar Ismail",
-    email: "aprar@gmail.com",
-    profile_pic: require("../../../../assets/ancura.gif"),
-    location: "Nablus, Palestine",
-    comments_count: 120,
-    points: 150,
-    years_exp: 4,
-    created_at: "2021-03-15",
-    license: {
-      id: 1,
-      doctor_id: "d1e2f3a4-0003-0000-0000-000000000001",
-      license_number: "PMC-1923",
-      authority: "Palestinian Medical Council",
-      years_exp: 4,
-      issue_date: "1998-07-20",
-      expire_date: "2030-07-20",
-      created_at: "2021-03-15",
-      is_verified: true,
-    },
-    bio: "Experienced doctor specializing in patient care, diagnosis, and treatment with a passion for helping people and improving healthcare outcomes.",
-  };
+  
+const {
+   data: doctor,
+   isLoading: doctorLoading,
+   isError: doctorError,
+} = useQuery<IDoctor>({
+    queryKey: ["doctor"],
+    queryFn: async () => {
+      const meta =await getUserMeta();
+      console.log(meta!.id);
+      return getDoctorProfile(meta!.id)
+    }
+  });
+
+
+  const { data: license, 
+    isLoading :LicenseLoading ,
+    isError: LicenseError,
+ } = useQuery<ILicense>({
+  queryKey: ["license", id],
+  queryFn: () => getDoctorLicense(id),
+  enabled: !!id,
+});
 
   const insets = useSafeAreaInsets();
 
-  const goBack = () => {
+  if (doctorLoading ||LicenseLoading) {
+  return (
+    <View style={styles.overlay}>
+      <AnimatedLogoScreen size={scale(432)} />
+    </View>
+  );
+}
+
+if( doctorError||LicenseError){
+   return <Text>Error loading cases</Text>;
+}
+   const goBack = () => {
     navigation.goBack();
   }
 
   const LogOut = async () => {
     await signOut();
-  }
+  }  
+    const profilePic = doctor?.profilePic ?? userBase;
+
   return (
     <AppBackground variant="clean">
       <SafeAreaView style={{ flex: 1 }}>
@@ -69,33 +88,33 @@ export default function DoctorProfile({ navigation }: any) {
 
             <View style={styles.profileCard}>
               <View style={styles.DoctorInfo}>
-                <Image source={doctor.profile_pic} style={styles.image} />
+                <Image source={profilePic} style={styles.image} />
                 <View style={{ gap: scale(10) }}>
-                  <Text style={styles.name}>{doctor.full_name}</Text>
+                  <Text style={styles.name}>{doctor?.full_name}</Text>
                   <View style={styles.TextWithIcon}>
                     <LocationIcon />
-                    <Text style={styles.sub}> {doctor.location}</Text>
+                    <Text style={styles.sub}> {doctor?.location}</Text>
                   </View>
                   <View style={styles.TextWithIcon}>
                     <EmailIcon />
-                    <Text style={styles.sub}>{doctor.email}</Text>
+                    <Text style={styles.sub}>{doctor?.email}</Text>
                   </View>
                 </View>
               </View>
               <View style={styles.statsRow}>
                 <View style={styles.statItem}>
-                  <Text style={styles.statNumber}>{doctor.comments_count}</Text>
+                  <Text style={styles.statNumber}>{doctor?.comments_count}</Text>
                   <Text style={styles.statLabel}>Comments</Text>
                 </View>
 
                 <View style={styles.statItem}>
-                  <Text style={styles.statNumber}>{doctor.points}</Text>
+                  <Text style={styles.statNumber}>{doctor?.points}</Text>
                   <Text style={styles.statLabel}>Reputation </Text>
                   <Text style={styles.statLabel}> Score</Text>
                 </View>
 
                 <View style={styles.statItem}>
-                  <Text style={styles.statNumber}>{doctor.years_exp}</Text>
+                  <Text style={styles.statNumber}>{doctor?.years_exp}</Text>
                   <Text style={styles.statLabel}>Years </Text>
                   <Text style={styles.statLabel}> Experence</Text>
                 </View>
@@ -106,28 +125,28 @@ export default function DoctorProfile({ navigation }: any) {
                 <Text style={styles.cardTitle}>License Verification</Text>
 
                 <View style={styles.TextContainer}>
-                  <Text style={styles.cardText}>License Number </Text>
+                  <Text style={styles.cardText}>License Number : </Text>
                   <Text style={styles.cardText}>
-                    {doctor.license?.license_number}
+                    {license?.license_number}
                   </Text>
                 </View>
 
                 <View style={styles.TextContainer}>
-                  <Text style={styles.cardText}>Licensing Authority:</Text>
+                  <Text style={styles.cardText}>Licensing Authority :</Text>
                   <Text style={styles.cardText}>
-                    {doctor.license?.authority}
+                    {license?.authority}
                   </Text>
                 </View>
 
                 <View style={styles.TextContainer}>
-                  <Text style={styles.cardText}>Issue Date</Text>
+                  <Text style={styles.cardText}>Issue Date : </Text>
                   <Text style={styles.cardText}>
-                    {doctor.license?.issue_date}
+                    {license?.issue_date}
                   </Text>
                 </View>
               </View>
 
-              {doctor.license?.is_verified && (
+              {license?.is_verified && (
                 <View style={styles.VerfiedContainer}>
                   <TickIcon size={20} />
                   <Text style={styles.verified}>Verified by Admin</Text>
@@ -136,14 +155,14 @@ export default function DoctorProfile({ navigation }: any) {
             </View>
 
             <View style={[styles.card, styles.BioCard]}>
-              <Text style={styles.BioText}>About {doctor.full_name}</Text>
-              <Text style={styles.bio}>{doctor.bio}</Text>
+              <Text style={styles.BioText}>About {doctor?.full_name}</Text>
+              <Text style={styles.bio}>{doctor?.bio}</Text>
             </View>
-
-            <SafeAreaView style={{ paddingBottom: insets.bottom }}>
+              <SafeAreaView style={{ paddingBottom: insets.bottom }}>
               <LogoutButton onPress={LogOut} />
             </SafeAreaView>
           </View>
+          
         </ScrollView>
       </SafeAreaView>
     </AppBackground>
@@ -155,7 +174,7 @@ const styles = StyleSheet.create({
     padding: scale(40),
     justifyContent: "space-between",
     flex: 1,
-    gap: scale(20),
+    gap: scale(30),
   },
   NavBar: {
     flexDirection: "row",
@@ -216,6 +235,7 @@ const styles = StyleSheet.create({
 
   statItem: {
     alignItems: "center",
+    justifyContent:'center',
     padding: scale(10),
     backgroundColor: "#6d7eb5ad",
     borderRadius: scale(16),
@@ -253,7 +273,8 @@ const styles = StyleSheet.create({
   TextContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: scale(20),
+    
+    flexWrap: "wrap",
   },
   cardText: {
     fontSize: scale(16),
@@ -261,6 +282,7 @@ const styles = StyleSheet.create({
     fontFamily: Family.FG_Regular,
     flexWrap: "wrap",
     marginTop: scale(10),
+    marginLeft:scale(3)
   },
 
   VerfiedContainer: {
@@ -291,4 +313,11 @@ const styles = StyleSheet.create({
     color: palette.dark,
     lineHeight: scale(20),
   },
+   overlay: {
+  ...StyleSheet.absoluteFillObject,
+  backgroundColor: "rgba(255,255,255,0.7)",
+  justifyContent: "center",
+  alignItems: "center",
+  zIndex: 999,
+}
 });
