@@ -106,7 +106,7 @@ export default function DoctorLoginScreen({ navigation }: any) {
 
             <NormalButton
               title="Apply as a Licensed Professional"
-              onPress={() => navigation.navigate('DoctorProfileAndSettings')}
+              onPress={() => navigation.navigate('LicenseVerification')}
               bgColor={Colors.secondary}
               disabled={isAuthenticating}
             />
