@@ -14,7 +14,7 @@ export default function RoleSelectionScreen({ navigation }: any) {
         if (selectedRole === "patient") {
             navigation.navigate("PatientAuthScreen");
         } else if (selectedRole === "doctor") {
-            navigation.navigate("LicenseVerification");
+            navigation.navigate("DoctorLoginScreen");
         }
     };
 

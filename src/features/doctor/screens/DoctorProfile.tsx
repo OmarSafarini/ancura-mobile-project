@@ -94,7 +94,7 @@ if( doctorError||LicenseError){
               <View style={styles.DoctorInfo}>
                 <Image source={profilePic} style={styles.image} />
                 <View style={{ gap: scale(10) }}>
-                  <Text style={styles.name}>{doctor?.full_name}</Text>
+                  <Text style={styles.name}>{doctor?.fullname}</Text>
                   <View style={styles.TextWithIcon}>
                     <LocationIcon />
                     <Text style={styles.sub}> {doctor?.location}</Text>

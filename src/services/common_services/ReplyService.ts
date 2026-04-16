@@ -4,7 +4,7 @@ export const getRepliesByCaseId = async (caseId: number) => {
   const { data } = await supabaseClient.get('/reply', {
     params: {
       case_id: `eq.${caseId}`,
-      select: '*,doctor(fullname)',        
+      select: '*,doctor(fullname)',
     },
   });
   console.log('replies fetched:', data);
@@ -36,7 +36,7 @@ export const postReply = async ({
 export const likeReply = async (replyId: string, currentLikes: number) => {
   const { data } = await supabaseClient.patch(
     '/reply',
-    { likes: currentLikes + 1 },  
+    { likes: currentLikes + 1 },
     {
       params: { id: `eq.${replyId}` },
       headers: { Prefer: 'return=representation' },

@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { Control, useForm } from "react-hook-form";
 import { View, FlatList, StyleSheet, SafeAreaView } from "react-native";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getRepliesByPostId, postReply } from '@/services/common_services/ReplyService';
+import { getRepliesByCaseId, postReply } from '@/services/common_services/ReplyService';
 import { useAuthStore } from '@/store/authStore';
 import AppBackground from "@/components/base/AppBackground";
 import BackButton from "@/components/common/BackButton";
@@ -20,7 +20,6 @@ import { Colors } from "@/utils/colors";
 
 import PencilIcon from "@/assets/icons/PencilIcon";
 import TrashIcon from "@/assets/icons/TrashIcon";
-import { useAuthStore } from "@/store/authStore";
 
 
 type FormData = {
@@ -106,8 +105,8 @@ const onSend = async (data: FormData) => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
     <AppBackground>
+      <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
 
         <View style={styles.topBar}>
@@ -211,8 +210,8 @@ const onSend = async (data: FormData) => {
           )}
         </View>
       </View>
+      </SafeAreaView>
     </AppBackground>
-    </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
@@ -225,9 +224,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: scale(50),
+    marginTop: scale(20),
     marginHorizontal: scale(24),
-    marginBottom: scale(25),
+    marginBottom: scale(20),
   },
 
   toggleContainer: {
@@ -238,12 +237,12 @@ const styles = StyleSheet.create({
   mainContent: {
     flex: 1,
     paddingHorizontal: scale(24),
-    gap: scale(41),
+    gap: scale(20),
   },
 
   replySection: {
-    height: scale(410),
-    gap: scale(41),
+    flex: 1,
+    gap: scale(20),
   },
 
   list: {
