@@ -84,8 +84,7 @@ const { mutate: submitReply, isPending } = useMutation({
 
 const onSend = async (data: FormData) => {
   if (!data.doctorReply.trim()) return;
-  const doctorId = useAuthStore.getState().session?.id;
-  if (!doctorId) return;
+  if (!authUser?.id) return;
 
   submitReply({
     caseId: caseId,
