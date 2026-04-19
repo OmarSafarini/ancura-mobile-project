@@ -23,6 +23,7 @@ import { Family } from "@/utils/typography";
 import EmergencyCheckBox from "../components/EmergencyCheckBox";
 import { createCase } from "@/services/Patient/Cases";
 import { useAuthStore } from "@/store/authStore";
+import { useQueryClient } from "@tanstack/react-query";
 
 
 type FormValues = {
@@ -40,6 +41,7 @@ type CaseFileItem = {
 const CreateCase = ({ navigation }: any) => {
   const [caseFiles, setCaseFiles] = useState<CaseFileItem[]>([]);
   const user = useAuthStore((state) => state.user);
+  const queryClient = useQueryClient();
 
   const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
     defaultValues: {
@@ -71,6 +73,8 @@ const CreateCase = ({ navigation }: any) => {
         file: files[0] ?? null,
         isEmergency: data.isEmergency,
       });
+
+      queryClient.invalidateQueries({ queryKey: ["patientPost"] });
 
       Alert.alert("Success", "Case created successfully.");
       navigation.goBack();
