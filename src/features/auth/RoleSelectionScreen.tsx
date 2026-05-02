@@ -34,6 +34,7 @@ export default function RoleSelectionScreen({ navigation }: any) {
                             onPress={() => setSelectedRole("patient")}
                             isActive={selectedRole === "patient"}
                             activeBgColor="#b6c0f95b"
+                            borderColor="#6D7EB5"
                         />
 
                         <SelectUserType
@@ -43,6 +44,7 @@ export default function RoleSelectionScreen({ navigation }: any) {
                             onPress={() => setSelectedRole("doctor")}
                             isActive={selectedRole === "doctor"}
                             activeBgColor="#c3e3c75b"
+                            borderColor="#8EB392"
                         />
                     </View>
                 </View>

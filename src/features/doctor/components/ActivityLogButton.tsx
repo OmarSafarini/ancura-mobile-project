@@ -47,8 +47,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     color: Colors.formBackground,
     marginStart: scale(25),
-    fontSize: scale(13),
-    fontFamily: Family.FG_Medium,
+    fontSize: scale(14),
+    fontFamily: Family.FG_Regular,
   },
 
   thumb: {
@@ -60,10 +60,5 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.formBackground,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: Colors.textDark,
-    shadowOffset: { width: 0, height: scale(3) },
-    shadowOpacity: 0.15,
-    shadowRadius: scale(5),
-    elevation: 4,
   },
 });

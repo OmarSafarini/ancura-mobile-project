@@ -8,6 +8,7 @@ import {
   Text,
   SafeAreaView,
   FlatList,
+  Pressable,
 } from "react-native";
 import { Colors as colors, palette } from "@/utils/colors";
 import NotificationsIcon from "@/assets/icons/NotificationsIcon";
@@ -88,9 +89,12 @@ export default function PatientHomePage() {
       <View style={styles.container}>
         <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
           <Image style={styles.img} source={profilePic} />
-          <IconWrapper shape="square" bgColor={palette.white} size={33}>
-            <NotificationsIcon size={16} color={palette.black} />
-          </IconWrapper>
+          <Pressable 
+            style={styles.iconWrapper} 
+            onPress={() => navigation.navigate("PatientNotifyTab")}
+          >
+            <NotificationsIcon size={scale(18)} color={colors.textDark2} />
+          </Pressable>
         </SafeAreaView>
 
         <View style={{ marginVertical: scale(20) }}>
@@ -167,10 +171,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: scale(10), 
+  },
+  iconWrapper: {
+    borderRadius: scale(6),
+    backgroundColor: colors.formBackground,
+    padding: scale(8),
   },
   img: {
-    width: scale(40),
-    height: scale(40),
+    width: scale(54),
+    height: scale(54),
+    borderRadius: scale(16),
   },
   container: {
     padding: scale(40),
