@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import AppBackground from '../../components/base/AppBackground';
-import LogoOverlay from '../../assets/icons/LogoOverlay';
+import AnimatedLogo from '../../components/base/AnimatedLogo';
 import SlideButton from '../../components/common/SlideButton';
 import { scale } from '../../utils/responsive';
 
@@ -16,7 +16,7 @@ export default function EntryScreen({ navigation }: any) {
   return (
     <AppBackground variant="texture" style={{ width: scale(430), height: scale(932) }}>
       <View style={styles.container}>
-        <LogoOverlay size={150} opacity={1} />
+        <AnimatedLogo size={scale(200)} />
 
         <View style={styles.buttonContainer}>
           <SlideButton

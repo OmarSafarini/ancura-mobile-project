@@ -35,7 +35,7 @@ export default function NotificationCard({
       </View>
       <View style={styles.Footer}>
         <View style={styles.TimeContainer}>
-          <ClockIcon color={"gray"} size={11} />
+          <ClockIcon color={"#00000056"} size={14} />
           <Text style={styles.Time}>{date}</Text>
         </View>
         {status !== "None" && <CaseStatus status={status} backgroundColor={isRead ? "rgba(216, 216, 216, 0.48)" : "rgba(255, 255, 255, 0.48)"} />}
@@ -48,18 +48,22 @@ export default function NotificationCard({
 
 const styles = StyleSheet.create({
   Card: {
+    width: scale(327),
+    minHeight: scale(73),
     borderRadius: Card_Radius,
-    padding: scale(18),
-    gap: scale(5),
+    paddingHorizontal: scale(16),
+    paddingVertical: scale(12),
+    justifyContent: "space-between",
   },
   UnReadCard: {
     backgroundColor: "rgba(182,192,249,0.4)",
-    borderWidth: 0.1,
-    borderColor: colors.primary,
-    shadowColor: colors.primary,
+    borderWidth: 0.5,
+    borderColor: "rgba(109, 126, 181, 0.5)",
+    shadowColor: "#B6C0F9",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.6,
-    shadowRadius: 8,
+    shadowOpacity: 1,
+    shadowRadius: 9.9,
+    elevation: 4,
   },
   ReadCard: {
     backgroundColor: palette.white,
@@ -67,22 +71,24 @@ const styles = StyleSheet.create({
     borderColor: "#66666649",
   },
   Dot: {
-    width: scale(6),
-    height: scale(6),
+    width: scale(8),
+    height: scale(8),
     borderRadius: scale(4),
     backgroundColor: colors.primary,
-    right: 0,
-    top: 0,
+    marginTop: scale(6),
   },
   CardHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "flex-start",
+    gap: scale(10),
   },
   Title: {
     color: colors.primary,
-    fontSize: scale(12),
+    fontSize: scale(14),
     fontFamily: Family.FG_Regular,
     flex: 1,
+    lineHeight: scale(20),
   },
   Footer: {
     flexDirection: 'row',
@@ -91,7 +97,7 @@ const styles = StyleSheet.create({
   },
   Time: {
     color: "#00000056",
-    fontSize: scale(8),
+    fontSize: scale(11),
     fontFamily: Family.HV_Regular
   },
   TimeContainer: {

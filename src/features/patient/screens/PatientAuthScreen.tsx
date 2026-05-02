@@ -130,7 +130,7 @@ export default function PatientAuthScreen({ navigation }: any) {
                     />
                   </View>
 
-                  <View style={[styles.halfInput, { paddingTop: scale(3.5) }]}>
+                  <View style={styles.halfInput}>
                     <FormDropdown
                       control={control}
                       name="gender"
@@ -163,19 +163,7 @@ export default function PatientAuthScreen({ navigation }: any) {
               disabled={isAuthenticating}
             />
 
-            <View style={styles.dividerContainer}>
-              <View style={styles.line} />
-              <Text style={styles.orText}>or</Text>
-              <View style={styles.line} />
-            </View>
 
-            <NormalButton
-              title="Generate New Anonymous ID"
-              onPress={() => console.log('Generate ID')}
-              bgColor={palette.darkGray2}
-              textColor={Colors.textDark}
-              disabled={isAuthenticating}
-            />
           </FadeInView>
 
         </ScrollView>

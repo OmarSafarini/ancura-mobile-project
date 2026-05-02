@@ -21,9 +21,7 @@ const InputField = ({ control, name, label, placeholder, rules, isEdit=false, se
               <View
                 style={[
                   styles.inputField,
-                  { backgroundColor: isEdit
-                    ? (isFocused ? palette.white : "transparent") 
-                    : palette.white,},
+                  { backgroundColor: palette.white },
                   error && { borderColor: Colors.warning },
                   multiline && styles.multilineInput,
                 ]}
@@ -84,9 +82,10 @@ const styles = StyleSheet.create({
     borderWidth: scale(1),
     borderColor: Colors.formBorder,
     borderRadius: scale(8),
-    paddingVertical: scale(12),
     paddingHorizontal: scale(16),
     width: "100%",
+    height: scale(54),
+    justifyContent: "center",
   },
 
   inputText: {
