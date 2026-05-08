@@ -11,10 +11,10 @@ import CopyIcon from "../../../assets/icons/CopyIcon";
 import FlashMessage, { showMessage } from "react-native-flash-message";
 import { useQuery } from "@tanstack/react-query";
 import { getPatintProfile } from "@/services/Patient/PatinetService";
-import AnimatedLogoScreen from "@/components/base/AnimatedLogoScreen";
 import * as Clipboard from "expo-clipboard";
 import { signOut } from "../../../services/authService";
 import { getUserMeta } from "@/services/tokenService";
+import Loading from "@/components/common/Loading";
 
 export default function PaitentSettings({ navigation }: any) {
   const insets = useSafeAreaInsets();
@@ -44,9 +44,7 @@ export default function PaitentSettings({ navigation }: any) {
 
   if (patientLoading) {
     return (
-      <View style={styles.overlay}>
-        <AnimatedLogoScreen size={scale(432)} />
-      </View>
+        <Loading/>
     );
   }
 
@@ -151,12 +149,5 @@ const styles = StyleSheet.create({
   BottomBar: {
     alignSelf: "stretch",
     alignItems: "center",
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(255,255,255,0.7)",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 999,
   },
 });
