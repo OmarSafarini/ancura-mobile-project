@@ -9,12 +9,12 @@ import LogoutButton from "@/components/common/LogoutButton";
 import ArrowLeftIcon from "./../../../assets/icons/ArrowLeftIcon";
 import CopyIcon from "../../../assets/icons/CopyIcon";
 import FlashMessage, { showMessage } from "react-native-flash-message";
-import { useQuery } from "@tanstack/react-query";
-import { getPatintProfile } from "@/services/Patient/PatinetService";
 import * as Clipboard from "expo-clipboard";
 import { signOut } from "../../../services/authService";
 import { getUserMeta } from "@/services/tokenService";
 import Loading from "@/components/common/Loading";
+import { useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 export default function PaitentSettings() {
   const insets = useSafeAreaInsets();
