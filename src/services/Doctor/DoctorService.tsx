@@ -89,19 +89,3 @@ export interface DoctorInput {
   profilePic?: string;
 }
 
-export const createDoctor = async (payload: DoctorInput): Promise<IDoctor> => {
-  try {
-    const { data } = await supabaseClient.post("/doctor", payload, {
-      headers: {
-        apikey: SUPABASE_ANON_KEY!,
-        "Content-Type": "application/json",
-        Prefer: "return=representation",
-      },
-    });
-
-    return Array.isArray(data) ? data[0] : data;
-  } catch (error) {
-    console.log("FULL ERROR:", error?.response?.data);
-    throw new Error("Failed to create doctor");
-  }
-};
