@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, Pressable} from "react-native";
 import { scale } from "@/utils/responsive";
 
-export default function SelectUserType({ Icon, title, userType, onPress, isActive, activeBgColor}: any) {
+export default function SelectUserType({ Icon, title, userType, onPress, isActive, activeBgColor, borderColor }: any) {
     return (
         <Pressable 
             onPress={onPress} 
@@ -12,7 +12,7 @@ export default function SelectUserType({ Icon, title, userType, onPress, isActiv
                     backgroundColor: isActive 
                         ? (activeBgColor || "#B6C0F933") 
                         : (pressed ? (activeBgColor || "#B6C0F933") : "transparent"),
-                   
+                    borderColor: borderColor || "#7B7C8F"
                 }
             ]}
         >

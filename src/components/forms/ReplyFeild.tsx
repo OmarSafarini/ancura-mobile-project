@@ -20,6 +20,8 @@ const ReplyField = ({ control, name }: ReplyFieldProps) => {
             value={value || ""}
             onBlur={onBlur}
             onChangeText={onChange}
+            multiline={true}
+            textAlignVertical="top"
           />
         </View>
       )}
@@ -33,15 +35,18 @@ const styles = StyleSheet.create({
     backgroundColor: palette.white,
     borderWidth: scale(1),
     borderColor: Colors.secondary,
-    borderRadius: scale(24),
-    //paddingVertical: scale(12),
+    borderRadius: scale(18),
+    paddingVertical: scale(10),
     paddingHorizontal: scale(16),
-    width: "100%"
+    width: "100%",
+    minHeight: scale(50),
+    justifyContent: "center",
   },
 
   inputText: {
-    fontSize: scale(18),
+    fontSize: scale(16),
     color: palette.darkGray,
-    fontFamily: Family.FG_Regular
+    fontFamily: Family.FG_Regular,
+    textAlignVertical: "top",
   }
 });

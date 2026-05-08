@@ -1,8 +1,9 @@
 import ChatIcon from "@/assets/icons/ChatIcon";
 import HandLikeIcon from "@/assets/icons/HandLikeIcon";
+import HandLikeFilledIcon from "@/assets/icons/HandLikeFilledIcon";
 import { palette, Colors as colors } from "../../utils/colors";
 import { Family } from "../../utils/typography";
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, Dimensions, Pressable } from "react-native";
 import VerificationIcon from "@/assets/icons/VerificationIcon";
 import DisLikeIcon from "@/assets/icons/DisLikeIcon";
@@ -14,21 +15,29 @@ const AVATAR_SIZE = scale(47);
 const Card_Radius = scale(11);
 // ________________ TYPES ________________
 type DoctorReplyCardProps = {
+  id: string;
   title: string;
   major: string;
   message: string;
   time: string;
   avatar?: string;
+  likes?: number;
+  dislikes?: number;
+  onLike: (id: string) => void;
+  onDislike: (id: string) => void;
   CardOnPress: () => void;
   ChatOnPress: () => void;
 };
 // ________________ COMPONENT ________________
 export default function DoctorReplyCard({
+  id,
   title,
   major,
   message,
   time,
   avatar,
+  onLike,
+  onDislike,
   CardOnPress,
   ChatOnPress
 }: DoctorReplyCardProps) {
@@ -59,8 +68,13 @@ export default function DoctorReplyCard({
 
       <View style={styles.footer}>
         <View style={styles.actions}>
-          <HandLikeIcon size={18} color="#707070" />
-          <DisLikeIcon size={18} color="#707070" />
+          <Pressable onPress={() => onLike(id)}>
+            <HandLikeIcon size={18} color="#707070" />
+          </Pressable>
+
+          <Pressable onPress={() => onDislike(id)}>
+            <DisLikeIcon size={18} color="#707070" />
+          </Pressable>
         </View>
 
         <Pressable style={styles.ReplyContainer} onPress={ChatOnPress}>

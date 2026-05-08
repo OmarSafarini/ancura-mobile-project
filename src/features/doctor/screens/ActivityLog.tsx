@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { supabaseClient } from "@/services/supabase"; // IMPORT YOUR AXIOS SETUP HERE
-import { Text, View, StyleSheet, FlatList, TouchableOpacity, Pressable , ActivityIndicator} from "react-native";
+import { supabaseClient } from "@/services/supabase"; 
+import { Text, View, StyleSheet, FlatList, TouchableOpacity, Pressable , ActivityIndicator, SafeAreaView} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 import { Colors } from "@/utils/colors";
@@ -50,6 +50,7 @@ export default function ActivityLog() {
 
     return (
         <AppBackground variant="clean" style={styles.screen}>
+            <SafeAreaView style={{ flex: 1 }}>
             <View style={styles.header}>
                 <Text style={styles.title}>Activity Log</Text>
                 <Pressable style={styles.backWrapper} onPress={() => navigation.goBack()}>
@@ -98,13 +99,14 @@ export default function ActivityLog() {
                     />
                 )}
             </View>
+            </SafeAreaView>
         </AppBackground>
     );
 }
 
 const styles = StyleSheet.create({
     screen: {
-        paddingTop: scale(50),
+        paddingTop: scale(20),
         flex: 1,
     },
 

@@ -32,11 +32,12 @@ export default function PatientBNB(props: any) {
         };
 
         const handleAddPress = () => {
-            // FAB Click -> Navigate to CreateCaseScreen
-            // We can push to the current stack, or navigate specifically.
-            // Since CreateCaseScreen is likely in PatientHomeTab stack:
             props.navigation.navigate('PatientHomeTab', { screen: 'CreateCaseScreen' });
         };
+
+        if (currentTab === 'PatientProfileTab') {
+            return null;
+        }
 
         return (
             <BottomNavBar

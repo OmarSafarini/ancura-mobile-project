@@ -23,6 +23,9 @@ import DoctorGreeting from "../components/DoctorGreeting";
 
 export default function DoctorHomeScreen({ navigation }: any) {
 
+
+const insets = useSafeAreaInsets();
+
 const {
   data: doctor,
    isLoading: doctorLoading,
@@ -59,7 +62,6 @@ if (doctorLoading || casesLoading) {
 if(casesError || doctorError){
    return <Text>Error loading cases</Text>;
 }
-  const insets = useSafeAreaInsets();
 
   const doctorCases = cases.filter( (c) => c.status !== "Resolved");
 
@@ -69,8 +71,8 @@ if(casesError || doctorError){
       <View style={styles.container}>
         <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
           <View style={{ marginLeft: scale(5) }}>
-            <DoctorGreeting name={doctor?.full_name} image={doctor?.profile_pic}/>
-            <Text style={styles.userName}>{doctor?.full_name}</Text>
+            <DoctorGreeting name={doctor?.fullname} image={doctor?.profilePic || (doctor as any)?.avatar_url || (doctor as any)?.profile_pic}/>
+         
           </View>
         </SafeAreaView>
 

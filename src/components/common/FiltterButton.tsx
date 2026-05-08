@@ -19,7 +19,7 @@ export default function FilterButton({
       style={[
         styles.container,
         {
-          backgroundColor: isActive ? "#6D7EB5" : "transparent",
+          backgroundColor: isActive ? "#6D7EB5" : "#FFFFFF",
           borderColor: "#6D7EB5",
         },
       ]}
