@@ -15,6 +15,8 @@ import * as Clipboard from "expo-clipboard";
 import { signOut } from "../../../services/authService";
 import { getUserMeta } from "@/services/tokenService";
 import Loading from "@/components/common/Loading";
+import { useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 export default function PaitentSettings() {
   const insets = useSafeAreaInsets();
