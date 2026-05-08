@@ -32,7 +32,7 @@ export default function DoctorVerificationScreen({ navigation, route }: any) {
       setLoading(true);
       setError('');
       const tempToken = await verifyOTP(email, otp);
-      
+
       navigation.navigate('DoctorNewPasswordScreen', { tempToken, email });
     } catch (e: any) {
       setError("Invalid verification code or expired.");

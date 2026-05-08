@@ -48,17 +48,34 @@ npx expo install expo
 npx expo install expo-status-bar
 npx expo install expo-font
 npx expo install expo-document-picker
+npx expo install expo-image-picker
 npx expo install expo-linear-gradient
+npx expo install expo-secure-store
+npm install react react-native
+npx expo install react-dom react-native-web
+npx expo install react-native-safe-area-context
+npx expo install react-native-screens
+npm install @react-navigation/native
+npm install @react-navigation/native-stack
+npm install @react-navigation/bottom-tabs
+npm install @supabase/supabase-js
+npm install @supabase/ssr
+npm install @react-native-async-storage/async-storage
+npm install @tanstack/react-query
+npm install @tanstack/react-query-devtools
+npm install axios
 npx expo install @expo/vector-icons
 npx expo install react-native-svg
-npx expo install react-native-safe-area-context
-npx expo install react-dom react-native-web
-npm install react react-native
-npm install react-hook-form
 npm install react-native-element-dropdown
+npm install react-native-flash-message
+npm install react-hook-form
 npm install react-native-size-matters
+npm install lodash
+npm install -D typescript
+npm install -D @types/react @types/react-native
 npm install -D babel-plugin-module-resolver
-npm install -D typescript @types/react @types/react-native
+npm install -D eslint eslint-config-expo
+npm install -D babel-preset-expo
 ```
 
 ### 4. Start the dev server

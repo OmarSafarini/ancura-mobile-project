@@ -59,10 +59,10 @@ export default function PaitentSettings() {
             <View style={styles.header}>
               <Text style={styles.title}>Profile & Settings</Text>
               <View style={styles.iconWrapper}>
-                <ArrowLeftIcon 
-                  color={colors.textDark2} 
-                  size={scale(18)} 
-                  onPress={() => navigation.navigate("PatientHomeTab" as never)} 
+                <ArrowLeftIcon
+                  color={colors.textDark2}
+                  size={scale(18)}
+                  onPress={() => navigation.navigate("PatientHomeTab" as never)}
                 />
               </View>
             </View>
