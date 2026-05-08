@@ -11,8 +11,7 @@ import LicenseVerificationButton from "../components/LiecenseVerficationButton";
 import UploadImageButton from "../components/UploadImageButton";
 import IconWrapper from "../../../components/common/IconWrapper";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
-import { createDoctor, uploadDoctorProfileImage } from "@/services/Doctor/DoctorService";
-import { useAuthStore } from "@/store/authStore";
+import { uploadDoctorProfileImage } from "@/services/Doctor/DoctorService";
 import { signUp } from "@/services/authService";
 
 export default function DoctorProfileAndSettings({ navigation }: any) {
@@ -55,9 +54,6 @@ const OnSubmit = async (data: any) => {
       }
     );
 
-    navigation.navigate("DoctorHome");
-
-    console.log("Doctor Payload:", result);
  navigation.navigate("LicenseVerification");
   } catch (error) {
     console.log("ERROR:", error);
