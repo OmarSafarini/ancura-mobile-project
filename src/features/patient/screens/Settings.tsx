@@ -44,6 +44,7 @@ export default function PaitentSettings({ navigation }: any) {
 
   if (patientLoading) {
     return (
+      
         <Loading/>
     );
   }

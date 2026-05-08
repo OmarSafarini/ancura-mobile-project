@@ -61,6 +61,7 @@ export default function PatientHomePage() {
 
   if (patientLoading || patientPstLoading) {
     return (
+      
         <Loading />
     );
   }
