@@ -63,8 +63,8 @@ export default function DoctorForgotPasswordScreen({ navigation }: any) {
               name="email"
               label="Email"
               placeholder="doctor@example.com"
-              rules={{ 
-                required: "Email is required", 
+              rules={{
+                required: "Email is required",
                 pattern: { value: /\S+@\S+\.\S+/, message: "Invalid email" }
               }}
             />

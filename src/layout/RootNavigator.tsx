@@ -22,7 +22,7 @@ export default function RootNavigator() {
     restoreSession();
   }, []);
 
-  
+
   if (isLoading) {
     return (
       <View style={styles.splash}>
@@ -31,7 +31,7 @@ export default function RootNavigator() {
     );
   }
 
-  
+
   return (
     <RootStack.Navigator screenOptions={{ headerShown: false }}>
       {role === 'patient' ? (

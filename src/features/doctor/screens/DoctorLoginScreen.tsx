@@ -1,6 +1,7 @@
-import React from 'react';
-import { StyleSheet, View, Text, KeyboardAvoidingView, ScrollView, Platform, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, KeyboardAvoidingView, ScrollView, Platform, TouchableOpacity, Alert } from 'react-native';
 import { useForm } from 'react-hook-form';
+import { Ionicons } from '@expo/vector-icons';
 import AppBackground from '../../../components/base/AppBackground';
 import Logo from '../../../assets/icons/Logo';
 import FadeInView from '../../../utils/FadeInView';
@@ -12,9 +13,24 @@ import { Family } from '../../../utils/typography';
 import { scale } from '../../../utils/responsive';
 import { signIn } from '../../../services/authService';
 import { useAuthStore } from '../../../store/authStore';
+import { checkBiometricSupport, saveBiometricCredentials, getBiometricCredentials, promptBiometricAuth } from '../../../services/biometricService';
 
 export default function DoctorLoginScreen({ navigation }: any) {
-  const { isAuthenticating, error } = useAuthStore();
+  const [hasBiometrics, setHasBiometrics] = useState(false);
+  const { isAuthenticating, error, setError } = useAuthStore();
+
+  useEffect(() => {
+    const checkBiometrics = async () => {
+      const supported = await checkBiometricSupport();
+      if (supported) {
+        const creds = await getBiometricCredentials('doctor');
+        if (creds) {
+          setHasBiometrics(true);
+        }
+      }
+    };
+    checkBiometrics();
+  }, []);
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -26,7 +42,44 @@ export default function DoctorLoginScreen({ navigation }: any) {
   const onSubmit = async (data: any) => {
     try {
       await signIn(data.email, data.password, 'doctor');
+
+      const supported = await checkBiometricSupport();
+      const creds = await getBiometricCredentials('doctor');
+      if (supported && !creds) {
+        Alert.alert(
+          "Enable Face ID / Touch ID",
+          "Would you like to enable biometric login for future use?",
+          [
+            { text: "No", style: "cancel" },
+            { 
+              text: "Yes", 
+              onPress: async () => {
+                await saveBiometricCredentials(data.email, data.password, 'doctor');
+                setHasBiometrics(true);
+              }
+            }
+          ]
+        );
+      }
     } catch {
+    }
+  };
+
+  const handleBiometricLogin = async () => {
+    setError(null);
+    const success = await promptBiometricAuth('Sign in to Ancura');
+    if (!success) return;
+
+    const creds = await getBiometricCredentials('doctor');
+    if (!creds) {
+      setHasBiometrics(false);
+      setError('Session expired. Please sign in with email and password.');
+      return;
+    }
+    try {
+      await signIn(creds.email, creds.password, 'doctor');
+    } catch (err: any) {
+      setError(err?.message ?? 'Biometric login failed. Please sign in manually.');
     }
   };
 
@@ -90,13 +143,33 @@ export default function DoctorLoginScreen({ navigation }: any) {
               <Text style={styles.errorText}>{error}</Text>
             )}
 
-            <NormalButton
-              title="Login"
-              onPress={handleSubmit(onSubmit)}
-              bgColor={Colors.primary}
-              loading={isAuthenticating}
-              disabled={isAuthenticating}
-            />
+            {hasBiometrics ? (
+              <View style={styles.biometricRow}>
+                <View style={{ flex: 1 }}>
+                  <NormalButton
+                    title="Login"
+                    onPress={handleSubmit(onSubmit)}
+                    bgColor={Colors.primary}
+                    loading={isAuthenticating}
+                    disabled={isAuthenticating}
+                  />
+                </View>
+                <TouchableOpacity 
+                  style={styles.biometricButton} 
+                  onPress={handleBiometricLogin}
+                >
+                  <Ionicons name="finger-print" size={scale(28)} color={Colors.primary} />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <NormalButton
+                title="Login"
+                onPress={handleSubmit(onSubmit)}
+                bgColor={Colors.primary}
+                loading={isAuthenticating}
+                disabled={isAuthenticating}
+              />
+            )}
 
             <View style={styles.dividerContainer}>
               <View style={styles.line} />
@@ -203,5 +276,21 @@ const styles = StyleSheet.create({
     color: Colors.textGray,
     fontFamily: Family.FG_Regular,
     fontSize: scale(14),
+  },
+  biometricRow: {
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: 'center',
+    gap: scale(10),
+  },
+  biometricButton: {
+    height: scale(54),
+    width: scale(54),
+    borderRadius: scale(12),
+    backgroundColor: 'rgba(0, 86, 210, 0.05)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.primary,
   },
 });
