@@ -6,13 +6,12 @@ import { Colors, palette } from "@/utils/colors";
 import ImageIcon from "@/assets/icons/ImageIcon";
 
 interface UploadImageButtonProps {
-  initialImage?: any;
   onImageSelected?: (uri: string) => void;
 }
 
-export default function UploadImageButton({ initialImage, onImageSelected }: UploadImageButtonProps) {
+export default function UploadImageButton({onImageSelected }: UploadImageButtonProps) {
   const [imageUri, setImageUri] = useState<string | null>(null);
-
+const  initialImage=require("../../../../assets/ancura.gif");
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -34,7 +33,7 @@ export default function UploadImageButton({ initialImage, onImageSelected }: Upl
       />
       <TouchableOpacity style={styles.button} onPress={pickImage}>
         <ImageIcon color={palette.white} size={17} />
-        <Text style={styles.buttonText}>Change Photo</Text>
+        <Text style={styles.buttonText}>Upload Photo</Text>
       </TouchableOpacity>
     </View>
   );
