@@ -143,9 +143,12 @@ export async function signUp(
       await supabaseClient.post(
         '/doctor',
         {
-          id: user.id,
+          id: user.id, 
           email: user.email,
-          FullName: meta.full_name || 'Dr. New User',
+          full_name: meta.full_name || "Dr. New User",
+          bio: meta.bio || "",
+          location: meta.location || "",
+          profilePic: meta.profilePic || "",
           points: 0,
         },
         { headers: { Prefer: 'return=minimal' } }
