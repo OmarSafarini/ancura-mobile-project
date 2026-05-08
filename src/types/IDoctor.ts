@@ -11,7 +11,6 @@ export interface IDoctor {
   location?: string;           // was: Location
   created_at: string;
   license?: ILicense;
-
   // UI-only fields (not in DB — fetched from joined queries or calculated)
   profilePic?: string;
   years_exp?: number;          // from license.years_exp
