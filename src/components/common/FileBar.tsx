@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { scale } from '@/utils/responsive';
 import FileIcon from '@/assets/icons/FileIcon';
+import { Family } from '@/utils/typography';
 
 interface FileBarProps {
   title: string;
@@ -10,8 +11,10 @@ interface FileBarProps {
 export default function FileBar({ title ,icon}: FileBarProps) {
   return (
     <View style={styles.container}>
-      <FileIcon size={(10)} />
-      <Text style={styles.text} numberOfLines={1}>{title}</Text>
+      <View style={styles.leftContent}>
+        <FileIcon size={(18)} />
+        <Text style={styles.text} numberOfLines={1}>{title}</Text>
+      </View>
       <View style={styles.iconContainer}>{icon && icon}</View>
     </View>
   );
@@ -19,30 +22,33 @@ export default function FileBar({ title ,icon}: FileBarProps) {
 
 const styles = StyleSheet.create({
   container: {
-    display: 'flex',
     flexDirection: 'row', 
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: scale(4),
-    paddingLeft: scale(16),
-    paddingRight: scale(6),
-    gap: scale(10),
-    flex: 1,
-    height: scale(23),
+    paddingHorizontal: scale(16),
+    height: scale(44),
     backgroundColor: '#F5F5F5',
-    borderWidth: 0.4,
-    borderColor: '#6d7eb5f8',
-    borderRadius: scale(11),
+    borderWidth: 1,
+    borderColor: '#6d7eb533',
+    borderRadius: scale(8),
+    marginVertical: scale(2),
+  },
+  leftContent: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: scale(12),
   },
   text: {
     flex: 1,
-    fontSize: scale(10),
+    fontSize: scale(12),
     fontWeight: '400',
-    lineHeight: scale(11),
-    color: '#000000',
+    color: '#333333',
+    fontFamily: Family.FG_Regular,
   },
   iconContainer: {
-    alignSelf: 'flex-end',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

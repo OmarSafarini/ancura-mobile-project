@@ -16,9 +16,13 @@ import DoctorGreeting from "../components/DoctorGreeting";
 import Loading from "@/components/common/Loading";
 
 export default function DoctorHomeScreen({ navigation }: any) {
-  const {
-    data: doctor,
-    isLoading: doctorLoading,
+
+
+const insets = useSafeAreaInsets();
+
+const {
+  data: doctor,
+   isLoading: doctorLoading,
     isError: doctorError,
   } = useQuery<IDoctor>({
     queryKey: ["doctor"],

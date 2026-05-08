@@ -2,11 +2,11 @@ import { supabaseClient } from '../supabase';
 
 export const getAllCases = async () => {
   try {
-    const { data, status, statusText } = await supabaseClient.get('/post', {
+    const { data, status, statusText } = await supabaseClient.get('/case', {
       params: {
         select: '*',
 
-        isreplied: 'eq.false',
+        isReplied: 'eq.false',
 
         order: 'timestamp.desc',
       },

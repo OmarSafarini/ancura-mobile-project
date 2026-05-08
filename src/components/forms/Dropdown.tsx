@@ -97,16 +97,18 @@ const styles = StyleSheet.create({
   label: {
     fontSize: scale(12),
     fontFamily: Family.HV_Bold,
-    color: palette.darkGray,
-    marginBottom: scale(6),
+    color: Colors.formLabel,
+    marginBottom: scale(8),
+    lineHeight: scale(18),
   },
 
   dropdown: {
     borderWidth: scale(1),
     borderColor: Colors.formBorder,
     borderRadius: scale(8),
-    padding: scale(12),
+    paddingHorizontal: scale(16),
     backgroundColor: palette.white,
+    height: scale(54),
   },
 
   dropdownList: {
@@ -125,10 +127,10 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.formBorder,
   },
   selectedValue: {
-  fontSize: scale(16),
-  fontFamily: Family.HV_Regular,
-  color: palette.darkGray,
-},
+    fontSize: scale(18),
+    fontFamily: Family.FG_Light,
+    color: Colors.formLabel,
+  },
 
   lastItem: {
     borderBottomWidth: 0,
@@ -141,9 +143,9 @@ const styles = StyleSheet.create({
   },
 
   itemText: {
-    fontSize: scale(16),
-    color: palette.darkGray,
-    fontFamily: Family.HV_Regular,
+    fontSize: scale(18),
+    color: Colors.formLabel,
+    fontFamily: Family.FG_Light,
   },
 
   selectedText: {
