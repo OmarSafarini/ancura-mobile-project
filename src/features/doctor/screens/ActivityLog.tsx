@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { supabaseClient } from "@/services/supabase"; // IMPORT YOUR AXIOS SETUP HERE
+import { supabaseClient } from "@/services/supabase"; 
 import { Text, View, StyleSheet, FlatList, TouchableOpacity, Pressable , ActivityIndicator, SafeAreaView} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";

@@ -7,11 +7,19 @@ import { Family } from "@/utils/typography";
 import AppBackground from "@/components/base/AppBackground";
 import NotificationCard from "@/components/common/NotificationCard";
 import { useNavigation } from "@react-navigation/native";
+import { getPatientNotification } from "@/services/Patient/Notification";
+import { useQuery } from "@tanstack/react-query";
+
+// ✅ Import the store here
+import { useAuthStore } from "@/store/authStore"; 
 
 export default function Notification() {
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const translateY = useRef(new Animated.Value(20)).current; 
     const navigation = useNavigation();
+
+    // ✅ Grab the user safely inside the React component
+    const user = useAuthStore((state) => state.user);
 
     useEffect(() => {
         Animated.parallel([
@@ -28,12 +36,16 @@ export default function Notification() {
         ]).start();
     }, []);
 
-    const notifications = [
-        { id: "1", title: "A doctor has provided guidance on your case Feeling anxious about work", date: "2/24/2026", isRead: false, status: "doctor_replied" },
-        { id: "2", title: "A doctor has provided guidance on your case Feeling anxious about work", date: "2/24/2026", isRead: false, status: "doctor_replied" },
-        { id: "3", title: "A doctor has provided guidance on your case Feeling anxious about work", date: "2/24/2026", isRead: true, status: "resolved" },
-        { id: "4", title: "A doctor has provided guidance on your case Feeling anxious about work", date: "2/24/2026", isRead: true, status: "None" }
-    ];
+    const { data: notifications, isLoading } = useQuery({
+        // ✅ Add user.id to the queryKey so it refetches if the user logs out/in
+        queryKey: ["notifications", user?.id], 
+        
+        // ✅ Pass the user.id to your API call
+        queryFn: () => getPatientNotification(user?.id), 
+        
+        // ✅ Tell React Query not to run this until `user.id` actually exists
+        enabled: !!user?.id 
+    });
 
     const renderHeader = () => (
         <View style={styles.header}>
@@ -82,7 +94,6 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         marginBottom: scale(56),
-        // Added a bit of top margin in case the SafeArea is too close to the very top on Android
         marginTop: scale(10), 
     },
     iconWrapper: {
