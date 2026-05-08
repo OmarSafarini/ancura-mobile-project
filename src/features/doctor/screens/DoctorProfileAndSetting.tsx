@@ -1,7 +1,7 @@
 import AppBackground from "@/components/base/AppBackground";
 import { Colors, palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, View, Text, SafeAreaView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale } from "react-native-size-matters";
@@ -11,13 +11,13 @@ import LicenseVerificationButton from "../components/LiecenseVerficationButton";
 import UploadImageButton from "../components/UploadImageButton";
 import IconWrapper from "../../../components/common/IconWrapper";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
+import { createDoctor, uploadDoctorProfileImage } from "@/services/Doctor/DoctorService";
+import { useAuthStore } from "@/store/authStore";
+import { signUp } from "@/services/authService";
 
-export default function DoctorProfileAndSettings(navigation : any) {
+export default function DoctorProfileAndSettings({ navigation }: any) {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const insets = useSafeAreaInsets();
-  const user = {
-    profilePic: require("../../../../assets/ancura.gif"),
-    name: "Dr.Aprar Ismail",
-  };
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -28,13 +28,44 @@ export default function DoctorProfileAndSettings(navigation : any) {
       Bio: "",
     },
   });
-  const OnSubmit = (data: any) => {
-    console.log("Profile: ", data);
-    navigation.navigate("DoctorLoginScreen");
-  };
+const OnSubmit = async (data: any) => {
+  
+  try {
+    let imageUrl = "";
+
+    if (selectedImage) {
+      imageUrl = await uploadDoctorProfileImage(
+        selectedImage,
+        "doctor_profile.jpg",
+        "image/jpeg"
+      );
+    }
+
+    console.log("Uploaded Image:", imageUrl);
+
+    await signUp(
+      data.Email,
+      data.Password,
+      "doctor",
+      {
+        full_name: data.FullName,
+        bio: data.Bio,
+        location: data.Location,
+        profilePic: imageUrl,
+      }
+    );
+
+    navigation.navigate("DoctorHome");
+
+    console.log("Doctor Payload:", result);
+ navigation.navigate("LicenseVerification");
+  } catch (error) {
+    console.log("ERROR:", error);
+  }
+};
 
   const goBack = () => {
-    navigation.navigate("LicenseVerification");
+  navigation.navigate("DoctorLoginScreen");
   };
 
 
@@ -49,10 +80,10 @@ export default function DoctorProfileAndSettings(navigation : any) {
         </SafeAreaView>
         <View>
           <UploadImageButton
-            initialImage={user.profilePic}
-            onImageSelected={(uri) => console.log("Selected image URI:", uri)}
-          />
-        </View>
+onImageSelected={(uri) => {
+    setSelectedImage(uri);
+  }}/>
+          </View>
 
         <View style={styles.Form}>
           <InputField

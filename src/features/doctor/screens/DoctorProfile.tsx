@@ -21,11 +21,11 @@ import IconWrapper from "../../../components/common/IconWrapper";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 import { useQuery } from "@tanstack/react-query";
 import { getDoctorLicense, getDoctorProfile } from "@/services/Doctor/DoctorService";
-import AnimatedLogoScreen from "@/components/base/AnimatedLogoScreen";
 import { ILicense } from "@/types/ILicense";
 import { signOut } from "../../../services/authService";
 import userBase from "../../../../assets/icon.png";
 import { getUserMeta } from "@/services/tokenService";
+import Loading from "@/components/common/Loading";
 
 export default function DoctorProfile({ navigation }: any) {
   
@@ -60,9 +60,7 @@ const {
 
   if (doctorLoading ||LicenseLoading) {
   return (
-    <View style={styles.overlay}>
-      <AnimatedLogoScreen size={scale(432)} />
-    </View>
+      <Loading />
   );
 }
 
@@ -317,11 +315,5 @@ const styles = StyleSheet.create({
     color: palette.dark,
     lineHeight: scale(20),
   },
-   overlay: {
-  ...StyleSheet.absoluteFillObject,
-  backgroundColor: "rgba(255,255,255,0.7)",
-  justifyContent: "center",
-  alignItems: "center",
-  zIndex: 999,
-}
+
 });
