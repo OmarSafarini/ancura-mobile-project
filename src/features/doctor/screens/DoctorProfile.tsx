@@ -21,62 +21,60 @@ import IconWrapper from "../../../components/common/IconWrapper";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 import { useQuery } from "@tanstack/react-query";
 import { getDoctorLicense, getDoctorProfile } from "@/services/Doctor/DoctorService";
-import AnimatedLogoScreen from "@/components/base/AnimatedLogoScreen";
 import { ILicense } from "@/types/ILicense";
 import { signOut } from "../../../services/authService";
 import userBase from "../../../../assets/icon.png";
 import { getUserMeta } from "@/services/tokenService";
+import Loading from "@/components/common/Loading";
 
 export default function DoctorProfile({ navigation }: any) {
-  
-const {
-   data: doctor,
-   isLoading: doctorLoading,
-   isError: doctorError,
-} = useQuery<IDoctor>({
+
+  const {
+    data: doctor,
+    isLoading: doctorLoading,
+    isError: doctorError,
+  } = useQuery<IDoctor>({
     queryKey: ["doctor"],
     queryFn: async () => {
-      const meta =await getUserMeta();
+      const meta = await getUserMeta();
       console.log(meta!.id);
       return getDoctorProfile(meta!.id)
     }
   });
 
 
-  const { data: license, 
-    isLoading :LicenseLoading ,
+  const { data: license,
+    isLoading: LicenseLoading,
     isError: LicenseError,
- } = useQuery<ILicense>({
-  queryKey: ["license"],
-  queryFn:async () => {
-    const meta =await getUserMeta();
-    console.log(meta!.id);
-    return getDoctorLicense(meta!.id)
-  }
+  } = useQuery<ILicense>({
+    queryKey: ["license"],
+    queryFn: async () => {
+      const meta = await getUserMeta();
+      console.log(meta!.id);
+      return getDoctorLicense(meta!.id)
+    }
 
-});
+  });
 
   const insets = useSafeAreaInsets();
 
   if (doctorLoading ||LicenseLoading) {
   return (
-    <View style={styles.overlay}>
-      <AnimatedLogoScreen size={scale(432)} />
-    </View>
+      <Loading />
   );
 }
 
-if( doctorError||LicenseError){
-   return <Text>Error loading cases</Text>;
-}
-   const goBack = () => {
+  if (doctorError || LicenseError) {
+    return <Text>Error loading cases</Text>;
+  }
+  const goBack = () => {
     navigation.goBack();
   }
 
   const LogOut = async () => {
     await signOut();
-  }  
-    const profilePic = doctor?.profilePic ?? userBase;
+  }
+  const profilePic = doctor?.profilePic ?? userBase;
 
   return (
     <AppBackground variant="clean">
@@ -94,7 +92,7 @@ if( doctorError||LicenseError){
               <View style={styles.DoctorInfo}>
                 <Image source={profilePic} style={styles.image} />
                 <View style={{ gap: scale(10) }}>
-                  <Text style={styles.name}>{doctor?.full_name}</Text>
+                  <Text style={styles.name}>{doctor?.fullname}</Text>
                   <View style={styles.TextWithIcon}>
                     <LocationIcon />
                     <Text style={styles.sub}> {doctor?.location}</Text>
@@ -162,11 +160,11 @@ if( doctorError||LicenseError){
               <Text style={styles.BioText}>About {doctor?.full_name}</Text>
               <Text style={styles.bio}>{doctor?.bio}</Text>
             </View>
-              <SafeAreaView style={{ paddingBottom: insets.bottom }}>
+            <SafeAreaView style={{ paddingBottom: insets.bottom }}>
               <LogoutButton onPress={LogOut} />
             </SafeAreaView>
           </View>
-          
+
         </ScrollView>
       </SafeAreaView>
     </AppBackground>
@@ -239,7 +237,7 @@ const styles = StyleSheet.create({
 
   statItem: {
     alignItems: "center",
-    justifyContent:'center',
+    justifyContent: 'center',
     padding: scale(10),
     backgroundColor: "#6d7eb5ad",
     borderRadius: scale(16),
@@ -277,7 +275,7 @@ const styles = StyleSheet.create({
   TextContainer: {
     flexDirection: "row",
     alignItems: "center",
-    
+
     flexWrap: "wrap",
   },
   cardText: {
@@ -286,7 +284,7 @@ const styles = StyleSheet.create({
     fontFamily: Family.FG_Regular,
     flexWrap: "wrap",
     marginTop: scale(10),
-    marginLeft:scale(3)
+    marginLeft: scale(3)
   },
 
   VerfiedContainer: {
@@ -317,11 +315,5 @@ const styles = StyleSheet.create({
     color: palette.dark,
     lineHeight: scale(20),
   },
-   overlay: {
-  ...StyleSheet.absoluteFillObject,
-  backgroundColor: "rgba(255,255,255,0.7)",
-  justifyContent: "center",
-  alignItems: "center",
-  zIndex: 999,
-}
+
 });

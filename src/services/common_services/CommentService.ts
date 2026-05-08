@@ -1,16 +1,44 @@
 import { supabaseClient } from '@/services/supabase';
 
-export const addComment = async (replyId: number, body: string) => {
-  const { data } = await supabaseClient.post('/comment', {
-    reply_id: replyId,
-    body,
-    nooflikes: 0,
-    noofdislikes: 0,
-    noofreplies: 0,
+export const getCommentsByReplyId = async (replyId: number) => {
+  const { data } = await supabaseClient.get('/comment', {
+    params: {
+      reply_id: `eq.${replyId}`,
+      select: '*,doctor(fullname),patient(nickname)',
+      order: 'timestamp',
+    },
   });
 
-  const comment = data?.[0];
-  if (!comment) throw new Error('Failed to create comment');
+  return (data ?? []).map((item: any) => ({
+    ...item,
+    author_name: item.doctor?.fullname || item.patient?.nickname,
+    author_role: item.doctor ? 'Doctor' : 'Patient',
+  }));
+};
+export const postComment = async ({
+  replyId,
+  body,
+  userId,
+  role,
+}: {
+  replyId: number;
+  body: string;
+  userId: string;
+  role: 'doctor' | 'patient';
+}) => {
 
-  return comment;
+  const payload: any = {
+    reply_id: replyId,
+    body,
+  };
+
+  if (role === 'doctor') {
+    payload.doctor_id = userId;
+  } else {
+    payload.patient_id = userId;
+  }
+
+  const { data } = await supabaseClient.post('/comment', payload);
+
+  return data?.[0];
 };

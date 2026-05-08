@@ -1,6 +1,5 @@
 import React, { useRef } from "react";
-import { View, FlatList, StyleSheet, Text } from "react-native";
-
+import { View, FlatList, StyleSheet, Text, SafeAreaView } from "react-native";
 import AppBackground from "@/components/base/AppBackground";
 import BackButton from "@/components/common/BackButton";
 import ReplyText from "@/components/common/ReplyText";
@@ -13,32 +12,13 @@ import { Family } from "@/utils/typography";
 import ArrowInCircle from "@/components/common/SubmitButton";
 import ReplyField from "@/components/forms/ReplyFeild";
 import { Control, useForm } from "react-hook-form";
-import { supabaseClient } from "@/services/supabase";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
+import { getCommentsByReplyId, postComment } from "@/services/common_services/CommentService";
+import { useAuthStore } from "@/store/authStore";
 
 
 type FormData = {
   doctorReply: string;
-};
-
-const getCommentsByReplyId = async (replyId: number) => {
-  const { data } = await supabaseClient.get('/comment', {
-    params: {
-      reply_id: `eq.${replyId}`,
-      order: 'timestamp.asc',
-      select: '*',
-    },
-  });
-  return data ?? [];
-};
-
-const postComment = async ({ replyId, body }: { replyId: number; body: string }) => {
-  const { data } = await supabaseClient.post('/comment', {
-    reply_id: replyId,
-    body,
-  });
-  return data?.[0];
 };
 
 export default function AllRepliesScreen({ navigation, route }: any) {
@@ -46,9 +26,13 @@ export default function AllRepliesScreen({ navigation, route }: any) {
   const caseData = route?.params?.caseData;
   const replyId = route?.params?.replyId;
   const replyData = route?.params?.replyData;
+  const caseId = route?.params?.caseId;
   const role = route?.params?.role || 'patient';
 
   const isPatient = role === "patient";
+
+  const authUser = useAuthStore((state) => state.user);
+  const authRole = useAuthStore((state) => state.role);
 
   const { data: comments = [], isLoading } = useQuery({
     queryKey: ['comments', replyId],
@@ -70,9 +54,16 @@ export default function AllRepliesScreen({ navigation, route }: any) {
     },
   });
 
-  const onSend = (data: FormData) => {
+  const onSend = async (data: FormData) => {
     if (!data.doctorReply.trim()) return;
-    submitComment({ replyId, body: data.doctorReply.trim() });
+    if (!authUser?.id || !authRole) return;
+
+    submitComment({
+      replyId,
+      body: data.doctorReply.trim(),
+      userId: authUser.id,
+      role: authRole,
+    });
   };
   const handleViewGoBack = () => {
     navigation.navigate('DoctorRepliesScreen', {
@@ -82,7 +73,7 @@ export default function AllRepliesScreen({ navigation, route }: any) {
     });
   };
 
-  const { control ,handleSubmit, resetField } = useForm<FormData>({
+  const { control, handleSubmit, resetField } = useForm<FormData>({
     defaultValues: { doctorReply: "" },
   });
 
@@ -91,93 +82,105 @@ export default function AllRepliesScreen({ navigation, route }: any) {
 
   return (
     <AppBackground>
-      <View style={styles.container}>
+      <SafeAreaView style={styles.safeArea} >
+        <View style={styles.container}>
 
-        <View style={styles.header}>
-          <Text style={styles.title}>{caseData?.title || "Case Title"}</Text>
-          <BackButton onPress={handleViewGoBack} />
-        </View>
-
-        <View style={styles.staticContent}>
-          <DoctorReplyCard
-            title={replyData?.doctor_name || "Dr. Sarah Ahmed"}
-            major={replyData?.doctor_major || "Clinical Psychologist"}
-            message={replyData?.body || "Reply details."}
-            time={replyData?.timestamp || "Just now"}
-            CardOnPress={() => { }}
-            ChatOnPress={() => { }}
-          />
-
-
-          <ReplyText title="All Replies" color={Colors.primary} />
-        </View>
-
-        <View style={styles.listWrapper}>
-          <FlatList
-            ref={listRef}
-            data={comments}
-            keyExtractor={(item) => String(item.id)}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.listContent}
-            ItemSeparatorComponent={() => (
-              <View style={{ height: scale(19) }} />
-            )}
-            ListFooterComponent={<View style={{ height: scale(120) }} />}
-            renderItem={({ item }) => (
-              <DoctorCommentCard
-                title={item.author_name}
-                discreption={item.body}
-                time={item.timestamp}
-                avatar={undefined}
-                major={item.author_role}
-              />
-            )}
-          />
-        </View>
-
-        <View style={styles.bottomContainer}>
-
-          <View style={styles.doctorBottom}>
-            <View style={styles.DoctorreplySection}>
-              <View style={{ width: "80%" }}>
-                <ReplyField
-                  name="doctorReply"
-                  control={control as Control<any>}
-                />
-              </View>
-              <ArrowInCircle onPress={handleSubmit(onSend)}/>
-            </View>
+          <View style={styles.header}>
+            <Text style={styles.title}>{caseData?.title || "Case Title"}</Text>
+            <BackButton onPress={handleViewGoBack} />
           </View>
 
-          {isPatient && (
-            <View style={styles.patientBottom}>
-              <ResolvedSlideButton
-                onSlideComplete={() => {
-                  console.log("Case Marked as Resolved");
-                }}
-              />
-            </View>
-          )}
-        </View>
+          <View style={styles.staticContent}>
+            <DoctorReplyCard
+              id={replyData?.id}
+              title={replyData?.doctor?.fullname || "Dr. Sarah Ahmed"}
+              major={replyData?.doctor_major || "Clinical Psychologist"}
+              message={replyData?.body || "Reply details."}
+              time={replyData?.timestamp || "Just now"}
+              CardOnPress={() => { }}
+              ChatOnPress={() => { }}
+              onLike={() => { }}
+              onDislike={() => { }}
+            />
+            <ReplyText title="All Replies" color={Colors.primary} />
+          </View>
 
-      </View>
+          <View style={styles.listWrapper}>
+            <FlatList
+              ref={listRef}
+              data={comments}
+              keyExtractor={(item) => String(item.id)}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.listContent}
+              ItemSeparatorComponent={() => (
+                <View style={{ height: scale(19) }} />
+              )}
+              ListFooterComponent={<View style={{ height: scale(120) }} />}
+              renderItem={({ item }) => {
+                const isDoctor = !!item.doctor;
+
+                const authorName = isDoctor
+                  ? item.doctor?.fullname
+                  : item.patient?.nickname;
+
+                return (
+                  <DoctorCommentCard
+                    title={authorName || "Unknown"}
+                    discreption={item.body}
+                    time={item.timestamp}
+                    avatar={undefined}
+                    major={isDoctor ? "Doctor" : "Patient"}
+                  />
+                );
+              }}
+            />
+          </View>
+          <View style={styles.bottomContainer}>
+            <View style={styles.doctorBottom}>
+              <View style={styles.DoctorreplySection}>
+                <View style={{ width: "80%" }}>
+                  <ReplyField
+                    name="doctorReply"
+                    control={control as Control<any>}
+                  />
+                </View>
+                <ArrowInCircle onPress={handleSubmit(onSend)} />
+              </View>
+            </View>
+
+            {isPatient && (
+              <View style={styles.patientBottom}>
+                <ResolvedSlideButton
+                  onSlideComplete={() => {
+                    console.log("Case Marked as Resolved");
+                  }}
+                />
+              </View>
+            )}
+          </View>
+
+        </View>
+      </SafeAreaView>
     </AppBackground>
   );
 }
 
-
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
   container: {
     flex: 1,
-    paddingTop: scale(50),
     paddingHorizontal: scale(24),
+    paddingBottom: scale(20),
   },
 
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: scale(36),
+    marginTop: scale(20),
+    marginBottom: scale(25),
   },
 
   title: {
@@ -193,7 +196,8 @@ const styles = StyleSheet.create({
   },
 
   listWrapper: {
-    height: "30%",
+    flex: 1,
+    // minHeight: scale(200),
   },
 
   listContent: {
@@ -201,13 +205,14 @@ const styles = StyleSheet.create({
   },
 
   bottomContainer: {
-    position: "absolute",
-    bottom: scale(30),
-    left: scale(24),
-    right: scale(24),
+    // position: "absolute",
+    // bottom: scale(30),
+    // left: scale(24),
+    // right: scale(24),
     width: "100%",
-    paddingBottom: scale(30),
-    paddingHorizontal: scale(24),
+    paddingTop: scale(10),
+    paddingBottom: scale(10),
+    gap: scale(15),
   },
 
   patientBottom: {

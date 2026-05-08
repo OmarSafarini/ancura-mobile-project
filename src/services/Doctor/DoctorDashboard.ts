@@ -13,7 +13,6 @@ export const getDoctorDashboardStats = async (
   doctorId: string,
   period: TimePeriod = 'Weekly'
 ): Promise<DashboardStats> => {
-  console.log(`🚀 Starting getDoctorDashboardStats for doctor: ${doctorId} | Period: ${period}`);
 
   try {
     const now = new Date();
@@ -27,10 +26,7 @@ export const getDoctorDashboardStats = async (
       startDate = firstDayOfMonth.toISOString();
     }
 
-    console.log(`📅 Period filter: ${period} | Start date: ${startDate || 'All Time'}`);
-
-    // 1. جلب النقاط من جدول doctor
-    console.log('📊 Fetching doctor points...');
+    console.log(`Period filter: ${period} | Start date: ${startDate || 'All Time'}`);
     let doctorRes: any = null;
     try {
       const response = await supabaseClient.get('/doctor', {
@@ -41,13 +37,12 @@ export const getDoctorDashboardStats = async (
       });
       doctorRes = response.data;
     } catch (error) {
-      console.error('❌ Doctor points error:', error);
+      console.error('Doctor points error:', error);
     }
 
     const basePoints = doctorRes?.[0]?.points || 0;
-    console.log(`✅ Doctor points: ${basePoints}`);
+    console.log(`Doctor points: ${basePoints}`);
 
-    // فلتر مشترك
     const baseParams: any = {
       doctor_id: `eq.${doctorId}`,
     };
@@ -56,10 +51,9 @@ export const getDoctorDashboardStats = async (
       baseParams.timestamp = `gte.${startDate}`;
     }
 
-    console.log('🔍 Base params for replies:', baseParams);
+    console.log('Base params for replies:', baseParams);
 
-    // ─── 2. عدد الردود (Comments) ─────────────────────────────────
-    console.log('📈 Fetching replies count...');
+    console.log('Fetching replies count...');
     let countHeaders: any = null;
     try {
       const response = await supabaseClient.get('/reply', {
@@ -68,62 +62,88 @@ export const getDoctorDashboardStats = async (
       });
       countHeaders = response.headers;
     } catch (error) {
-      console.error('❌ Count error:', error);
+      console.error('Count error:', error);
     }
 
     const commentsCount = parseInt(countHeaders?.['content-range']?.split('/')[1] || '0', 10) || 0;
-    console.log(`✅ Total replies (comments): ${commentsCount}`);
+    console.log(`Total replies (comments): ${commentsCount}`);
 
-    // ─── 3. Average Response Time ───────────────────────────────
-    console.log('⏱️ Calculating average response time...');
-    let avgResponseTime = 0;
+    console.log('Calculating average response time...');
+let avgResponseTime = 0;
 
-    if (commentsCount > 0) {
-      let timeData: any = null;
-      try {
-        const response = await supabaseClient.get('/reply', {
-          params: {
-            ...baseParams,
-            select: `
-              timestamp,                    // وقت الرد
-              case_id,
-              cases!inner(timestamp)        // وقت إنشاء الـ Case
-            `,
-          },
-        });
-        timeData = response.data;
-      } catch (error) {
-        console.error('❌ Time data error:', error);
-      }
+const safeDate = (value: unknown) => {
+  if (!value) return null;
+  const date = new Date(value as string);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
 
-      if (timeData) {
-        console.log(`📊 Fetched ${timeData?.length || 0} replies with case data`);
+if (commentsCount > 0) {
+  let timeData: any = null;
 
-        if (timeData && timeData.length > 0) {
-          const totalMinutes = timeData.reduce((sum: number, reply: any, index: number) => {
-            const replyTime = new Date(reply.timestamp);
-            const caseTime = new Date(reply.cases?.timestamp);
+  try {
+    const response = await supabaseClient.get('/reply', {
+      params: {
+        ...baseParams,
+        select: `
+          timestamp,
+          case_id,
+          cases!inner(timestamp)
+        `,
+      },
+    });
 
-            const diffMs = replyTime.getTime() - caseTime.getTime();
-            const diffMinutes = Math.max(0, Math.floor(diffMs / (1000 * 60)));
+    timeData = response.data;
+  } catch (error) {
+    console.error('Time data error:', error);
+  }
 
-            if (index < 3) {  // نطبع أول 3 ردود للـ debug
-              console.log(`   Reply ${index + 1}: Case time=${caseTime.toISOString()}, Reply time=${replyTime.toISOString()}, Diff=${diffMinutes} min`);
-            }
+  if (timeData) {
+    console.log(`Fetched ${timeData?.length || 0} replies with case data`);
 
-            return sum + diffMinutes;
-          }, 0);
+    if (timeData.length > 0) {
+      let validRepliesCount = 0;
 
-          avgResponseTime = Math.floor(totalMinutes / timeData.length);
-          console.log(`✅ Average response time: ${avgResponseTime} minutes (from ${timeData.length} replies)`);
+      const totalMinutes = timeData.reduce((sum: number, reply: any, index: number) => {
+        const replyTime = safeDate(reply.timestamp);
+        const caseTime = safeDate(reply.cases?.timestamp);
+
+        if (!replyTime || !caseTime) {
+          console.warn(`Skipping invalid date at reply index ${index}`, {
+            replyTimestamp: reply.timestamp,
+            caseTimestamp: reply.cases?.timestamp,
+            reply,
+          });
+          return sum;
         }
-      }
-    } else {
-      console.log('⚠️ No replies, skipping average time calculation');
-    }
 
-    // ─── 4. Chart Data ───────────────────────────────────────────
-    console.log('📊 Fetching chart data...');
+        const diffMs = replyTime.getTime() - caseTime.getTime();
+        const diffMinutes = Math.max(0, Math.floor(diffMs / (1000 * 60)));
+
+        validRepliesCount++;
+
+        if (index < 3) {
+          console.log(
+            `   Reply ${index + 1}: Case time=${caseTime.toISOString()}, Reply time=${replyTime.toISOString()}, Diff=${diffMinutes} min`
+          );
+        }
+
+        return sum + diffMinutes;
+      }, 0);
+
+      if (validRepliesCount > 0) {
+        avgResponseTime = Math.floor(totalMinutes / validRepliesCount);
+        console.log(
+          `Average response time: ${avgResponseTime} minutes (from ${validRepliesCount} valid replies)`
+        );
+      } else {
+        console.log('No valid reply timestamps found, average response time remains 0');
+      }
+    }
+  }
+} else {
+  console.log('No replies, skipping average time calculation');
+}
+
     const chartParams: any = {
       ...baseParams,
       select: 'timestamp',
@@ -137,19 +157,18 @@ export const getDoctorDashboardStats = async (
       });
       chartReplies = response.data;
     } catch (error) {
-      console.error('❌ Chart data error:', error);
+      console.error('Chart data error:', error);
     }
 
-    console.log(`📈 Fetched ${chartReplies.length} replies for chart`);
+    console.log(`Fetched ${chartReplies.length} replies for chart`);
 
     const chart = processChartData(chartReplies, period);
-    console.log(`✅ Chart prepared with ${chart.length} bars`);
+    console.log(`Chart prepared with ${chart.length} bars`);
 
-    // حساب الـ Score
     const activityScore = Math.floor(commentsCount * 5);
     const finalScore = basePoints + activityScore;
 
-    console.log(`🏆 Final Score: ${finalScore} (base: ${basePoints} + activity: ${activityScore})`);
+    console.log(`Final Score: ${finalScore} (base: ${basePoints} + activity: ${activityScore})`);
 
     const result = {
       comments: commentsCount,
@@ -158,11 +177,11 @@ export const getDoctorDashboardStats = async (
       chart,
     };
 
-    console.log('✅ Final dashboard stats:', result);
+    console.log('Final dashboard stats:', result);
     return result;
 
   } catch (error: any) {
-    console.error('💥 CRITICAL ERROR in getDoctorDashboardStats:', error?.response?.data || error.message);
+    console.error('CRITICAL ERROR in getDoctorDashboardStats:', error?.response?.data || error.message);
     console.error('Full error object:', error);
     
     return { 
@@ -174,9 +193,8 @@ export const getDoctorDashboardStats = async (
   }
 };
 
-// ─── processChartData (مع لوج بسيط) ─────────────────────────────
 const processChartData = (replies: any[], period: TimePeriod): BarData[] => {
-  console.log(`🗂️ Processing chart data for ${period} with ${replies.length} replies`);
+  console.log(`Processing chart data for ${period} with ${replies.length} replies`);
 
   const grouped = new Map<string, number>();
 
@@ -202,10 +220,10 @@ const processChartData = (replies: any[], period: TimePeriod): BarData[] => {
     active: index === arr.length - 1,
   }));
 
-  console.log(`📊 Grouped chart data:`, Object.fromEntries(grouped));
+  console.log(`Grouped chart data:`, Object.fromEntries(grouped));
 
   if (chartArray.length === 0) {
-    console.log('⚠️ No chart data, using fallback');
+    console.log('No chart data, using fallback');
     chartArray = period === 'Weekly' 
       ? [{ label: 'Sat', value: 8 }, { label: 'Sun', value: 15, active: true }, { label: 'Mon', value: 22 }]
       : [{ label: 'W1', value: 35 }, { label: 'W2', value: 68, active: true }, { label: 'W3', value: 42 }];

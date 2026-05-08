@@ -7,11 +7,11 @@ export interface DoctorProfile {
 
 export const getDoctorBasicInfo = async (id: string): Promise<DoctorProfile> => {
   try {
-    console.log('🔍 Fetching doctor for id:', id);
+    console.log('Fetching doctor for id:', id);
 
     const { data, status } = await supabaseClient.get('/doctor', {
       params: {
-        id: `eq.${id}`,     // ← استخدام "id" بدلاً من "user_id"
+        id: `eq.${id}`,  
         select: 'fullname',
       },
       paramsSerializer: (params) => {
@@ -25,8 +25,6 @@ export const getDoctorBasicInfo = async (id: string): Promise<DoctorProfile> => 
       },
     });
 
-    console.log('✅ Status:', status);
-    console.log('📊 Data received:', data);
 
     if (!data || data.length === 0) {
       throw new Error(`Doctor not found for id: ${id}`);
@@ -39,7 +37,7 @@ export const getDoctorBasicInfo = async (id: string): Promise<DoctorProfile> => 
     };
 
   } catch (error: any) {
-    console.error('❌ Failed to get doctor info:', error.message);
+    console.error('Failed to get doctor info:', error.message);
     if (error.response?.data) console.error('Response Data:', error.response.data);
 
     return {

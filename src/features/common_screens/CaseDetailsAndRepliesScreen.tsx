@@ -1,8 +1,8 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { Control, useForm } from "react-hook-form";
-import { View, FlatList, StyleSheet } from "react-native";
+import { View, FlatList, StyleSheet, SafeAreaView } from "react-native";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getRepliesByPostId, postReply } from '@/services/common_services/ReplyService';
+import { getRepliesByCaseId, postReply } from '@/services/common_services/ReplyService';
 import { useAuthStore } from '@/store/authStore';
 import AppBackground from "@/components/base/AppBackground";
 import BackButton from "@/components/common/BackButton";
@@ -22,18 +22,21 @@ import PencilIcon from "@/assets/icons/PencilIcon";
 import TrashIcon from "@/assets/icons/TrashIcon";
 
 
-
 type FormData = {
   doctorReply: string;
 };
 
-const STATUS_MAP: Record<string, "Under Review" | "Doctor Replied" | "Resolved"> = {
-  "Under Review": "Under Review",
-  "Doctor Replied": "Doctor Replied",
-  "Resolved": "Resolved",
+const STATUS_MAP: Record<string, "under_review" | "doctor_replied" | "resolved"> = {
+  "Under Review": "under_review",
+  "Doctor Replied": "doctor_replied",
+  "Resolved": "resolved",
+  "under_review": "under_review",
+  "doctor_replied": "doctor_replied",
+  "resolved": "resolved",
 };
 
 export default function CaseDetailScreen({ navigation, route }: any) {
+  const authUser = useAuthStore((state) => state.user);
   const caseId = route?.params?.caseId;
   const caseData = route?.params?.caseData;
   const role = route?.params?.role || 'patient';
@@ -64,7 +67,7 @@ export default function CaseDetailScreen({ navigation, route }: any) {
 
 const { data: replies = [] } = useQuery({
   queryKey: ['replies', caseId],
-  queryFn: () => getRepliesByPostId(caseId),
+  queryFn: () => getRepliesByCaseId(caseId),
   enabled: !!caseId,
 });
 
@@ -81,12 +84,11 @@ const { mutate: submitReply, isPending } = useMutation({
 
 const onSend = async (data: FormData) => {
   if (!data.doctorReply.trim()) return;
-  const doctorId = useAuthStore.getState().session?.id;
-  if (!doctorId) return;
+  if (!authUser?.id) return;
 
   submitReply({
-    postId: caseId,
-    doctorId,
+    caseId: caseId,
+    doctorId: authUser.id,
     patientId: caseData?.patient_id,
     body: data.doctorReply.trim(),
   });
@@ -103,6 +105,7 @@ const onSend = async (data: FormData) => {
 
   return (
     <AppBackground>
+      <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
 
         <View style={styles.topBar}>
@@ -141,7 +144,7 @@ const onSend = async (data: FormData) => {
                 ? undefined
                 : caseData?.status
                   ? STATUS_MAP[caseData.status as string]
-                  : "Under Review"
+                  : "under_review"
             }
           />
 
@@ -160,12 +163,15 @@ const onSend = async (data: FormData) => {
               )}
               renderItem={({ item }) => (
                 <DoctorReplyCard
-                  title={item.doctor_name}
+                  id={item.id}
+                  title={item.doctor?.fullname}
                   major={item.doctor_major}
                   message={item.body}
                   time={item.timestamp}
                   CardOnPress={handleViewDoctorReplies}
                   ChatOnPress={() => handleViewAllReplies(item)}
+                  onLike={() =>{}}
+                  onDislike={() =>{}}
                 />
               )}
             />
@@ -202,13 +208,11 @@ const onSend = async (data: FormData) => {
             </View>
           )}
         </View>
-
       </View>
+      </SafeAreaView>
     </AppBackground>
   );
 }
-
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -219,9 +223,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: scale(50),
+    marginTop: scale(20),
     marginHorizontal: scale(24),
-    marginBottom: scale(25),
+    marginBottom: scale(20),
   },
 
   toggleContainer: {
@@ -232,12 +236,12 @@ const styles = StyleSheet.create({
   mainContent: {
     flex: 1,
     paddingHorizontal: scale(24),
-    gap: scale(41),
+    gap: scale(20),
   },
 
   replySection: {
-    height: scale(410),
-    gap: scale(41),
+    flex: 1,
+    gap: scale(20),
   },
 
   list: {

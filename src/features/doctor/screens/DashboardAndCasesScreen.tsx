@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import AppBackground from "@/components/base/AppBackground";
 import DoctorGreeting from "../components/DoctorGreeting";
 import CaseCard from "@/components/common/CaseCard";
-import { dummyCases, dashboardChartData } from "@/types/mockData";
+import { dashboardChartData } from "@/types/mockData";
 import IconWrapper from "@/components/common/IconWrapper";
 import ClockIcon from "@/assets/icons/ClockIcon";
 import ChatIcon from "../../../assets/icons/ChatIcon";
@@ -16,9 +16,10 @@ import { Family } from "@/utils/typography";
 import { scale } from "@/utils/responsive";
 import { CaseData } from "@/types/ICaseData";
 import { getDoctorBasicInfo } from "@/services/Doctor/Doctor";
-import { getSupabaseSession } from "@/services/supabase";
+import { useAuthStore } from "@/store/authStore";
 
 export default function DoctorDashboardAndCases({ navigation }: any) {
+   const user = useAuthStore((state) => state.user);
 
   const handleViewAllCases = () => {
     navigation.navigate('DoctorHomeScreen');
@@ -31,9 +32,8 @@ export default function DoctorDashboardAndCases({ navigation }: any) {
   const { data: doctorId } = useQuery({
     queryKey: ['doctorSession'],
     queryFn: async () => {
-      const session = await getSupabaseSession();
-      if (!session?.id) throw new Error('No session found');
-      return session.id as string;
+      if (!user?.id) throw new Error('No session found');
+      return user.id as string;
     },
     staleTime: Infinity,
   });
@@ -104,7 +104,7 @@ const doctorCases: CaseData[] = casesData ?? [];
                         title: item.title,
                         description: item.description,
                         timestamp: item.timestamp,
-                        status: item.isReplied ? "Resolved" : "Under Review",
+                        status: item.status ? "Resolved" : "Under Review",
                         isEmergency: item.isEmergency ?? false,
                         isReplied: item.isReplied ?? false,
                       }}

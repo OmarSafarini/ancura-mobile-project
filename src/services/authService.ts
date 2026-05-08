@@ -135,17 +135,20 @@ export async function signUp(
           id: user.id,
           nickname: generatedNickname,
           age: meta.age,
-          gender: meta.gender, 
+          gender: meta.gender,
         },
-        { headers: { Prefer: 'return=minimal' } } 
+        { headers: { Prefer: 'return=minimal' } }
       );
     } else {
       await supabaseClient.post(
         '/doctor',
         {
-          id: user.id,
+          id: user.id, 
           email: user.email,
-          FullName: meta.full_name || 'Dr. New User',
+          full_name: meta.full_name || "Dr. New User",
+          bio: meta.bio || "",
+          location: meta.location || "",
+          profilePic: meta.profilePic || "",
           points: 0,
         },
         { headers: { Prefer: 'return=minimal' } }
@@ -159,7 +162,7 @@ export async function signUp(
 
   } catch (err: any) {
     console.error("Supabase API Error Data:", err?.response?.data);
-    
+
     const message =
       err?.response?.data?.msg ??
       err?.response?.data?.error_description ??
@@ -274,16 +277,16 @@ export async function updatePassword(email: string, newPassword: string, tempAcc
     await axios.put(
       `${SUPABASE_URL}/auth/v1/user`,
       { password: newPassword },
-      { 
-        headers: { 
-          apikey: SUPABASE_ANON_KEY, 
+      {
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
           Authorization: `Bearer ${tempAccessToken}`,
-          'Content-Type': 'application/json' 
-        } 
+          'Content-Type': 'application/json'
+        }
       }
     );
 
- 
+
     await signIn(email, newPassword, 'doctor');
   } catch (error: any) {
     throw error;
