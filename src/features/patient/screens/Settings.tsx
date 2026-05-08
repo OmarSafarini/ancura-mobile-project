@@ -9,12 +9,12 @@ import LogoutButton from "@/components/common/LogoutButton";
 import ArrowLeftIcon from "./../../../assets/icons/ArrowLeftIcon";
 import CopyIcon from "../../../assets/icons/CopyIcon";
 import FlashMessage, { showMessage } from "react-native-flash-message";
-import AnimatedLogoScreen from "@/components/base/AnimatedLogoScreen";
+import { useQuery } from "@tanstack/react-query";
+import { getPatintProfile } from "@/services/Patient/PatinetService";
 import * as Clipboard from "expo-clipboard";
 import { signOut } from "../../../services/authService";
 import { getUserMeta } from "@/services/tokenService";
-import { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
+import Loading from "@/components/common/Loading";
 
 export default function PaitentSettings() {
   const insets = useSafeAreaInsets();
@@ -45,9 +45,7 @@ export default function PaitentSettings() {
 
   if (loading) {
     return (
-      <View style={styles.overlay}>
-        <AnimatedLogoScreen size={scale(432)} />
-      </View>
+        <Loading/>
     );
   }
 
@@ -142,12 +140,5 @@ const styles = StyleSheet.create({
   BottomBar: {
     alignSelf: "stretch",
     alignItems: "center",
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(255,255,255,0.7)",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 999,
   },
 });

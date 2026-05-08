@@ -23,10 +23,10 @@ import {
   getPatintPosts,
   getPatintProfile,
 } from "@/services/Patient/PatinetService";
-import AnimatedLogoScreen from "@/components/base/AnimatedLogoScreen";
 import { Status } from "@/types/ICaseStatusProps";
 import userBase from "../../../../assets/icon.png";
 import { getUserMeta } from "@/services/tokenService";
+import Loading from "@/components/common/Loading";
 
 export default function PatientHomePage() {
   const navigation = useNavigation<any>();
@@ -62,9 +62,7 @@ export default function PatientHomePage() {
 
   if (patientLoading || patientPstLoading) {
     return (
-      <View style={styles.overlay}>
-        <AnimatedLogoScreen size={scale(432)} />
-      </View>
+        <Loading />
     );
   }
 
@@ -214,12 +212,5 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: scale(15),
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(255,255,255,0.7)",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 999,
   },
 });
