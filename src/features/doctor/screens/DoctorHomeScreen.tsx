@@ -50,7 +50,6 @@ const {
   if (casesError || doctorError) {
     return <Text>Error loading cases</Text>;
   }
-  const insets = useSafeAreaInsets();
 
   const doctorCases = cases.filter((c) => c.status !== "Resolved");
 
