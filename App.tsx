@@ -1,17 +1,17 @@
-import { StyleSheet } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import FlashMessage from 'react-native-flash-message';
-import { useAppFonts } from './src/utils/useAppFonts';
-import RootNavigator from './src/layout/RootNavigator';
-import DoctorDashboardAndCases from '@/features/doctor/screens/DashboardAndCasesScreen';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { StyleSheet } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import FlashMessage from "react-native-flash-message";
+import { useAppFonts } from "./src/utils/useAppFonts";
+import RootNavigator from "./src/layout/RootNavigator";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { DoctorProvider } from "@/Context/DoctorContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 2,
-      staleTime: 5 * 60 * 1000,    
-      gcTime: 10 * 60 * 1000,      
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
     },
   },
 });
@@ -26,12 +26,19 @@ export default function App() {
   return (
     <>
       <QueryClientProvider client={queryClient}>
-      <NavigationContainer>
-        <RootNavigator />         
-      </NavigationContainer>
 
-      <FlashMessage position="top" />
-    </QueryClientProvider>
+        <DoctorProvider>
+
+          <NavigationContainer>
+
+            <RootNavigator />
+            
+          </NavigationContainer>
+
+        </DoctorProvider>
+
+        <FlashMessage position="top" />
+      </QueryClientProvider>
     </>
   );
 }
@@ -39,6 +46,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
 });
