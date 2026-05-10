@@ -80,12 +80,3 @@ export const uploadDoctorProfileImage = async (
   }
 };
 
-export interface DoctorInput {
-  id:string;
-  full_name: string;
-  email: string;
-  bio?: string;
-  location?: string;
-  profilePic?: string;
-}
-
