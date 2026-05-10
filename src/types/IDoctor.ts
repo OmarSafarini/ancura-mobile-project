@@ -4,7 +4,7 @@ import { ILicense } from "./ILicense";
 // Matches the `doctor` table in the database
 export interface IDoctor {
   id: string;          // UUID — references auth.users(id)
-  fullname: string;           // was: name (matched SQL FullName)
+  full_name: string;           // was: name (matched SQL FullName)
   email: string;
   bio?: string;
   points: number;              // was: reputation
