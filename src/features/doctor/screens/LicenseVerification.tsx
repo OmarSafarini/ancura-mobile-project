@@ -17,13 +17,14 @@ import SuccessScreen from "@/components/common/SuccessScreen";
 import { supabaseClient } from "@/services/supabase"; 
 import { uploadDocumentToStorage } from "@/services/Doctor/storageService";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import { useDoctor } from "@/Context/DoctorContext";
 export function LicenseVerification({ navigation }: any) {
     const { control, handleSubmit } = useForm();
     const [selectedDocument, setSelectedDocument] = useState<null | { name: string, uri: string, size?: number, mimeType?: string }>(null);
     const [showSuccess, setShowSuccess] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-
+    const { doctorData } = useDoctor(); 
+console.log("Licnse",doctorData);
     const handleDocumentUpload = async () => {
         try {
             const result = await DocumentPicker.getDocumentAsync({
@@ -97,6 +98,9 @@ export function LicenseVerification({ navigation }: any) {
         }
     };
 
+const goBack = () => {
+  navigation.navigate("DoctorProfileAndSettings");
+  };
     return (
         <AppBackground variant="clean" style={styles.screen}>
             <SafeAreaView style={{ flex: 1 }} edges={['top', 'left', 'right']}>
@@ -111,7 +115,7 @@ export function LicenseVerification({ navigation }: any) {
                     <View style={styles.header}>
                         <Text style={styles.title}>License Verification</Text>
                         <Pressable style={styles.iconWrapper} onPress={() => navigation.navigate('DoctorProfileAndSettings')}>
-                            <ArrowLeftIcon color={Colors.textDark2} size={scale(18)} />
+                            <ArrowLeftIcon color={Colors.textDark2} size={scale(18)} onPress={goBack} />
                         </Pressable>
                     </View>
 

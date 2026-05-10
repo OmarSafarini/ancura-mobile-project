@@ -1,7 +1,7 @@
 import AppBackground from "@/components/base/AppBackground";
 import { Colors, palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { StyleSheet, View, Text, SafeAreaView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale } from "react-native-size-matters";
@@ -13,12 +13,14 @@ import IconWrapper from "../../../components/common/IconWrapper";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 import { uploadDoctorProfileImage } from "@/services/Doctor/DoctorService";
 import { signUp } from "@/services/authService";
+import { useDoctor } from "@/Context/DoctorContext";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function DoctorProfileAndSettings({ navigation }: any) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const insets = useSafeAreaInsets();
-
-  const { control, handleSubmit } = useForm({
+const {doctorData,setDoctorData } = useDoctor();
+  const { control, handleSubmit ,reset } = useForm({
     defaultValues: {
       FullName: "",
       Location: "",
@@ -27,11 +29,22 @@ export default function DoctorProfileAndSettings({ navigation }: any) {
       Bio: "",
     },
   });
-const OnSubmit = async (data: any) => {
-  
-  try {
-    let imageUrl = "";
 
+  useFocusEffect(
+    useCallback(() => {
+      reset({
+        FullName: doctorData.full_name || "",
+        Location: doctorData.location || "",
+        Email: doctorData.email || "",
+        Password: "",
+        Bio: doctorData.bio || "",
+      });
+    }, [doctorData, reset])
+  );
+  
+const OnSubmit = async (data: any) => {
+  let imageUrl = "";
+  try {
     if (selectedImage) {
       imageUrl = await uploadDoctorProfileImage(
         selectedImage,
@@ -40,8 +53,16 @@ const OnSubmit = async (data: any) => {
       );
     }
 
-    console.log("Uploaded Image:", imageUrl);
+    setDoctorData({
+      full_name: data.FullName,
+      bio: data.Bio,
+      location: data.Location,
+      email: data.Email,
+      profilePic: imageUrl,
+    });
 
+
+    console.log(setDoctorData);
     await signUp(
       data.Email,
       data.Password,
@@ -78,7 +99,8 @@ const OnSubmit = async (data: any) => {
           <UploadImageButton
 onImageSelected={(uri) => {
     setSelectedImage(uri);
-  }}/>
+  }}
+  />
           </View>
 
         <View style={styles.Form}>
@@ -101,11 +123,11 @@ onImageSelected={(uri) => {
             control={control as any}
             name="Email"
             label="Email"
-            placeholder="Enter your Email"
+            placeholder="UserName@gmail.com"
             rules={{
               required: "Location is required",
               pattern: {
-                value: "/\S+@\S+\.\S+/",
+                value: /\S+@\S+\.\S+/,
                 message: "Invalid email",
               },
             }}
