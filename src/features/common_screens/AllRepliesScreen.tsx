@@ -66,11 +66,7 @@ export default function AllRepliesScreen({ navigation, route }: any) {
     });
   };
   const handleViewGoBack = () => {
-    navigation.navigate('DoctorRepliesScreen', {
-      caseId: route?.params?.caseId,
-      caseData,
-      role
-    });
+    navigation.goBack();
   };
 
   const { control, handleSubmit, resetField } = useForm<FormData>({
@@ -179,15 +175,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: scale(20),
-    marginBottom: scale(25),
+    marginBottom: scale(56),
+    marginTop: scale(10),
   },
 
   title: {
-    width: scale(150),
-    fontSize: scale(20),
+    flex: 1,
+    fontSize: scale(24),
     fontFamily: Family.FG_Medium,
-    color: Colors.primary,
+    color: Colors.textDark,
   },
 
   staticContent: {

@@ -50,7 +50,6 @@ const {
   if (casesError || doctorError) {
     return <Text>Error loading cases</Text>;
   }
-  const insets = useSafeAreaInsets();
 
   const doctorCases = cases.filter((c) => c.status !== "Resolved");
 
@@ -63,7 +62,7 @@ const {
               name={doctor?.full_name}
               image={doctor?.profilePic}
             />
-            <Text style={styles.userName}>{doctor?.full_name}</Text>
+            {/* <Text style={styles.userName}>{doctor?.full_name}</Text> */}
           </View>
         </SafeAreaView>
 

@@ -50,9 +50,9 @@ export default function PaitentSettings() {
   }
 
   return (
-    <AppBackground variant="logo">
-      <View style={styles.container}>
-        <View>
+      <AppBackground variant="logo">
+        <View style={styles.container}>
+          <View>
           <SafeAreaView style={{ paddingTop: insets.top }}>
             <View style={styles.header}>
               <Text style={styles.title}>Profile & Settings</Text>
@@ -65,7 +65,7 @@ export default function PaitentSettings() {
               </View>
             </View>
           </SafeAreaView>
-          <View style={styles.Card}>
+            <View style={styles.Card}>
             <Text style={[styles.CardHeader, styles.CardText]}>
               Email
             </Text>
@@ -87,11 +87,11 @@ export default function PaitentSettings() {
         <SafeAreaView
           style={[styles.BottomBar, { paddingBottom: insets.bottom }]}
         >
-          <FlashMessage position="bottom" style={{ marginBottom: scale(40) }} />
-          <LogoutButton onPress={LogOut} />
+            <FlashMessage position="bottom" style={{ marginBottom: scale(40) }} />
+            <LogoutButton onPress={LogOut} />
         </SafeAreaView>
-      </View>
-    </AppBackground>
+        </View>
+      </AppBackground>
   );
 }
 const styles = StyleSheet.create({

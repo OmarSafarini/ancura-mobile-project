@@ -21,15 +21,15 @@ type FormData = { doctorReply: string };
 export default function DoctorRepliesScreen({ navigation, route }: any) {
   const caseData = route?.params?.caseData;
   const role = route?.params?.role || 'doctor';
-  const caseId = route?.params?.caseId || caseData?.id; 
+  const caseId = route?.params?.caseId || caseData?.id;
   const isDoctor = role === "doctor";
   const isPatient = role === "patient";
   const authUser = useAuthStore((state) => state.user);
 
-  const queryClient = useQueryClient(); 
+  const queryClient = useQueryClient();
   const flatListRef = useRef<FlatList>(null);
 
-  const { control, handleSubmit, resetField } = useForm<FormData>({ 
+  const { control, handleSubmit, resetField } = useForm<FormData>({
     defaultValues: { doctorReply: "" },
   });
 
@@ -54,17 +54,17 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
   });
 
   const onSend = async (data: FormData) => {
-   if (!data.doctorReply.trim()) return;
-  if (!authUser?.id) return;
+    if (!data.doctorReply.trim()) return;
+    if (!authUser?.id) return;
 
 
-  submitReply({
-    caseId: caseId,
-    doctorId: authUser.id,
-    patientId: caseData?.patient_id,
-    body: data.doctorReply.trim(),
-  });
-};
+    submitReply({
+      caseId: caseId,
+      doctorId: authUser.id,
+      patientId: caseData?.patient_id,
+      body: data.doctorReply.trim(),
+    });
+  };
 
 
   const handleViewAllReplies = (reply: any) => {
@@ -78,10 +78,10 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
   };
 
   const handleViewGoBack = () => {
-    navigation.navigate('CaseDetailsAndRepliesScreen');
+    navigation.goBack();
   };
 
- 
+
 
   const scrollToBottom = () => {
     flatListRef.current?.scrollToEnd({ animated: true });
@@ -94,68 +94,68 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-    <AppBackground style={{ flex: 1 }}>
+      <AppBackground style={{ flex: 1 }}>
 
-      <View style={styles.fixedHeader}>
-        <View style={styles.header}>
-          <Text style={styles.title}>{caseData?.title || "Case Title"}</Text>
-          <BackButton onPress={handleViewGoBack} />
+        <View style={styles.fixedHeader}>
+          <View style={styles.header}>
+            <Text style={styles.title}>{caseData?.title || "Case Title"}</Text>
+            <BackButton onPress={handleViewGoBack} />
+          </View>
+
+          <ReplyText title="Doctor's Replies" color={Colors.secondary} />
         </View>
 
-        <ReplyText title="Doctor's Replies" color={Colors.secondary} />
-      </View>
+        <View style={styles.scrollWrapper}>
+          <FlatList
+            ref={flatListRef}
+            data={replies}
+            keyExtractor={(item) => String(item.id)}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+            ItemSeparatorComponent={() => (
+              <View style={{ height: scale(14) }} />
+            )}
+            renderItem={({ item }) => (
+              <DoctorReplyCard
+                id={item.id}
+                title={item.doctor?.fullname}
+                major={item.doctor_major}
+                message={item.body}
+                time={item.timestamp}
+                CardOnPress={() => handleViewAllReplies(item)}
+                ChatOnPress={() => handleViewAllReplies(item)}
+                onLike={() => { }}
+                onDislike={() => { }}
+              />
+            )}
+          />
+        </View>
 
-      <View style={styles.scrollWrapper}>
-        <FlatList
-          ref={flatListRef}
-          data={replies}
-          keyExtractor={(item) => String(item.id)}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
-          ItemSeparatorComponent={() => (
-            <View style={{ height: scale(14) }} />
-          )}
-          renderItem={({ item }) => (
-            <DoctorReplyCard
-              id={item.id}
-              title={item.doctor?.fullname}
-              major={item.doctor_major}
-              message={item.body}
-              time={item.timestamp}
-              CardOnPress={() => handleViewAllReplies(item)}
-              ChatOnPress={() => handleViewAllReplies(item)}
-              onLike={() =>{}}
-              onDislike={() =>{}}
-            />
-          )}
-        />
-      </View>
-
-      <View style={styles.bottomContainer}>
-        {isPatient && (
-          <View style={styles.patientBottom}>
-            <View style={{ width: "70%" }}>
-              <ResolvedSlideButton onSlideComplete={handleSlideComplete} />
-            </View>
-
-            <ScrollToBottomButton onPress={scrollToBottom} />
-          </View>
-        )}
-
-        {isDoctor && (
-          <View style={styles.doctorBottom}>
-            <View style={styles.DoctorreplySection}>
-              <View style={{ width: "80%" }}>
-                <ReplyField name="doctorReply" control={control as Control<any>} />
+        <View style={styles.bottomContainer}>
+          {isPatient && (
+            <View style={styles.patientBottom}>
+              <View style={{ width: "70%" }}>
+                <ResolvedSlideButton onSlideComplete={handleSlideComplete} />
               </View>
 
-              <ArrowInCircle onPress={handleSubmit(onSend)}/>
+              <ScrollToBottomButton onPress={scrollToBottom} />
             </View>
-          </View>
-        )}
-      </View>
+          )}
 
-    </AppBackground>
+          {isDoctor && (
+            <View style={styles.doctorBottom}>
+              <View style={styles.DoctorreplySection}>
+                <View style={{ width: "80%" }}>
+                  <ReplyField name="doctorReply" control={control as Control<any>} />
+                </View>
+
+                <ArrowInCircle onPress={handleSubmit(onSend)} />
+              </View>
+            </View>
+          )}
+        </View>
+
+      </AppBackground>
     </SafeAreaView>
   );
 }
@@ -166,7 +166,6 @@ const styles = StyleSheet.create({
   },
   fixedHeader: {
     paddingHorizontal: scale(24),
-    paddingTop: scale(50),
     paddingBottom: scale(16),
     zIndex: 10,
   },
@@ -175,15 +174,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: scale(43),
+    marginBottom: scale(56),
+    marginTop: scale(10),
   },
 
   title: {
-    width: scale(150),
-    fontSize: scale(20),
+    flex: 1,
+    fontSize: scale(24),
     fontFamily: Family.FG_Medium,
-    color: Colors.primary,
-    marginTop: scale(27),
+    color: Colors.textDark,
   },
 
   scrollWrapper: {

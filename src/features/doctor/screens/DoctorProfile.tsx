@@ -12,13 +12,11 @@ import { scale } from "@/utils/responsive";
 import { Colors, palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import LogoutButton from "@/components/common/LogoutButton";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import LocationIcon from "../../../assets/icons/LocationIcoon";
 import EmailIcon from "../../../assets/icons/EmailIcon";
 import TickIcon from "@/assets/icons/TickIcon";
 import { IDoctor } from "@/types/IDoctor";
-import IconWrapper from "../../../components/common/IconWrapper";
-import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
+import BackButton from "@/components/common/BackButton";
 import { useQuery } from "@tanstack/react-query";
 import { getDoctorLicense, getDoctorProfile } from "@/services/Doctor/DoctorService";
 import { ILicense } from "@/types/ILicense";
@@ -56,8 +54,6 @@ export default function DoctorProfile({ navigation }: any) {
 
   });
 
-  const insets = useSafeAreaInsets();
-
   if (doctorLoading ||LicenseLoading) {
   return (
       <Loading />
@@ -81,12 +77,10 @@ export default function DoctorProfile({ navigation }: any) {
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.container}>
-            <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
-              <Text style={styles.Text}>Profile & Settings</Text>
-              <IconWrapper size={scale(33)} bgColor={palette.white} shape="square">
-                <ArrowLeftIcon size={scale(18)} color={palette.dark} onPress={goBack} />
-              </IconWrapper>
-            </SafeAreaView>
+            <View style={styles.header}>
+              <Text style={styles.title}>Profile & Settings</Text>
+              <BackButton onPress={goBack} />
+            </View>
 
             <View style={styles.profileCard}>
               <View style={styles.DoctorInfo}>
@@ -160,9 +154,9 @@ export default function DoctorProfile({ navigation }: any) {
               <Text style={styles.BioText}>About {doctor?.full_name}</Text>
               <Text style={styles.bio}>{doctor?.bio}</Text>
             </View>
-            <SafeAreaView style={{ paddingBottom: insets.bottom }}>
+            <View style={{ paddingBottom: scale(20) }}>
               <LogoutButton onPress={LogOut} />
-            </SafeAreaView>
+            </View>
           </View>
 
         </ScrollView>
@@ -173,22 +167,23 @@ export default function DoctorProfile({ navigation }: any) {
 
 const styles = StyleSheet.create({
   container: {
-    padding: scale(40),
+    paddingHorizontal: scale(51),
     justifyContent: "space-between",
     flex: 1,
     gap: scale(30),
   },
-  NavBar: {
+  header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: scale(20),
+    marginBottom: scale(56),
+    marginTop: scale(10),
   },
 
-  Text: {
-    fontFamily: Family.FG_Medium,
-    fontWeight: "500",
+  title: {
     fontSize: scale(24),
+    fontFamily: Family.FG_Medium,
+    color: Colors.textDark,
   },
 
   profileCard: {
