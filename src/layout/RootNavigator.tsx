@@ -16,7 +16,7 @@ import DoctorNavigator from './DoctorNavigator';
 const RootStack = createNativeStackNavigator();
 
 export default function RootNavigator() {
-  const { role, isLoading } = useAuthStore();
+  const { role, isLoading ,user} = useAuthStore();
 
   useEffect(() => {
     restoreSession();
@@ -31,13 +31,18 @@ export default function RootNavigator() {
     );
   }
 
+const isDoctorVerified = role === 'doctor' && user?.doctorStatus === 'verified';
 
-  return (
+   return (
     <RootStack.Navigator screenOptions={{ headerShown: false }}>
       {role === 'patient' ? (
         <RootStack.Screen name="PatientApp" component={PatientNavigator} />
       ) : role === 'doctor' ? (
-        <RootStack.Screen name="DoctorApp" component={DoctorNavigator} />
+        isDoctorVerified ? (
+          <RootStack.Screen name="DoctorApp" component={DoctorNavigator} />
+        ) : (
+          <RootStack.Screen name="Auth" component={AuthNavigator} />
+        )
       ) : (
         <RootStack.Screen name="Auth" component={AuthNavigator} />
       )}
