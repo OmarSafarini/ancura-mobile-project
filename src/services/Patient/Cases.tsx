@@ -40,3 +40,18 @@ export const editCase = async (
     throw new Error(error instanceof Error ? error.message : "Failed to update case");
   }
 };
+
+export const getCaseById = async (
+  caseId: number
+): Promise<CaseData> => {
+  try {
+  const { data } = await supabaseClient.get(
+    `/case?id=eq.${caseId}&select=*,patient:patient_id(*)`
+  );
+    return data;
+  } catch (error) {
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to fetch case files"
+    );
+  }
+};
