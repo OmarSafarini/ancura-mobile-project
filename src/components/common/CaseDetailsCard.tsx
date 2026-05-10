@@ -10,64 +10,61 @@ import FileBar from "./FileBar";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 import IconWrapper from "./IconWrapper";
 import { Status } from "@/types/ICaseStatusProps";
+import { useQuery } from "@tanstack/react-query";
+import { getCaseById } from "@/services/Patient/Cases";
+import Loading from "./Loading";
 
 // ________________ CONSTANTS ________________
 const AVATAR_SIZE = scale(25);
 const Card_Radius = scale(11);
 const Tags_Radius = scale(14);
-// ________________ TYPES ________________
-type CaseDetailCardProps = {
-  userId: string;
-  gender: string;
-  age: number;
-  title: string;
-  description: string;
-  date: string;
-  avatar?: string;
-  status?: Status;
-};
 
+//________________ TYPS ______________________
+type CaseDetailsCardProps = {
+  caseId: number;
+};
 // ________________ COMPONENT ________________
-export default function CaseDetailsCard({
-  userId,
-  gender,
-  age,
-  title,
-  description,
-  date,
-  avatar,
-  status,
-}: CaseDetailCardProps) {
+export default function CaseDetailsCard({caseId}:CaseDetailsCardProps) {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["case", caseId],
+    queryFn: () => getCaseById(caseId),
+  });
+
+  if (isLoading) return <Loading/>;
+  if (error || !data) return <Text>{error?.message}</Text>;
+  const caseData = Array.isArray(data) ? data[0] : data;
+  console.log("caseData",caseData)
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Image
           source={
-            avatar ? { uri: avatar } : require("../../../assets/icon.png")
+            require("../../../assets/icon.png")
           }
           style={styles.avatar}
         />
-        <Text style={styles.tag}>{userId}</Text>
-        <Text style={styles.tag}>{gender}</Text>
-        <Text style={styles.tag}>{age}</Text>
-        {status && <CaseStatus status={status} />}
+        <Text style={styles.tag}>{caseData.patient_id}</Text>
+        <Text style={styles.tag}>{caseData.patient.gender}</Text>
+        <Text style={styles.tag}>{caseData.patient.age}</Text>
+        {caseData.status && <CaseStatus status={caseData.status} />}
       </View>
 
-      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.title}>{caseData.title}</Text>
 
-      <Text style={styles.description}>{description}</Text>
-      <FileBar
-        title="Clinical Psychology License - California Board"
-        icon={
-          <IconWrapper size={12} bgColor="#ffffff" shape="circle">
-            <ArrowLeftIcon size={8} color="#6D7EB5" />
-          </IconWrapper>
-        }
-      />
-      <FileBar title="Clinical Psychology License - California Board" />
+      <Text style={styles.description}>{caseData.description}</Text>
+     {caseData.file &&
+  <FileBar
+    title={caseData.file}
+    icon={
+      <IconWrapper size={12} bgColor="#ffffff" shape="circle">
+        <ArrowLeftIcon size={8} color="#6D7EB5" />
+      </IconWrapper>
+    }
+  />
+}
       <View style={styles.DateContainer}>
         <ClockIcon size={12} color="#666666ac" />
-        <Text style={styles.date}>{date}</Text>
+        <Text style={styles.date}>{caseData.Date}</Text>
       </View>
     </View>
   );
