@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  SafeAreaView,
 } from "react-native";
 import { useForm } from "react-hook-form";
 import type { DocumentPickerAsset } from "expo-document-picker";
@@ -14,6 +15,7 @@ import InputField from "@/components/forms/InputFeild";
 import AttachmentsField from "@/components/forms/AttachmentFeild";
 import NormalButton from "@/components/common/NormalButton";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
+import BackButton from "@/components/common/BackButton";
 import DeleteIconButton from "../components/Buttons/DeleteIconButton";
 import FileBar from "@/components/common/FileBar";
 import IconWrapper from "@/components/common/IconWrapper";
@@ -54,6 +56,7 @@ const CreateCase = ({ navigation }: any) => {
 
   const isEmergency = watch("isEmergency");
   const pickedFiles = watch("files");
+  const titleValue = watch("title");
 
   const onSubmit = async (data: FormValues) => {
     try {
@@ -111,20 +114,15 @@ const CreateCase = ({ navigation }: any) => {
 
   return (
     <AppBackground variant="clean">
-      <ScrollView
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}
-      >
+      <SafeAreaView style={{ flex: 1 }}>
+        <ScrollView
+          contentContainerStyle={styles.container}
+          showsVerticalScrollIndicator={false}
+        >
         <View style={styles.header}>
           <View style={styles.headerTitleRow}>
             <Text style={styles.headerText}>Hi USR-XXXXX</Text>
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => navigation.goBack()}
-              activeOpacity={0.7}
-            >
-              <ArrowLeftIcon size={18} color={Colors.textDark} />
-            </TouchableOpacity>
+            <BackButton onPress={() => navigation.goBack()} />
           </View>
           <Text style={styles.headerSubtitle}>
             Your identity will remain 100% anonymous, and your name will not be
@@ -141,7 +139,7 @@ const CreateCase = ({ navigation }: any) => {
             isEdit
             textStyle={{
               fontSize: scale(20),
-              fontFamily: Family.FG_Medium,
+              fontFamily: titleValue ? Family.FG_Medium : Family.FG_Light,
               color: "#000",
             }}
             rules={{ required: "Title is required" }}
@@ -217,6 +215,7 @@ const CreateCase = ({ navigation }: any) => {
           />
         </View>
       </ScrollView>
+      </SafeAreaView>
     </AppBackground>
   );
 };
@@ -224,7 +223,7 @@ const CreateCase = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: scale(52),
-    paddingTop: scale(60),
+    paddingTop: scale(10),
     paddingBottom: scale(40),
     gap: scale(30),
   },
@@ -255,15 +254,6 @@ const styles = StyleSheet.create({
     fontFamily: Family.FG_Regular,
     color: "#6D7EB5",
     lineHeight: scale(16),
-  },
-
-  backButton: {
-    width: scale(33),
-    height: scale(33),
-    backgroundColor: "#fff",
-    borderRadius: scale(7),
-    justifyContent: "center",
-    alignItems: "center",
   },
 
   form: {

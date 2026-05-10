@@ -62,7 +62,7 @@ const {
               name={doctor?.full_name}
               image={doctor?.profilePic}
             />
-            <Text style={styles.userName}>{doctor?.full_name}</Text>
+            {/* <Text style={styles.userName}>{doctor?.full_name}</Text> */}
           </View>
         </SafeAreaView>
 
