@@ -131,22 +131,10 @@ export default function CaseDetailScreen({ navigation, route }: any) {
             <BackButton onPress={handleViewGoBack} />
           </View>
 
-          <View style={styles.mainContent}>
-            <CaseDetailsCard
-              userId={caseData ? `#${caseData.patient_id}` : "#124"}
-              gender="Female"
-              age={28}
-              title={caseData?.title || "Anxiety and sleep problem"}
-              description={caseData?.description || "Patient reports severe anxiety and insomnia for the past 3 weeks."}
-              date={caseData?.timestamp || "2 hours ago"}
-              status={
-                isDoctor
-                  ? undefined
-                  : caseData?.status
-                    ? STATUS_MAP[caseData.status as string]
-                    : "under_review"
-              }
-            />
+        <View style={styles.mainContent}>
+          <CaseDetailsCard
+            caseId={caseId}
+          />
 
             <View style={styles.replySection}>
               <ReplyText title="Doctor's Reply" color={Colors.primary} onPress={handleViewDoctorReplies} />
