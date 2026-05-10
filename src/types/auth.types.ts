@@ -1,9 +1,17 @@
 export type UserRole = 'patient' | 'doctor';
+export type DoctorStatus = 'pending' | 'verified' | 'rejected';
 
 export interface AuthUser {
   id: string;
   email: string;
   role: UserRole;
+  doctorStatus?: DoctorStatus;
+}
+export interface AuthUser {
+  id: string;
+  email: string;
+  role: UserRole;
+  doctorStatus?: DoctorStatus;
 }
 
 export interface StoredTokens {
