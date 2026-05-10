@@ -1,19 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, KeyboardAvoidingView, ScrollView, Platform, TouchableOpacity, Alert } from 'react-native';
-import { useForm } from 'react-hook-form';
-import { Ionicons } from '@expo/vector-icons';
-import AppBackground from '../../../components/base/AppBackground';
-import Logo from '../../../assets/icons/Logo';
-import FadeInView from '../../../utils/FadeInView';
-import InputField from '../../../components/forms/InputFeild';
-import NormalButton from '../../../components/common/NormalButton';
-import HIPAAFooter from '../../../components/common/Footer';
-import { Colors, palette } from '../../../utils/colors';
-import { Family } from '../../../utils/typography';
-import { scale } from '../../../utils/responsive';
-import { signIn } from '../../../services/authService';
-import { useAuthStore } from '../../../store/authStore';
-import { checkBiometricSupport, saveBiometricCredentials, getBiometricCredentials, promptBiometricAuth } from '../../../services/biometricService';
+import React, { useState, useEffect } from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
+import { useForm } from "react-hook-form";
+import { Ionicons } from "@expo/vector-icons";
+import AppBackground from "../../../components/base/AppBackground";
+import Logo from "../../../assets/icons/Logo";
+import FadeInView from "../../../utils/FadeInView";
+import InputField from "../../../components/forms/InputFeild";
+import NormalButton from "../../../components/common/NormalButton";
+import HIPAAFooter from "../../../components/common/Footer";
+import { Colors, palette } from "../../../utils/colors";
+import { Family } from "../../../utils/typography";
+import { scale } from "../../../utils/responsive";
+import { signIn } from "../../../services/authService";
+import { useAuthStore } from "../../../store/authStore";
+import {
+  checkBiometricSupport,
+  saveBiometricCredentials,
+  getBiometricCredentials,
+  promptBiometricAuth,
+} from "../../../services/biometricService";
 
 export default function DoctorLoginScreen({ navigation }: any) {
   const [hasBiometrics, setHasBiometrics] = useState(false);
@@ -23,7 +37,7 @@ export default function DoctorLoginScreen({ navigation }: any) {
     const checkBiometrics = async () => {
       const supported = await checkBiometricSupport();
       if (supported) {
-        const creds = await getBiometricCredentials('doctor');
+        const creds = await getBiometricCredentials("doctor");
         if (creds) {
           setHasBiometrics(true);
         }
@@ -34,52 +48,57 @@ export default function DoctorLoginScreen({ navigation }: any) {
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
   });
 
   const onSubmit = async (data: any) => {
     try {
-      await signIn(data.email, data.password, 'doctor');
+      await signIn(data.email, data.password, "doctor");
 
       const supported = await checkBiometricSupport();
-      const creds = await getBiometricCredentials('doctor');
+      const creds = await getBiometricCredentials("doctor");
       if (supported && !creds) {
         Alert.alert(
           "Enable Face ID / Touch ID",
           "Would you like to enable biometric login for future use?",
           [
             { text: "No", style: "cancel" },
-            { 
-              text: "Yes", 
+            {
+              text: "Yes",
               onPress: async () => {
-                await saveBiometricCredentials(data.email, data.password, 'doctor');
+                await saveBiometricCredentials(
+                  data.email,
+                  data.password,
+                  "doctor",
+                );
                 setHasBiometrics(true);
-              }
-            }
-          ]
+              },
+            },
+          ],
         );
       }
-    } catch {
-    }
+    } catch {}
   };
 
   const handleBiometricLogin = async () => {
     setError(null);
-    const success = await promptBiometricAuth('Sign in to Ancura');
+    const success = await promptBiometricAuth("Sign in to Ancura");
     if (!success) return;
 
-    const creds = await getBiometricCredentials('doctor');
+    const creds = await getBiometricCredentials("doctor");
     if (!creds) {
       setHasBiometrics(false);
-      setError('Session expired. Please sign in with email and password.');
+      setError("Session expired. Please sign in with email and password.");
       return;
     }
     try {
-      await signIn(creds.email, creds.password, 'doctor');
+      await signIn(creds.email, creds.password, "doctor");
     } catch (err: any) {
-      setError(err?.message ?? 'Biometric login failed. Please sign in manually.');
+      setError(
+        err?.message ?? "Biometric login failed. Please sign in manually.",
+      );
     }
   };
 
@@ -87,7 +106,7 @@ export default function DoctorLoginScreen({ navigation }: any) {
     <AppBackground variant="clean">
       <KeyboardAvoidingView
         style={styles.keyboardView}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <ScrollView
           contentContainerStyle={styles.scrollContent}
@@ -123,14 +142,24 @@ export default function DoctorLoginScreen({ navigation }: any) {
               placeholder="Enter Password"
               rules={{
                 required: "Password is required",
-                minLength: { value: 8, message: "Password must be at least 8 characters" },
-                maxLength: { value: 13, message: "Password cannot exceed 13 characters" }
+                minLength: {
+                  value: 8,
+                  message: "Password must be at least 8 characters",
+                },
+                maxLength: {
+                  value: 13,
+                  message: "Password cannot exceed 13 characters",
+                },
               }}
               secureTextEntry={true}
             />
 
             <View style={styles.forgotPasswordContainer}>
-              <TouchableOpacity onPress={() => navigation.navigate('DoctorForgotPasswordScreen')}>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("DoctorForgotPasswordScreen")
+                }
+              >
                 <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
               </TouchableOpacity>
             </View>
@@ -139,9 +168,7 @@ export default function DoctorLoginScreen({ navigation }: any) {
           {/* Actions Section */}
           <FadeInView delay={450} style={styles.actionsContainer}>
             {/* Error Message */}
-            {error && (
-              <Text style={styles.errorText}>{error}</Text>
-            )}
+            {error && <Text style={styles.errorText}>{error}</Text>}
 
             {hasBiometrics ? (
               <View style={styles.biometricRow}>
@@ -154,11 +181,15 @@ export default function DoctorLoginScreen({ navigation }: any) {
                     disabled={isAuthenticating}
                   />
                 </View>
-                <TouchableOpacity 
-                  style={styles.biometricButton} 
+                <TouchableOpacity
+                  style={styles.biometricButton}
                   onPress={handleBiometricLogin}
                 >
-                  <Ionicons name="finger-print" size={scale(28)} color={Colors.primary} />
+                  <Ionicons
+                    name="finger-print"
+                    size={scale(28)}
+                    color={Colors.primary}
+                  />
                 </TouchableOpacity>
               </View>
             ) : (
@@ -178,8 +209,8 @@ export default function DoctorLoginScreen({ navigation }: any) {
             </View>
 
             <NormalButton
-              title="Apply as a Licensed Professional"
-              onPress={() => navigation.navigate('LicenseVerification')}
+              title="Sign Up"
+              onPress={() => navigation.navigate("DoctorProfileAndSettings")}
               bgColor={Colors.secondary}
               disabled={isAuthenticating}
             />
@@ -189,10 +220,9 @@ export default function DoctorLoginScreen({ navigation }: any) {
           <View style={styles.spacer} />
 
           {/* Footer */}
-          <FadeInView delay={600} style={{ width: '100%' }}>
+          <FadeInView delay={600} style={{ width: "100%" }}>
             <HIPAAFooter />
           </FadeInView>
-
         </ScrollView>
       </KeyboardAvoidingView>
     </AppBackground>
@@ -208,15 +238,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(20),
     paddingBottom: scale(20),
     paddingTop: scale(70),
-    alignItems: 'center',
+    alignItems: "center",
   },
   logoContainer: {
     marginBottom: scale(35),
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   titleContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: scale(30),
   },
   titleText: {
@@ -225,12 +255,12 @@ const styles = StyleSheet.create({
     color: Colors.textDark,
   },
   formContainer: {
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
   },
   forgotPasswordContainer: {
-    width: '100%',
-    alignItems: 'flex-end',
+    width: "100%",
+    alignItems: "flex-end",
     marginTop: scale(10),
     marginBottom: scale(20),
   },
@@ -240,15 +270,15 @@ const styles = StyleSheet.create({
     color: Colors.secondary,
   },
   errorText: {
-    width: '100%',
+    width: "100%",
     marginBottom: scale(12),
     paddingHorizontal: scale(12),
     paddingVertical: scale(10),
-    backgroundColor: 'rgba(255, 80, 80, 0.12)',
+    backgroundColor: "rgba(255, 80, 80, 0.12)",
     borderRadius: scale(8),
     borderLeftWidth: 3,
-    borderLeftColor: '#FF5050',
-    color: '#FF5050',
+    borderLeftColor: "#FF5050",
+    color: "#FF5050",
     fontFamily: Family.FG_Regular,
     fontSize: scale(13),
   },
@@ -257,13 +287,13 @@ const styles = StyleSheet.create({
     minHeight: scale(30),
   },
   actionsContainer: {
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
   },
   dividerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
     marginVertical: scale(20),
   },
   line: {
@@ -278,18 +308,18 @@ const styles = StyleSheet.create({
     fontSize: scale(14),
   },
   biometricRow: {
-    flexDirection: 'row',
-    width: '100%',
-    alignItems: 'center',
+    flexDirection: "row",
+    width: "100%",
+    alignItems: "center",
     gap: scale(10),
   },
   biometricButton: {
     height: scale(54),
     width: scale(54),
     borderRadius: scale(12),
-    backgroundColor: 'rgba(0, 86, 210, 0.05)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 86, 210, 0.05)",
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 1,
     borderColor: Colors.primary,
   },
