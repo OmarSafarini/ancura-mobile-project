@@ -35,7 +35,6 @@ export default function ActivityLog() {
         const fetchActivities = async () => {
             try {
                 const response = await supabaseClient.get('/activity_log?select=*');
-                console.log(response)
                 setActivities(response.data);
             } catch (err) {
                 console.error("Error fetching activity logs:", err);

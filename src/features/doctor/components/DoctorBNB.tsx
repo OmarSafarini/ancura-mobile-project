@@ -5,9 +5,11 @@ import ActivityLogIcon from '../../../assets/icons/ActivityLogIcon';
 import NotificationsIcon from '../../../assets/icons/NotificationsIcon';
 import ProfileIcon from '../../../assets/icons/ProfileIcon';
 import FabAddIcon from '../../../assets/icons/FabAddIcon';
+import KnowledgeIcon from '../../../assets/icons/KnowledgeIcon';
 
 const TABS: TabItem[] = [
     { name: 'HomeTab', label: 'Dashboard', icon: HomeIcon },
+    { name: 'BaseKnowledgeTab', label: 'Knowledge', icon: KnowledgeIcon },
     { name: 'ActivityTab', label: 'Activity Log', icon: ActivityLogIcon },
     { name: 'ProfileTab', label: 'Profile', icon: ProfileIcon },
 ];
