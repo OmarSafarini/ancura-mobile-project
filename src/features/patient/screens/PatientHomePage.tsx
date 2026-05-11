@@ -1,5 +1,4 @@
 import AppBackground from "@/components/base/AppBackground";
-import IconWrapper from "@/components/common/IconWrapper";
 import { useNavigation } from "@react-navigation/native";
 import {
   StyleSheet,
@@ -12,7 +11,7 @@ import {
 } from "react-native";
 import { Colors as colors, palette } from "@/utils/colors";
 import NotificationsIcon from "@/assets/icons/NotificationsIcon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { scale } from "@/utils/responsive";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Family } from "@/utils/typography";
@@ -27,13 +26,23 @@ import { Status } from "@/types/ICaseStatusProps";
 import userBase from "../../../../assets/icon.png";
 import { getUserMeta } from "@/services/tokenService";
 import Loading from "@/components/common/Loading";
+import { getLocalCases, saveCasesToLocal } from "@/services/localDb";
 
 export default function PatientHomePage() {
   const navigation = useNavigation<any>();
   const insets = useSafeAreaInsets();
   const [filterStatus, setFilterStatus] = useState<Status | null>(null);
   const [selected, setSelcted] = useState("All");
+  const [localCases, setLocalCases] = useState<any[]>([]);
 
+  useEffect(() => {
+    loadLocal();
+  }, []);
+
+    const loadLocal = async () => {
+    const data = await getLocalCases();
+    setLocalCases(data);
+  };
   const {
     data: patient,
     isLoading: patientLoading,
@@ -47,17 +56,25 @@ export default function PatientHomePage() {
     },
   });
 
-  const {
+   const {
     data: patientPost,
     isLoading: patientPstLoading,
     isError: patientPostError,
   } = useQuery({
     queryKey: ["patientPost"],
     queryFn: async () => {
-      const meta = await getUserMeta();
-      console.log(meta!.id);
-      return getPatintPosts(meta!.id);
-    },
+  try {
+    const meta = await getUserMeta();
+    const data = await getPatintPosts(meta!.id);
+
+    await saveCasesToLocal(data);
+
+    return data;
+  } catch (error) {
+    console.log("PATIENT POSTS ERROR:", error);
+    throw error;
+  }
+},
   });
 
   if (patientLoading || patientPstLoading) {
@@ -71,8 +88,8 @@ export default function PatientHomePage() {
   }
 
   const filteredCases = filterStatus
-    ? patientPost?.filter((c) => c.status === filterStatus)
-    : patientPost;
+    ? localCases?.filter((c) => c.status === filterStatus)
+    : localCases;
 
   const STATUS_OPTIONS = [
     { label: "All", value: null },
