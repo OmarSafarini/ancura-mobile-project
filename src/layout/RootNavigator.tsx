@@ -31,8 +31,10 @@ export default function RootNavigator() {
     );
   }
 
-const isDoctorVerified = role === 'doctor' && user?.doctorStatus === 'verified';
-
+const isDoctorVerified = role === 'doctor' && user?.verify_status === 'approved';
+console.log(user);
+console.log(user?.verify_status);
+console.log(typeof user?.verify_status);
    return (
     <RootStack.Navigator screenOptions={{ headerShown: false }}>
       {role === 'patient' ? (
