@@ -15,7 +15,7 @@ import { Control, useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCommentsByReplyId, postComment } from "@/services/common_services/CommentService";
 import { useAuthStore } from "@/store/authStore";
-
+import { useAddNotification } from "@/hooks/useAddNotification"; // added by omar
 
 type FormData = {
   doctorReply: string;
@@ -29,6 +29,7 @@ export default function AllRepliesScreen({ navigation, route }: any) {
   const caseId = route?.params?.caseId;
   const role = route?.params?.role || 'patient';
 
+  const { mutate: sendNotification } = useAddNotification(); // added by omar
   const isPatient = role === "patient";
 
   const authUser = useAuthStore((state) => state.user);
@@ -45,6 +46,16 @@ export default function AllRepliesScreen({ navigation, route }: any) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comments', replyId] });
       resetField('doctorReply');
+
+      // 2. added by omar
+      if (authRole === 'doctor' && caseData?.patient_id) {
+        sendNotification({
+          patientId: caseData.patient_id,
+          title: `New reply received for your case: ${caseData?.title}`,
+          status: 'Success'
+        });
+      }
+
       setTimeout(() => {
         listRef.current?.scrollToEnd({ animated: true });
       }, 300);
@@ -75,6 +86,7 @@ export default function AllRepliesScreen({ navigation, route }: any) {
 
   const listRef = useRef<FlatList>(null);
 
+  
 
   return (
     <AppBackground>

@@ -15,3 +15,20 @@ export const getPatientNotification = async (patientId: string | null) => {
     throw error;
   }
 };
+
+export const addPatientNotification = async (payload:any) => {
+  if (!payload.patient_id) {
+    throw new Error("No patient ID provided for notification");
+  }
+
+  try {
+    const res = await supabaseClient.post(
+      `/notification`, 
+      payload
+    );
+    return res.data;
+  } catch (error) {
+    console.error("addPatientNotification ERROR:", error);
+    throw error;
+  }
+};
