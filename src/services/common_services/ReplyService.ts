@@ -4,7 +4,7 @@ export const getRepliesByCaseId = async (caseId: number) => {
   const { data } = await supabaseClient.get('/reply', {
     params: {
       case_id: `eq.${caseId}`,
-      select: '*,doctor(fullname)',
+      select: '*,doctor(full_name)',
     },
   });
   console.log('replies fetched:', data);

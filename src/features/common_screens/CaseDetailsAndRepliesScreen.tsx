@@ -173,34 +173,33 @@ export default function CaseDetailScreen({ navigation, route }: any) {
             caseId={caseId}
           />
 
-            <View style={styles.replySection}>
-              <ReplyText title="Doctor's Reply" color={Colors.primary} onPress={handleViewDoctorReplies} />
+          <View style={styles.replySection}>
+            <ReplyText title="Doctor's Reply" color={Colors.primary} onPress={handleViewDoctorReplies} />
 
-              <FlatList
-                ref={flatListRef}
-                data={replies}
-                keyExtractor={(item) => String(item.id)}
-                showsVerticalScrollIndicator={false}
-                style={styles.list}
-                contentContainerStyle={styles.listContent}
-                ItemSeparatorComponent={() => (
-                  <View style={{ height: scale(16) }} />
-                )}
-                renderItem={({ item }) => (
-                  <DoctorReplyCard
-                    id={item.id}
-                    title={item.doctor?.fullname}
-                    major={item.doctor_major}
-                    message={item.body}
-                    time={item.timestamp}
-                    CardOnPress={handleViewDoctorReplies}
-                    ChatOnPress={() => handleViewAllReplies(item)}
-                    onLike={() => { }}
-                    onDislike={() => { }}
-                  />
-                )}
-              />
-            </View>
+            <FlatList
+              ref={flatListRef}
+              data={replies}
+              keyExtractor={(item) => String(item.id)}
+              showsVerticalScrollIndicator={false}
+              style={styles.list}
+              contentContainerStyle={styles.listContent}
+              ItemSeparatorComponent={() => (
+                <View style={{ height: scale(16) }} />
+              )}
+              renderItem={({ item }) => (
+                <DoctorReplyCard
+                  id={item.id}
+                  title={item.doctor?.full_name}
+                  major={item.doctor_major}
+                  message={item.body}
+                  time={item.timestamp}
+                  CardOnPress={handleViewDoctorReplies}
+                  ChatOnPress={() => handleViewAllReplies(item)}
+                  onLike={() =>{}}
+                  onDislike={() =>{}}
+                />
+              )}
+            />
           </View>
 
           <View style={styles.bottomContainer}>

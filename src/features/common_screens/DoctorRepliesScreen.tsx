@@ -105,40 +105,40 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
           <ReplyText title="Doctor's Replies" color={Colors.secondary} />
         </View>
 
-        <View style={styles.scrollWrapper}>
-          <FlatList
-            ref={flatListRef}
-            data={replies}
-            keyExtractor={(item) => String(item.id)}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContent}
-            ItemSeparatorComponent={() => (
-              <View style={{ height: scale(14) }} />
-            )}
-            renderItem={({ item }) => (
-              <DoctorReplyCard
-                id={item.id}
-                title={item.doctor?.fullname}
-                major={item.doctor_major}
-                message={item.body}
-                time={item.timestamp}
-                CardOnPress={() => handleViewAllReplies(item)}
-                ChatOnPress={() => handleViewAllReplies(item)}
-                onLike={() => { }}
-                onDislike={() => { }}
-              />
-            )}
-          />
-        </View>
+        <ReplyText title="Doctor's Replies" color={Colors.secondary} />
+      </View>
 
-        <View style={styles.bottomContainer}>
-          {isPatient && (
-            <View style={styles.patientBottom}>
-              <View style={{ width: "70%" }}>
-                <ResolvedSlideButton onSlideComplete={handleSlideComplete} />
-              </View>
+      <View style={styles.scrollWrapper}>
+        <FlatList
+          ref={flatListRef}
+          data={replies}
+          keyExtractor={(item) => String(item.id)}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+          ItemSeparatorComponent={() => (
+            <View style={{ height: scale(14) }} />
+          )}
+          renderItem={({ item }) => (
+            <DoctorReplyCard
+              id={item.id}
+              title={item.doctor?.full_name}
+              major={item.doctor_major}
+              message={item.body}
+              time={item.timestamp}
+              CardOnPress={() => handleViewAllReplies(item)}
+              ChatOnPress={() => handleViewAllReplies(item)}
+              onLike={() =>{}}
+              onDislike={() =>{}}
+            />
+          )}
+        />
+      </View>
 
-              <ScrollToBottomButton onPress={scrollToBottom} />
+      <View style={styles.bottomContainer}>
+        {isPatient && (
+          <View style={styles.patientBottom}>
+            <View style={{ width: "70%" }}>
+              <ResolvedSlideButton onSlideComplete={handleSlideComplete} />
             </View>
           )}
 

@@ -70,7 +70,7 @@ const doctorCases: CaseData[] = casesData ?? [];
         <View style={styles.contentWrapper}>
 
           <View style={styles.greetingContainer}>
-            <DoctorGreeting name={doctorInfo?.fullname || "Doctor"} 
+            <DoctorGreeting name={doctorInfo?.full_name || "Doctor"} 
             image={doctorInfo?.avatar_url ? { uri: doctorInfo.avatar_url } : undefined} />
           </View>
 
