@@ -34,7 +34,7 @@ const STATUS_CONFIG = {
   },
   empty: {   
     label: "None",
-    containerColor: "rgba(8, 7, 14 , 0.13)",
+    containerColor: "rgb(227, 223, 234)",
     IconComponent: null,
     iconBackground: "transparent",
   }

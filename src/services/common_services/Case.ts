@@ -2,7 +2,7 @@ import { supabaseClient } from '../supabase';
 
 export const getAllCases = async () => {
   try {
-    const { data, status, statusText } = await supabaseClient.get('/case', {
+    const { data, status, statusText } = await supabaseClient.get('/post_with_time', {
       params: {
         select: '*',
 

@@ -1,6 +1,6 @@
 // Matches CaseStatus options used across the UI
 // NOTE: `status` is derived from `isReplied` + business logic, not a DB column
-export type CaseStatus = "Under Review" | "Doctor Replied" | "Resolved";
+export type CaseStatus = "Under Review" | "Doctor Replied" | "Resolved"| "empty";
 
 // Matches the `post` table in the database
 export type CaseData = {
