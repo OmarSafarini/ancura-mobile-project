@@ -43,6 +43,10 @@ function DoctorTabNavigator() {
         component={DoctorHomeStackNavigator}
       />
       <Tab.Screen
+        name="BaseKnowledgeTab"
+        component={BaseKnowledge}
+      />
+      <Tab.Screen
         name="ActivityTab"
         component={ActivityLogScreen}
       />

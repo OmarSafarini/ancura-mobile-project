@@ -14,6 +14,7 @@ import { uploadDoctorProfileImage } from "@/services/Doctor/DoctorService";
 import { signUp } from "@/services/authService";
 import { useDoctor } from "@/Context/DoctorContext";
 import { useFocusEffect } from "@react-navigation/native";
+import { useAuthStore } from "@/store/authStore";
 
 export default function DoctorProfileAndSettings({ navigation }: any) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -52,13 +53,7 @@ const OnSubmit = async (data: any) => {
       );
     }
 
-    setDoctorData({
-      full_name: data.FullName,
-      bio: data.Bio,
-      location: data.Location,
-      email: data.Email,
-      profilePic: imageUrl,
-    });
+    // Remove early setDoctorData since we set it after signUp with the ID
 
 
     console.log(setDoctorData);
@@ -73,6 +68,18 @@ const OnSubmit = async (data: any) => {
         profilePic: imageUrl,
       }
     );
+
+    const user = useAuthStore.getState().user;
+    if (user) {
+      setDoctorData({
+        id: user.id,
+        full_name: data.FullName,
+        bio: data.Bio,
+        location: data.Location,
+        email: data.Email,
+        profilePic: imageUrl,
+      });
+    }
 
  navigation.navigate("LicenseVerification");
   } catch (error) {
