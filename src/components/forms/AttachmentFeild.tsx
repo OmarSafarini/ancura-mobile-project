@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
+import * as ImagePicker from "expo-image-picker";
 import { AttachmentsFieldProps } from "@/types/IAttachmentFieldProps";
 import { palette, Colors } from "@/utils/colors";
 import { Family } from "@/utils/typography";
@@ -61,6 +62,64 @@ const AttachmentsField = ({
     }
   };
 
+  const takePhoto = async () => {
+    setError("");
+    try {
+      const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+      
+      if (!permissionResult.granted) {
+        setError("Camera permission is required to take photos.");
+        return;
+      }
+
+      const result = await ImagePicker.launchCameraAsync({
+        quality: 0.8,
+      });
+
+      if (result.canceled || !result.assets?.length) return;
+
+      const remainingSlots = maxFiles - selectedFiles.length;
+
+      if (remainingSlots <= 0) {
+        setError(`You can upload only ${maxFiles} files.`);
+        return;
+      }
+
+      const asset = result.assets[0];
+      const newFile = {
+        uri: asset.uri,
+        name: asset.fileName || `photo_${Date.now()}.jpg`,
+        mimeType: asset.mimeType || "image/jpeg",
+        size: asset.fileSize,
+      } as DocumentPicker.DocumentPickerAsset;
+
+      handleFilesChange([...selectedFiles, newFile]);
+    } catch (err) {
+      setError("Error while taking photo. Please try again.");
+    }
+  };
+
+  const handlePress = () => {
+    Alert.alert(
+      "Add Attachment",
+      "Choose an option",
+      [
+        {
+          text: "Take Photo",
+          onPress: takePhoto,
+        },
+        {
+          text: "Choose File",
+          onPress: pickFile,
+        },
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+      ]
+    );
+  };
+
   const removeFile = (index: number) => {
     const updated = selectedFiles.filter((_, i) => i !== index);
     handleFilesChange(updated);
@@ -71,7 +130,7 @@ const AttachmentsField = ({
     <View style={styles.wrapper}>
       <TouchableOpacity 
         style={styles.container} 
-        onPress={pickFile}
+        onPress={handlePress}
         activeOpacity={0.7}
       >
         <View style={styles.row}>
