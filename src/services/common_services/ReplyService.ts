@@ -1,14 +1,27 @@
 import { supabaseClient } from '@/services/supabase';
+import { formatDistanceToNow } from 'date-fns';
 
 export const getRepliesByCaseId = async (caseId: number) => {
   const { data } = await supabaseClient.get('/reply', {
     params: {
       case_id: `eq.${caseId}`,
-      select: '*,doctor(full_name)',
+      select: '*,doctor(full_name,profilePic)',
     },
   });
-  console.log('replies fetched:', data);
-  return data ?? [];
+  const formattedReplies =
+    data?.map((reply: any) => ({
+      ...reply,
+
+      timestamp: formatDistanceToNow(
+        new Date(reply.timestamp),
+        { addSuffix: true }
+      ).replace('about ', ''),
+    })) ?? [];
+
+  console.log('replies fetched:', formattedReplies);
+
+  return formattedReplies;
+
 };
 
 export const postReply = async ({
