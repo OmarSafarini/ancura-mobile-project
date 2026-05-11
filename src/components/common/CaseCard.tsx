@@ -34,7 +34,7 @@ const STATUS_CONFIG = {
   },
   empty: {   
     label: "None",
-    containerColor: "rgba(8, 7, 14 , 0.13)",
+    containerColor: "rgb(227, 223, 234)",
     IconComponent: null,
     iconBackground: "transparent",
   }
@@ -53,7 +53,7 @@ export default function CaseCard({ data, onPress }: Props) {
       </View>
       <View style={styles.bottomRow}>
         <Text style={styles.time}>{data.time_ago}</Text>
-        {status !== "Empty" && config.IconComponent && (
+        {status !== "empty" && config.IconComponent && (
           <View style={styles.reviewContainer}>
             <View style={[styles.iconCircle, { backgroundColor: config.iconBackground }]}>
               <config.IconComponent width={scale(10)} height={scale(10)} />
