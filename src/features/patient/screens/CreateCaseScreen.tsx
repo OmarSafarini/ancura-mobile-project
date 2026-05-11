@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  SafeAreaView,
 } from "react-native";
 import { useForm } from "react-hook-form";
 import type { DocumentPickerAsset } from "expo-document-picker";
@@ -14,6 +15,7 @@ import InputField from "@/components/forms/InputFeild";
 import AttachmentsField from "@/components/forms/AttachmentFeild";
 import NormalButton from "@/components/common/NormalButton";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
+import BackButton from "@/components/common/BackButton";
 import DeleteIconButton from "../components/Buttons/DeleteIconButton";
 import FileBar from "@/components/common/FileBar";
 import IconWrapper from "@/components/common/IconWrapper";
@@ -40,6 +42,7 @@ type CaseFileItem = {
 
 const CreateCase = ({ navigation }: any) => {
   const [caseFiles, setCaseFiles] = useState<CaseFileItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const user = useAuthStore((state) => state.user);
   const queryClient = useQueryClient();
 
@@ -54,6 +57,7 @@ const CreateCase = ({ navigation }: any) => {
 
   const isEmergency = watch("isEmergency");
   const pickedFiles = watch("files");
+  const titleValue = watch("title");
 
   const onSubmit = async (data: FormValues) => {
     try {
@@ -61,16 +65,28 @@ const CreateCase = ({ navigation }: any) => {
         Alert.alert("Error", "You must be signed in to create a case.");
         return;
       }
+      
+      setIsLoading(true);
 
-      const files = data.files
-        .map((file) => file.uri || file.name)
-        .filter(Boolean) as string[];
+      const uploadedFileUrls = await Promise.all(
+        data.files.map(async (file) => {
+          if (!file.uri) return null;
+          return await uploadDocumentToStorage(
+            file.uri,
+            file.name || `file_${Date.now()}`,
+            file.mimeType || 'application/octet-stream',
+            'case-files'
+          );
+        })
+      );
+      
+      const validUrls = uploadedFileUrls.filter(Boolean) as string[];
 
       await createCase({
         patient_id: user.id,
         title: data.title.trim(),
         description: data.description.trim(),
-        file: files[0] ?? null,
+        file: validUrls.length > 0 ? validUrls : null,
         isEmergency: data.isEmergency,
       });
 
@@ -82,6 +98,8 @@ const CreateCase = ({ navigation }: any) => {
       const message =
         error instanceof Error ? error.message : "Failed to create case.";
       Alert.alert("Error", message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -111,20 +129,15 @@ const CreateCase = ({ navigation }: any) => {
 
   return (
     <AppBackground variant="clean">
-      <ScrollView
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}
-      >
+      <SafeAreaView style={{ flex: 1 }}>
+        <ScrollView
+          contentContainerStyle={styles.container}
+          showsVerticalScrollIndicator={false}
+        >
         <View style={styles.header}>
           <View style={styles.headerTitleRow}>
             <Text style={styles.headerText}>Hi USR-XXXXX</Text>
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => navigation.goBack()}
-              activeOpacity={0.7}
-            >
-              <ArrowLeftIcon size={18} color={Colors.textDark} />
-            </TouchableOpacity>
+            <BackButton onPress={() => navigation.goBack()} />
           </View>
           <Text style={styles.headerSubtitle}>
             Your identity will remain 100% anonymous, and your name will not be
@@ -141,7 +154,7 @@ const CreateCase = ({ navigation }: any) => {
             isEdit
             textStyle={{
               fontSize: scale(20),
-              fontFamily: Family.FG_Medium,
+              fontFamily: titleValue ? Family.FG_Medium : Family.FG_Light,
               color: "#000",
             }}
             rules={{ required: "Title is required" }}
@@ -205,18 +218,23 @@ const CreateCase = ({ navigation }: any) => {
         </View>
 
         <View style={styles.footer}>
-          <NormalButton
-            title="Create Case"
-            onPress={handleSubmit(onSubmit)}
-            bgColor="#8EB392"
-            textColor="#fff"
-            textStyle={{
-              fontSize: scale(20),
-              fontFamily: Family.FG_Regular,
-            }}
-          />
+          {isLoading ? (
+            <ActivityIndicator size="large" color="#8EB392" />
+          ) : (
+            <NormalButton
+              title="Create Case"
+              onPress={handleSubmit(onSubmit)}
+              bgColor="#8EB392"
+              textColor="#fff"
+              textStyle={{
+                fontSize: scale(20),
+                fontFamily: Family.FG_Regular,
+              }}
+            />
+          )}
         </View>
       </ScrollView>
+      </SafeAreaView>
     </AppBackground>
   );
 };
@@ -224,7 +242,7 @@ const CreateCase = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: scale(52),
-    paddingTop: scale(60),
+    paddingTop: scale(10),
     paddingBottom: scale(40),
     gap: scale(30),
   },
@@ -255,15 +273,6 @@ const styles = StyleSheet.create({
     fontFamily: Family.FG_Regular,
     color: "#6D7EB5",
     lineHeight: scale(16),
-  },
-
-  backButton: {
-    width: scale(33),
-    height: scale(33),
-    backgroundColor: "#fff",
-    borderRadius: scale(7),
-    justifyContent: "center",
-    alignItems: "center",
   },
 
   form: {

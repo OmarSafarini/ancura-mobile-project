@@ -25,3 +25,20 @@ export const getAllCases = async () => {
     throw error;
   }
 };
+
+/**
+ * 
+ * @param caseId 
+ */
+export const deleteCase = async (caseId: string): Promise<void> => {
+  try {
+    await supabaseClient.delete('/case', {
+      params: {
+        id: `eq.${caseId}`,
+      },
+    });
+  } catch (error: any) {
+    console.error('Error deleting case:', error.response?.data || error.message);
+    throw error;
+  }
+};
