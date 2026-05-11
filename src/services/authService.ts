@@ -47,9 +47,9 @@ export async function signIn(
 
     const table = role === 'patient' ? 'patient' : 'doctor';
 
-    const { data: profileRows } = await supabaseClient.get<{ id: string }[]>(
+    const { data: profileRows } = await supabaseClient.get<{ id: string, status?: any }[]>(
       `/${table}`,
-      { params: { id: `eq.${user.id}`, select: 'id' } },
+      { params: { id: `eq.${user.id}`, select: 'id, status' } },
     );
 
     if (!profileRows || profileRows.length === 0) {
@@ -68,7 +68,12 @@ export async function signIn(
 
     await saveUserMeta({ id: user.id, email: user.email, role });
 
-    const authUser: AuthUser = { id: user.id, email: user.email, role };
+    const authUser: AuthUser = { 
+      id: user.id, 
+      email: user.email, 
+      role, 
+      doctorStatus: profileRows[0]?.status as any 
+    };
     setSession(authUser, access_token);
 
   } catch (err: any) {
@@ -143,7 +148,7 @@ export async function signUp(
       await supabaseClient.post(
         '/doctor',
         {
-          id: user.id, 
+          id: user.id,
           email: user.email,
           full_name: meta.full_name || "Dr. New User",
           bio: meta.bio || "",
