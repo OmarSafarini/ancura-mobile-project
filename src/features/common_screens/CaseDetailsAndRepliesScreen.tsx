@@ -1,8 +1,9 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Control, useForm } from "react-hook-form";
 import { View, FlatList, StyleSheet, SafeAreaView } from "react-native";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getRepliesByCaseId, postReply } from '@/services/common_services/ReplyService';
+import { deleteCase } from '@/services/common_services/Case';
 import { useAuthStore } from '@/store/authStore';
 import AppBackground from "@/components/base/AppBackground";
 import BackButton from "@/components/common/BackButton";
@@ -14,6 +15,7 @@ import ReplyText from "@/components/common/ReplyText";
 import ReplyField from "@/components/forms/ReplyFeild";
 import ArrowInCircle from "@/components/common/SubmitButton";
 import ScrollToBottomButton from "../patient/components/ScrollToBottom";
+import DeleteCasePopUp from "@/components/common/DeleteCasePopUp";
 
 import { scale } from "@/utils/responsive";
 import { Colors } from "@/utils/colors";
@@ -44,6 +46,9 @@ export default function CaseDetailScreen({ navigation, route }: any) {
 
   const isDoctor = role === "doctor";
   const isPatient = role === "patient";
+
+  // ─── Delete Popup State ────────────────────────────────────────────
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
 
   const handleViewDoctorReplies = () => {
     navigation.navigate('DoctorRepliesScreen', { caseId, caseData });
@@ -82,6 +87,30 @@ export default function CaseDetailScreen({ navigation, route }: any) {
     },
   });
 
+  // ─── Delete Case Mutation ──────────────────────────────────────────
+  const { mutate: handleDeleteCase, isPending: isDeleting } = useMutation({
+    mutationFn: () => deleteCase(caseId),
+    onSuccess: () => {
+      // ── Remove the case from the Patient home cache immediately (no re-fetch needed) ──
+      queryClient.setQueryData(['patientPost'], (oldData: any[] | undefined) =>
+        oldData ? oldData.filter((c: any) => String(c.id) !== String(caseId)) : []
+      );
+      // ── Also remove from the Doctor home cache if it exists ──
+      queryClient.setQueryData(['cases'], (oldData: any[] | undefined) =>
+        oldData ? oldData.filter((c: any) => String(c.id) !== String(caseId)) : []
+      );
+      // ── Remove the specific case detail cache ──
+      queryClient.removeQueries({ queryKey: ['case', caseId] });
+
+      setShowDeletePopup(false);
+      navigation.goBack();
+    },
+    onError: (error: any) => {
+      console.error('Failed to delete case:', error?.response?.data || error.message);
+      setShowDeletePopup(false);
+    },
+  });
+
   const onSend = async (data: FormData) => {
     if (!data.doctorReply.trim()) return;
     if (!authUser?.id) return;
@@ -108,6 +137,13 @@ export default function CaseDetailScreen({ navigation, route }: any) {
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.container}>
 
+          {/* ─── Delete Confirmation Popup ─────────────────────── */}
+          <DeleteCasePopUp
+            visible={showDeletePopup}
+            onCancel={() => setShowDeletePopup(false)}
+            onConfirm={() => handleDeleteCase()}
+          />
+
           <View style={styles.topBar}>
             <View style={styles.toggleContainer}>
               {isPatient && (
@@ -123,6 +159,7 @@ export default function CaseDetailScreen({ navigation, route }: any) {
                     Icon={TrashIcon}
                     bgColor={Colors.warning}
                     textColor="#FFFFFF"
+                    onPress={() => setShowDeletePopup(true)}
                   />
                 </>
               )}
