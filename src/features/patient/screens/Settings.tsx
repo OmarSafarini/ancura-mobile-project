@@ -1,6 +1,6 @@
 import AppBackground from "@/components/base/AppBackground";
 import IconWrapper from "@/components/common/IconWrapper";
-import { StyleSheet, View, Text, SafeAreaView } from "react-native";
+import { StyleSheet, View, Text, SafeAreaView, Pressable } from "react-native";
 import { Colors as colors, palette } from "@/utils/colors";
 import { scale } from "@/utils/responsive";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -9,16 +9,26 @@ import LogoutButton from "@/components/common/LogoutButton";
 import ArrowLeftIcon from "./../../../assets/icons/ArrowLeftIcon";
 import CopyIcon from "../../../assets/icons/CopyIcon";
 import FlashMessage, { showMessage } from "react-native-flash-message";
-import { useQuery } from "@tanstack/react-query";
-import { getPatintProfile } from "@/services/Patient/PatinetService";
-import AnimatedLogoScreen from "@/components/base/AnimatedLogoScreen";
 import * as Clipboard from "expo-clipboard";
 import { signOut } from "../../../services/authService";
 import { getUserMeta } from "@/services/tokenService";
+import Loading from "@/components/common/Loading";
+import { useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 
-export default function PaitentSettings({ navigation }: any) {
+export default function PaitentSettings() {
   const insets = useSafeAreaInsets();
-  const id = "9b3cb633-dad5-4e14-aa24-71daa6c17b58";
+  const navigation = useNavigation();
+  const [email, setEmail] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getUserMeta().then((meta) => {
+      setEmail(meta?.email ?? null);
+      setLoading(false);
+    });
+  }, []);
+
   const CopyId = async (copiedId: string) => {
     await Clipboard.setStringAsync(copiedId);
     showMessage({
@@ -29,71 +39,45 @@ export default function PaitentSettings({ navigation }: any) {
     });
   };
 
-  const {
-     data: patient,
-     isLoading: patientLoading,
-     isError: patientError,
-   } = useQuery({
-     queryKey: ["patient"],
-     queryFn: async () => {
-       const meta = await getUserMeta();
-       console.log(meta!.id);
-       return getPatintProfile(meta!.id);
-     },
-   });
-
-  if (patientLoading) {
-    return (
-      <View style={styles.overlay}>
-        <AnimatedLogoScreen size={scale(432)} />
-      </View>
-    );
-  }
-
-  if (patientError) {
-    return <Text>Error loading cases</Text>;
-  }
-
-  const goBack = () => {
-    navigation.goBack();
-  }
-
   const LogOut = async () => {
     await signOut();
   }
 
+  if (loading) {
+    return (
+        <Loading/>
+    );
+  }
+
   return (
-    <AppBackground variant="logo">
-      <View style={styles.container}>
-        <View>
-          <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
-            <Text style={styles.Text}>Profile & Settings</Text>
-            <IconWrapper
-              size={scale(33)}
-              bgColor={palette.white}
-              shape="square"
-            >
-              <ArrowLeftIcon
-                size={scale(18)}
-                color={palette.dark}
-                onPress={goBack}
-              />
-            </IconWrapper>
+      <AppBackground variant="logo">
+        <View style={styles.container}>
+          <View>
+          <SafeAreaView style={{ paddingTop: insets.top }}>
+            <View style={styles.header}>
+              <Text style={styles.title}>Profile & Settings</Text>
+              <View style={styles.iconWrapper}>
+                <ArrowLeftIcon
+                  color={colors.textDark2}
+                  size={scale(18)}
+                  onPress={() => navigation.navigate("PatientHomeTab" as never)}
+                />
+              </View>
+            </View>
           </SafeAreaView>
-          <View style={styles.Card}>
+            <View style={styles.Card}>
             <Text style={[styles.CardHeader, styles.CardText]}>
-              Your Anonymous ID
+              Email
             </Text>
             <Text style={[styles.CardSubtitle, styles.CardText]}>
-              {patient?.nickname}
+              {email}
             </Text>
-
             <View style={styles.icon}>
               <IconWrapper shape="circle" bgColor={palette.white} size={33}>
                 <CopyIcon
                   size={16}
                   color={palette.black}
-                  onPress={() => CopyId(patient?.id ?? "")}
+                  onPress={() => CopyId(email ?? "")}
                 />
               </IconWrapper>
             </View>
@@ -103,36 +87,41 @@ export default function PaitentSettings({ navigation }: any) {
         <SafeAreaView
           style={[styles.BottomBar, { paddingBottom: insets.bottom }]}
         >
-          <FlashMessage position="bottom" style={{ marginBottom: scale(40) }} />
-          <LogoutButton onPress={LogOut} />
+            <FlashMessage position="bottom" style={{ marginBottom: scale(40) }} />
+            <LogoutButton onPress={LogOut} />
         </SafeAreaView>
-      </View>
-    </AppBackground>
+        </View>
+      </AppBackground>
   );
 }
 const styles = StyleSheet.create({
   container: {
-    padding: scale(40),
+    paddingHorizontal: scale(51),
     justifyContent: "space-between",
     flex: 1,
   },
-  NavBar: {
+  header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: scale(10),
+    marginBottom: scale(56),
+    marginTop: scale(10),
   },
-  Text: {
-    fontFamily: Family.FG_Medium,
-    fontWeight: "500",
+  iconWrapper: {
+    borderRadius: scale(6),
+    backgroundColor: colors.formBackground,
+    padding: scale(8),
+  },
+  title: {
     fontSize: scale(24),
+    fontFamily: Family.FG_Medium,
+    color: colors.textDark,
   },
   Card: {
     borderRadius: scale(11),
     padding: scale(25),
     backgroundColor: "#ffffff4b",
     gap: scale(5),
-    marginTop: scale(30),
   },
   CardHeader: {
     color: colors.primary,
@@ -151,12 +140,5 @@ const styles = StyleSheet.create({
   BottomBar: {
     alignSelf: "stretch",
     alignItems: "center",
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(255,255,255,0.7)",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 999,
   },
 });

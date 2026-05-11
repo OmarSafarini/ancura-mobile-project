@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import { StyleSheet, View, Animated, Easing } from 'react-native';
-import AppBackground from './AppBackground';
 import LogoOverlay from '@/assets/icons/LogoOverlay';
 import { palette } from '@/utils/colors';
 
@@ -61,18 +60,16 @@ const AnimatedLogoScreen = ({ size = 180 }: AnimatedLogoScreenProps) => {
   });
 
   return (
-    <AppBackground variant="texture">
-      <View style={styles.container}>
-        <View style={[styles.logoContainer, { width: size, height: size * (408 / 331) }]}>
-          <LogoOverlay 
-            topColor={topColor} 
-            bottomColor={bottomColor} 
-            size={size} 
-            opacity={1} 
-          />
-        </View>
+    <View style={styles.container}>
+      <View style={[styles.logoContainer, { width: size, height: size * (408 / 331) }]}>
+        <LogoOverlay 
+          topColor={topColor} 
+          bottomColor={bottomColor} 
+          size={size} 
+          opacity={1} 
+        />
       </View>
-    </AppBackground>
+    </View>
   );
 };
 

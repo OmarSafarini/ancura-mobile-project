@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { supabaseClient } from "@/services/supabase"; // IMPORT YOUR AXIOS SETUP HERE
-import { Text, View, StyleSheet, FlatList, TouchableOpacity, Pressable , ActivityIndicator, SafeAreaView} from "react-native";
+import { supabaseClient } from "@/services/supabase"; 
+import { Text, View, StyleSheet, FlatList, ActivityIndicator, SafeAreaView} from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
+import BackButton from "@/components/common/BackButton";
 import { Colors } from "@/utils/colors";
 import { scale } from "@/utils/responsive";
 import { Family } from "@/utils/typography";
@@ -51,12 +51,10 @@ export default function ActivityLog() {
     return (
         <AppBackground variant="clean" style={styles.screen}>
             <SafeAreaView style={{ flex: 1 }}>
-            <View style={styles.header}>
-                <Text style={styles.title}>Activity Log</Text>
-                <Pressable style={styles.backWrapper} onPress={() => navigation.goBack()}>
-                    <ArrowLeftIcon color={Colors.textDark2} size={scale(18)} />
-                </Pressable>
-            </View>
+                <View style={styles.header}>
+                    <Text style={styles.title}>Activity Log</Text>
+                    <BackButton onPress={() => navigation.goBack()} />
+                </View>
 
             <View style={styles.timelineContainer}>
                 <View style={styles.timelineLine} />
@@ -106,7 +104,6 @@ export default function ActivityLog() {
 
 const styles = StyleSheet.create({
     screen: {
-        paddingTop: scale(20),
         flex: 1,
     },
 
@@ -114,13 +111,9 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
+        marginBottom: scale(56),
+        marginTop: scale(10),
         paddingHorizontal: scale(51),
-    },
-
-    backWrapper: {
-        borderRadius: scale(6),
-        backgroundColor: Colors.formBackground,
-        padding: scale(8),
     },
 
     title: {
@@ -132,7 +125,6 @@ const styles = StyleSheet.create({
     timelineContainer: {
         flex: 1,
         position: "relative",
-        marginTop: scale(40),
     },
 
     timelineLine: {

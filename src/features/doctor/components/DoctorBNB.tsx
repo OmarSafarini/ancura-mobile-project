@@ -9,7 +9,6 @@ import FabAddIcon from '../../../assets/icons/FabAddIcon';
 const TABS: TabItem[] = [
     { name: 'HomeTab', label: 'Dashboard', icon: HomeIcon },
     { name: 'ActivityTab', label: 'Activity Log', icon: ActivityLogIcon },
-    { name: 'NotificationsTab', label: 'Notifications', icon: NotificationsIcon },
     { name: 'ProfileTab', label: 'Profile', icon: ProfileIcon },
 ];
 

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, KeyboardAvoidingView, ScrollView, Platform, Alert, TouchableOpacity } from 'react-native';
 import { useForm } from 'react-hook-form';
+import { Ionicons } from '@expo/vector-icons';
 import AppBackground from '../../../components/base/AppBackground';
 import Logo from '../../../assets/icons/Logo';
 import FadeInView from '../../../utils/FadeInView';
@@ -13,6 +14,7 @@ import { Family } from '../../../utils/typography';
 import { scale } from '../../../utils/responsive';
 import { signIn, signUp } from '../../../services/authService';
 import { useAuthStore } from '../../../store/authStore';
+import { checkBiometricSupport, saveBiometricCredentials, getBiometricCredentials, promptBiometricAuth } from '../../../services/biometricService';
 
 const genderData = [
   { label: 'Male', value: 'Male' },
@@ -21,7 +23,19 @@ const genderData = [
 
 export default function PatientAuthScreen({ navigation }: any) {
   const [authMode, setAuthMode] = useState<"signin" | "signup">("signin");
+  const [hasBiometrics, setHasBiometrics] = useState(false);
   const { isAuthenticating, error, setError } = useAuthStore();
+
+  useEffect(() => {
+    const checkBiometrics = async () => {
+      const supported = await checkBiometricSupport();
+      const creds = await getBiometricCredentials('patient');
+      if (supported && creds) {
+        setHasBiometrics(true);
+      }
+    };
+    checkBiometrics();
+  }, []);
 
   const { control, handleSubmit, reset } = useForm({
     defaultValues: {
@@ -44,6 +58,25 @@ export default function PatientAuthScreen({ navigation }: any) {
       if (authMode === 'signin') {
         console.log("Attempting to sign in...");
         await signIn(data.email, data.password, 'patient');
+        
+        const supported = await checkBiometricSupport();
+        const creds = await getBiometricCredentials('patient');
+        if (supported && !creds) {
+          Alert.alert(
+            "Enable Face ID / Touch ID",
+            "Would you like to enable biometric login for future use?",
+            [
+              { text: "No", style: "cancel" },
+              { 
+                text: "Yes", 
+                onPress: async () => {
+                  await saveBiometricCredentials(data.email, data.password, 'patient');
+                  setHasBiometrics(true);
+                }
+              }
+            ]
+          );
+        }
       } else {
         console.log("Attempting to sign up...");
         await signUp(data.email, data.password, 'patient', {
@@ -53,6 +86,24 @@ export default function PatientAuthScreen({ navigation }: any) {
       }
     } catch (err: any) {
       console.error("Auth Error:", err);
+    }
+  };
+
+  const handleBiometricLogin = async () => {
+    setError(null);
+    const success = await promptBiometricAuth('Sign in to Ancura');
+    if (!success) return;
+
+    const creds = await getBiometricCredentials('patient');
+    if (!creds) {
+      setHasBiometrics(false);
+      setError('Session expired. Please sign in with email and password.');
+      return;
+    }
+    try {
+      await signIn(creds.email, creds.password, 'patient');
+    } catch (err: any) {
+      setError(err?.message ?? 'Biometric login failed. Please sign in manually.');
     }
   };
 
@@ -130,7 +181,7 @@ export default function PatientAuthScreen({ navigation }: any) {
                     />
                   </View>
 
-                  <View style={[styles.halfInput, { paddingTop: scale(3.5) }]}>
+                  <View style={styles.halfInput}>
                     <FormDropdown
                       control={control}
                       name="gender"
@@ -155,27 +206,35 @@ export default function PatientAuthScreen({ navigation }: any) {
               <Text style={styles.errorText}>{error}</Text>
             )}
 
-            <NormalButton
-              title={authMode === 'signin' ? 'Sign In' : 'Create Account'}
-              onPress={handleSubmit(onSubmit)}
-              bgColor={Colors.primary}
-              loading={isAuthenticating}
-              disabled={isAuthenticating}
-            />
+            {authMode === 'signin' && hasBiometrics ? (
+              <View style={styles.biometricRow}>
+                <View style={{ flex: 1 }}>
+                  <NormalButton
+                    title="Sign In"
+                    onPress={handleSubmit(onSubmit)}
+                    bgColor={Colors.primary}
+                    loading={isAuthenticating}
+                    disabled={isAuthenticating}
+                  />
+                </View>
+                <TouchableOpacity 
+                  style={styles.biometricButton} 
+                  onPress={handleBiometricLogin}
+                >
+                  <Ionicons name="finger-print" size={scale(28)} color={Colors.primary} />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <NormalButton
+                title={authMode === 'signin' ? 'Sign In' : 'Create Account'}
+                onPress={handleSubmit(onSubmit)}
+                bgColor={Colors.primary}
+                loading={isAuthenticating}
+                disabled={isAuthenticating}
+              />
+            )}
 
-            <View style={styles.dividerContainer}>
-              <View style={styles.line} />
-              <Text style={styles.orText}>or</Text>
-              <View style={styles.line} />
-            </View>
 
-            <NormalButton
-              title="Generate New Anonymous ID"
-              onPress={() => console.log('Generate ID')}
-              bgColor={palette.darkGray2}
-              textColor={Colors.textDark}
-              disabled={isAuthenticating}
-            />
           </FadeInView>
 
         </ScrollView>
@@ -275,5 +334,21 @@ const styles = StyleSheet.create({
     color: '#FF5050',
     fontFamily: Family.FG_Regular,
     fontSize: scale(13),
+  },
+  biometricRow: {
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: 'center',
+    gap: scale(10),
+  },
+  biometricButton: {
+    height: scale(54),
+    width: scale(54),
+    borderRadius: scale(12),
+    backgroundColor: 'rgba(0, 86, 210, 0.05)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.primary,
   },
 });

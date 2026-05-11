@@ -59,42 +59,41 @@ export default function CaseDetailScreen({ navigation, route }: any) {
   };
 
   const handleViewGoBack = () => {
-    navigation.navigate('DoctorHomeScreen');
+    navigation.goBack();
   };
 
 
   const queryClient = useQueryClient();
 
-const { data: replies = [] } = useQuery({
-  queryKey: ['replies', caseId],
-  queryFn: () => getRepliesByCaseId(caseId),
-  enabled: !!caseId,
-});
-
-const { mutate: submitReply, isPending } = useMutation({
-  mutationFn: postReply,
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['replies', caseId] });
-    resetField('doctorReply');
-  },
-  onError: (error: any) => {
-    console.error('Failed to post reply:', error?.response?.data || error.message);
-  },
-});
-
-const onSend = async (data: FormData) => {
-  if (!data.doctorReply.trim()) return;
-  const doctorId = useAuthStore.getState().session?.id;
-  if (!doctorId) return;
-
-  submitReply({
-    caseId: caseId,
-    doctorId: authUser.id,
-    patientId: caseData?.patient_id,
-    body: data.doctorReply.trim(),
+  const { data: replies = [] } = useQuery({
+    queryKey: ['replies', caseId],
+    queryFn: () => getRepliesByCaseId(caseId),
+    enabled: !!caseId,
   });
-};
-  const { control, handleSubmit, resetField  } = useForm<FormData>({
+
+  const { mutate: submitReply, isPending } = useMutation({
+    mutationFn: postReply,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['replies', caseId] });
+      resetField('doctorReply');
+    },
+    onError: (error: any) => {
+      console.error('Failed to post reply:', error?.response?.data || error.message);
+    },
+  });
+
+  const onSend = async (data: FormData) => {
+    if (!data.doctorReply.trim()) return;
+    if (!authUser?.id) return;
+
+    submitReply({
+      caseId: caseId,
+      doctorId: authUser.id,
+      patientId: caseData?.patient_id,
+      body: data.doctorReply.trim(),
+    });
+  };
+  const { control, handleSubmit, resetField } = useForm<FormData>({
     defaultValues: { doctorReply: "" },
   });
 
@@ -107,109 +106,97 @@ const onSend = async (data: FormData) => {
   return (
     <AppBackground>
       <SafeAreaView style={{ flex: 1 }}>
-      <View style={styles.container}>
+        <View style={styles.container}>
 
-        <View style={styles.topBar}>
-          <View style={styles.toggleContainer}>
-            {isPatient && (
-              <>
-                <ToggleButton
-                  title="Edit Case"
-                  Icon={PencilIcon}
-                  bgColor={Colors.secondary}
-                  textColor="#FFFFFF"
-                />
-                <ToggleButton
-                  title="Delete Case"
-                  Icon={TrashIcon}
-                  bgColor={Colors.warning}
-                  textColor="#FFFFFF"
-                />
-              </>
-            )}
+          <View style={styles.topBar}>
+            <View style={styles.toggleContainer}>
+              {isPatient && (
+                <>
+                  <ToggleButton
+                    title="Edit Case"
+                    Icon={PencilIcon}
+                    bgColor={Colors.secondary}
+                    textColor="#FFFFFF"
+                  />
+                  <ToggleButton
+                    title="Delete Case"
+                    Icon={TrashIcon}
+                    bgColor={Colors.warning}
+                    textColor="#FFFFFF"
+                  />
+                </>
+              )}
+            </View>
+
+            <BackButton onPress={handleViewGoBack} />
           </View>
-
-          <BackButton onPress={handleViewGoBack} />
-        </View>
 
         <View style={styles.mainContent}>
           <CaseDetailsCard
-            userId={caseData ? `#${caseData.patient_id}` : "#124"}
-            gender="Female"
-            age={28}
-            title={caseData?.title || "Anxiety and sleep problem"}
-            description={caseData?.description || "Patient reports severe anxiety and insomnia for the past 3 weeks."}
-            date={caseData?.timestamp || "2 hours ago"}
-            status={
-              isDoctor
-                ? undefined
-                : caseData?.status
-                  ? STATUS_MAP[caseData.status as string]
-                  : "under_review"
-            }
+            caseId={caseId}
           />
 
-          <View style={styles.replySection}>
-            <ReplyText title="Doctor's Reply" color={Colors.primary} onPress={handleViewDoctorReplies} />
+            <View style={styles.replySection}>
+              <ReplyText title="Doctor's Reply" color={Colors.primary} onPress={handleViewDoctorReplies} />
 
-            <FlatList
-              ref={flatListRef}
-              data={replies}
-              keyExtractor={(item) => String(item.id)}
-              showsVerticalScrollIndicator={false}
-              style={styles.list}
-              contentContainerStyle={styles.listContent}
-              ItemSeparatorComponent={() => (
-                <View style={{ height: scale(16) }} />
-              )}
-              renderItem={({ item }) => (
-                <DoctorReplyCard
-                  id={item.id}
-                  title={item.doctor?.fullname}
-                  major={item.doctor_major}
-                  message={item.body}
-                  time={item.timestamp}
-                  CardOnPress={handleViewDoctorReplies}
-                  ChatOnPress={() => handleViewAllReplies(item)}
-                  onLike={() =>{}}
-                  onDislike={() =>{}}
-                />
-              )}
-            />
-          </View>
-        </View>
-
-        <View style={styles.bottomContainer}>
-          {isPatient && (
-            <View style={styles.patientBottom}>
-              <View style={{ width: "70%" }}>
-                <ResolvedSlideButton
-                  onSlideComplete={() => {
-                    console.log("Case Marked as Resolved");
-                  }}
-                />
-              </View>
-
-              <ScrollToBottomButton onPress={scrollToBottom} />
+              <FlatList
+                ref={flatListRef}
+                data={replies}
+                keyExtractor={(item) => String(item.id)}
+                showsVerticalScrollIndicator={false}
+                style={styles.list}
+                contentContainerStyle={styles.listContent}
+                ItemSeparatorComponent={() => (
+                  <View style={{ height: scale(16) }} />
+                )}
+                renderItem={({ item }) => (
+                  <DoctorReplyCard
+                    id={item.id}
+                    title={item.doctor?.fullname}
+                    major={item.doctor_major}
+                    message={item.body}
+                    time={item.timestamp}
+                    CardOnPress={handleViewDoctorReplies}
+                    ChatOnPress={() => handleViewAllReplies(item)}
+                    onLike={() => { }}
+                    onDislike={() => { }}
+                  />
+                )}
+              />
             </View>
-          )}
+          </View>
 
-          {isDoctor && (
-            <View style={styles.doctorBottom}>
-              <View style={styles.DoctorreplySection}>
-                <View style={{ width: "80%" }}>
-                  <ReplyField
-                    name="doctorReply"
-                    control={control as Control<any>}
+          <View style={styles.bottomContainer}>
+            {isPatient && (
+              <View style={styles.patientBottom}>
+                <View style={{ width: "70%" }}>
+                  <ResolvedSlideButton
+                    onSlideComplete={() => {
+                      console.log("Case Marked as Resolved");
+                    }}
                   />
                 </View>
 
-                <ArrowInCircle onPress={handleSubmit(onSend)}/>
+                <ScrollToBottomButton onPress={scrollToBottom} />
               </View>
-            </View>
-          )}
+            )}
+
+            {isDoctor && (
+              <View style={styles.doctorBottom}>
+                <View style={styles.DoctorreplySection}>
+                  <View style={{ width: "80%" }}>
+                    <ReplyField
+                      name="doctorReply"
+                      control={control as Control<any>}
+                    />
+                  </View>
+
+                  <ArrowInCircle onPress={handleSubmit(onSend)} />
+                </View>
+              </View>
+            )}
+          </View>
         </View>
-      </View>
       </SafeAreaView>
     </AppBackground>
   );
@@ -224,9 +211,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: scale(20),
+    marginBottom: scale(56),
+    marginTop: scale(10),
     marginHorizontal: scale(24),
-    marginBottom: scale(20),
   },
 
   toggleContainer: {

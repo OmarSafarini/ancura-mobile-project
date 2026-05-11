@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Pressable, SafeAreaView } from "react-native";
 import { useQuery } from '@tanstack/react-query';
 import AppBackground from "@/components/base/AppBackground";
 import DoctorGreeting from "../components/DoctorGreeting";
@@ -62,10 +62,11 @@ export default function DoctorDashboardAndCases({ navigation }: any) {
 const doctorCases: CaseData[] = casesData ?? [];
   return (
     <AppBackground>
-      <ScrollView
-        contentContainerStyle={styles.screen}
-        showsVerticalScrollIndicator={false}
-      >
+      <SafeAreaView style={{ flex: 1 }}>
+        <ScrollView
+          contentContainerStyle={styles.screen}
+          showsVerticalScrollIndicator={false}
+        >
         <View style={styles.contentWrapper}>
 
           <View style={styles.greetingContainer}>
@@ -124,6 +125,7 @@ const doctorCases: CaseData[] = casesData ?? [];
 
         </View>
       </ScrollView>
+      </SafeAreaView>
     </AppBackground>
   );
 }

@@ -1,7 +1,7 @@
 import AppBackground from "@/components/base/AppBackground";
 import { Colors, palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { StyleSheet, View, Text, SafeAreaView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale } from "react-native-size-matters";
@@ -9,17 +9,17 @@ import { useForm } from "react-hook-form";
 import InputField from "@/components/forms/InputFeild";
 import LicenseVerificationButton from "../components/LiecenseVerficationButton";
 import UploadImageButton from "../components/UploadImageButton";
-import IconWrapper from "../../../components/common/IconWrapper";
-import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
+import BackButton from "@/components/common/BackButton";
+import { uploadDoctorProfileImage } from "@/services/Doctor/DoctorService";
+import { signUp } from "@/services/authService";
+import { useDoctor } from "@/Context/DoctorContext";
+import { useFocusEffect } from "@react-navigation/native";
 
-export default function DoctorProfileAndSettings(navigation : any) {
+export default function DoctorProfileAndSettings({ navigation }: any) {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const insets = useSafeAreaInsets();
-  const user = {
-    profilePic: require("../../../../assets/ancura.gif"),
-    name: "Dr.Aprar Ismail",
-  };
-
-  const { control, handleSubmit } = useForm({
+const {doctorData,setDoctorData } = useDoctor();
+  const { control, handleSubmit ,reset } = useForm({
     defaultValues: {
       FullName: "",
       Location: "",
@@ -28,31 +28,79 @@ export default function DoctorProfileAndSettings(navigation : any) {
       Bio: "",
     },
   });
-  const OnSubmit = (data: any) => {
-    console.log("Profile: ", data);
-    navigation.navigate("DoctorLoginScreen");
-  };
+
+  useFocusEffect(
+    useCallback(() => {
+      reset({
+        FullName: doctorData.full_name || "",
+        Location: doctorData.location || "",
+        Email: doctorData.email || "",
+        Password: "",
+        Bio: doctorData.bio || "",
+      });
+    }, [doctorData, reset])
+  );
+  
+const OnSubmit = async (data: any) => {
+  let imageUrl = "";
+  try {
+    if (selectedImage) {
+      imageUrl = await uploadDoctorProfileImage(
+        selectedImage,
+        "doctor_profile.jpg",
+        "image/jpeg"
+      );
+    }
+
+    setDoctorData({
+      full_name: data.FullName,
+      bio: data.Bio,
+      location: data.Location,
+      email: data.Email,
+      profilePic: imageUrl,
+    });
+
+
+    console.log(setDoctorData);
+    await signUp(
+      data.Email,
+      data.Password,
+      "doctor",
+      {
+        full_name: data.FullName,
+        bio: data.Bio,
+        location: data.Location,
+        profilePic: imageUrl,
+      }
+    );
+
+ navigation.navigate("LicenseVerification");
+  } catch (error) {
+    console.log("ERROR:", error);
+  }
+};
 
   const goBack = () => {
-    navigation.navigate("LicenseVerification");
+  navigation.navigate("DoctorLoginScreen");
   };
 
 
   return (
     <AppBackground variant="clean">
       <View style={styles.container}>
-        <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
-          <Text style={styles.Text}>Profile & Settings</Text>
-          <IconWrapper size={scale(33)} bgColor={palette.white} shape="square">
-            <ArrowLeftIcon size={scale(18)} color={palette.dark} onPress={goBack} />
-          </IconWrapper>
+        <SafeAreaView style={{ paddingTop: insets.top }}>
+          <View style={styles.header}>
+            <Text style={styles.title}>Profile & Settings</Text>
+            <BackButton onPress={goBack} />
+          </View>
         </SafeAreaView>
         <View>
           <UploadImageButton
-            initialImage={user.profilePic}
-            onImageSelected={(uri) => console.log("Selected image URI:", uri)}
-          />
-        </View>
+onImageSelected={(uri) => {
+    setSelectedImage(uri);
+  }}
+  />
+          </View>
 
         <View style={styles.Form}>
           <InputField
@@ -74,11 +122,11 @@ export default function DoctorProfileAndSettings(navigation : any) {
             control={control as any}
             name="Email"
             label="Email"
-            placeholder="Enter your Email"
+            placeholder="UserName@gmail.com"
             rules={{
               required: "Location is required",
               pattern: {
-                value: "/\S+@\S+\.\S+/",
+                value: /\S+@\S+\.\S+/,
                 message: "Invalid email",
               },
             }}
@@ -122,20 +170,21 @@ export default function DoctorProfileAndSettings(navigation : any) {
 
 const styles = StyleSheet.create({
   container: {
-    padding: scale(40),
+    paddingHorizontal: scale(51),
     justifyContent: "space-between",
     flex: 1,
   },
-  NavBar: {
+  header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: scale(20),
+    marginBottom: scale(56),
+    marginTop: scale(10),
   },
-  Text: {
-    fontFamily: Family.FG_Medium,
-    fontWeight: "500",
+  title: {
     fontSize: scale(24),
+    fontFamily: Family.FG_Medium,
+    color: Colors.textDark,
   },
 
   Form: {

@@ -36,9 +36,9 @@ export default function DoctorNewPasswordScreen({ navigation, route }: any) {
     try {
       setLoading(true);
       setError('');
-      
+
       await updatePassword(email, data.newPassword, tempToken);
-      
+
     } catch (e: any) {
       setError(e.message || "Error updating password");
     } finally {

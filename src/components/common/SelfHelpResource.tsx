@@ -71,13 +71,13 @@ const styles = StyleSheet.create({
         lineHeight: scale(16),
     },
     tagBadge: {
-        width: "fit-content",
-        height: scale(18),
+        alignSelf: "flex-start",
+        height: scale(20),
         backgroundColor: "rgba(182, 210, 249, 0.5)",
         borderRadius: scale(4),
         justifyContent: "center",
         alignItems: "center",
-        paddingHorizontal: scale(5),
+        paddingHorizontal: scale(8),
     },
     tagText: {
         fontSize: scale(10),

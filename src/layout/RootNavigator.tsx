@@ -16,13 +16,13 @@ import DoctorNavigator from './DoctorNavigator';
 const RootStack = createNativeStackNavigator();
 
 export default function RootNavigator() {
-  const { role, isLoading } = useAuthStore();
+  const { role, isLoading ,user} = useAuthStore();
 
   useEffect(() => {
     restoreSession();
   }, []);
 
-  
+
   if (isLoading) {
     return (
       <View style={styles.splash}>
@@ -31,8 +31,7 @@ export default function RootNavigator() {
     );
   }
 
-  
-  return (
+   return (
     <RootStack.Navigator screenOptions={{ headerShown: false }}>
       {role === 'patient' ? (
         <RootStack.Screen name="PatientApp" component={PatientNavigator} />

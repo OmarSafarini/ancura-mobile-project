@@ -7,5 +7,6 @@ export interface IPatient {
   age?: number;
   gender?: Gender;
   created_at: string;
+  profilePic:string;
   // NOTE: password is managed by Supabase Auth, never stored here
 }
