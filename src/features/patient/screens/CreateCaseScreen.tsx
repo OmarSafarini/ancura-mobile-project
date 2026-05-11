@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { useForm } from "react-hook-form";
 import type { DocumentPickerAsset } from "expo-document-picker";
@@ -23,6 +24,7 @@ import { Family } from "@/utils/typography";
 import EmergencyCheckBox from "../components/EmergencyCheckBox";
 import { createCase } from "@/services/Patient/Cases";
 import { useAuthStore } from "@/store/authStore";
+import { uploadDocumentToStorage } from "@/services/Doctor/storageService";
 
 
 type FormValues = {
@@ -39,6 +41,7 @@ type CaseFileItem = {
 
 const CreateCase = ({ navigation }: any) => {
   const [caseFiles, setCaseFiles] = useState<CaseFileItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const user = useAuthStore((state) => state.user);
 
   const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
@@ -59,16 +62,28 @@ const CreateCase = ({ navigation }: any) => {
         Alert.alert("Error", "You must be signed in to create a case.");
         return;
       }
+      
+      setIsLoading(true);
 
-      const files = data.files
-        .map((file) => file.uri || file.name)
-        .filter(Boolean) as string[];
+      const uploadedFileUrls = await Promise.all(
+        data.files.map(async (file) => {
+          if (!file.uri) return null;
+          return await uploadDocumentToStorage(
+            file.uri,
+            file.name || `file_${Date.now()}`,
+            file.mimeType || 'application/octet-stream',
+            'case-files'
+          );
+        })
+      );
+      
+      const validUrls = uploadedFileUrls.filter(Boolean) as string[];
 
       await createCase({
         patient_id: user.id,
         title: data.title.trim(),
         description: data.description.trim(),
-        file: files[0] ?? null,
+        file: validUrls.length > 0 ? validUrls : null,
         isEmergency: data.isEmergency,
       });
 
@@ -78,6 +93,8 @@ const CreateCase = ({ navigation }: any) => {
       const message =
         error instanceof Error ? error.message : "Failed to create case.";
       Alert.alert("Error", message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -201,16 +218,20 @@ const CreateCase = ({ navigation }: any) => {
         </View>
 
         <View style={styles.footer}>
-          <NormalButton
-            title="Create Case"
-            onPress={handleSubmit(onSubmit)}
-            bgColor="#8EB392"
-            textColor="#fff"
-            textStyle={{
-              fontSize: scale(20),
-              fontFamily: Family.FG_Regular,
-            }}
-          />
+          {isLoading ? (
+            <ActivityIndicator size="large" color="#8EB392" />
+          ) : (
+            <NormalButton
+              title="Create Case"
+              onPress={handleSubmit(onSubmit)}
+              bgColor="#8EB392"
+              textColor="#fff"
+              textStyle={{
+                fontSize: scale(20),
+                fontFamily: Family.FG_Regular,
+              }}
+            />
+          )}
         </View>
       </ScrollView>
     </AppBackground>

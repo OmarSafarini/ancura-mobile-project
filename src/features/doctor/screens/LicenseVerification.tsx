@@ -71,7 +71,8 @@ export function LicenseVerification({ navigation }: any) {
             const publicUrl = await uploadDocumentToStorage(
                 selectedDocument.uri, 
                 selectedDocument.name, 
-                selectedDocument.mimeType as string
+                selectedDocument.mimeType as string,
+                'licenses'
             );
 
             const payload = {
