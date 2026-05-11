@@ -17,7 +17,7 @@ const ReplyField = ({ control, name }: ReplyFieldProps) => {
             style={styles.inputText}
             placeholder="Reply"
             placeholderTextColor={palette.darkGray}
-            value={value || ""}
+            value={value}
             onBlur={onBlur}
             onChangeText={onChange}
             multiline={true}

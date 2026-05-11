@@ -16,7 +16,6 @@ import LocationIcon from "../../../assets/icons/LocationIcoon";
 import EmailIcon from "../../../assets/icons/EmailIcon";
 import TickIcon from "@/assets/icons/TickIcon";
 import { IDoctor } from "@/types/IDoctor";
-import BackButton from "@/components/common/BackButton";
 import { useQuery } from "@tanstack/react-query";
 import {
   getDoctorLicense,

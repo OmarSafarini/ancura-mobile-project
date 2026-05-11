@@ -25,8 +25,12 @@ export function LicenseVerification({ navigation }: any) {
     const [isLoading, setIsLoading] = useState(false);
     const { doctorData } = useDoctor(); 
 console.log("Licnse",doctorData);
+            console.log("Dr Id",doctorData.id);
+
     const handleDocumentUpload = async () => {
-        try {
+        try { 
+            const r = doctorData.id
+            console.log("Dr Id",r);
             const result = await DocumentPicker.getDocumentAsync({
                 type: ['application/pdf', 'image/*'],
                 copyToCacheDirectory: true,
@@ -68,6 +72,7 @@ console.log("Licnse",doctorData);
 
         setIsLoading(true);
 
+
         try {
             const publicUrl = await uploadDocumentToStorage(
                 selectedDocument.uri, 
@@ -77,7 +82,7 @@ console.log("Licnse",doctorData);
             );
 
             const payload = {
-                doctor_id: "fe1eabcb-fe97-4e32-9303-3cb9dbc79283", // TODO: Replace with auth ID
+                doctor_id: doctorData.id,
                 authority: formData.licensingAuthority,
                 yearsexp: parseInt(formData.yearsOfExperience, 10), 
                 license_number: formData.licenseNumber,

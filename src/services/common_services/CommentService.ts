@@ -1,17 +1,24 @@
 import { supabaseClient } from '@/services/supabase';
+import { formatDistanceToNow } from 'date-fns';
+
 
 export const getCommentsByReplyId = async (replyId: number) => {
   const { data } = await supabaseClient.get('/comment', {
     params: {
       reply_id: `eq.${replyId}`,
-      select: '*,doctor(fullname),patient(nickname)',
+      select: '*,doctor(full_name,profilePic),patient(nickname,profilePic)',
       order: 'timestamp',
     },
   });
 
   return (data ?? []).map((item: any) => ({
     ...item,
-    author_name: item.doctor?.fullname || item.patient?.nickname,
+
+    timestamp: formatDistanceToNow(
+      new Date(item.timestamp),
+      { addSuffix: true }
+    ).replace('about ', ''),
+    author_name: item.doctor?.full_name || item.patient?.nickname,
     author_role: item.doctor ? 'Doctor' : 'Patient',
   }));
 };

@@ -18,7 +18,6 @@ export default function Notification() {
     const translateY = useRef(new Animated.Value(20)).current; 
     const navigation = useNavigation();
 
-    // ✅ Grab the user safely inside the React component
     const user = useAuthStore((state) => state.user);
 
     useEffect(() => {
@@ -37,13 +36,10 @@ export default function Notification() {
     }, []);
 
     const { data: notifications, isLoading } = useQuery({
-        // ✅ Add user.id to the queryKey so it refetches if the user logs out/in
         queryKey: ["notifications", user?.id], 
         
-        // ✅ Pass the user.id to your API call
         queryFn: () => getPatientNotification(user?.id), 
         
-        // ✅ Tell React Query not to run this until `user.id` actually exists
         enabled: !!user?.id 
     });
 

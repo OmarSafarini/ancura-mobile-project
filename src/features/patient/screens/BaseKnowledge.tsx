@@ -95,14 +95,14 @@ export function BaseKnowledge() {
                     ItemSeparatorComponent={() => <View style={styles.separator} />}
                     renderItem={({ item }) => (
                         <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY }] }}>
-                            <Pressable
+                            <SelfHelpResource 
+                                title={item.title} 
+                                tag={item.tag} 
+                                tagColor={item.tagColor}
+                                bgTagColor={item.bgTagColor} 
+                                Icon={item.Icon}
                                 onPress={() => handleResourcePress(item)}
-                                android_ripple={{ color: Colors.formBackground }}
-                                style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.97 : 1 }] }]}>
-                                <SelfHelpResource title={item.title} tag={item.tag} tagColor={item.tagColor}
-                                    bgTagColor={item.bgTagColor} Icon={item.Icon}
-                                />
-                            </Pressable>
+                            />
                         </Animated.View>
                     )}
                 />
@@ -120,7 +120,7 @@ export function BaseKnowledge() {
                             <ArrowLeftIcon color={Colors.textDark2} size={scale(18)} />
                         </Pressable>
                         <Text style={styles.webViewHeaderTitle} numberOfLines={1}>Resource</Text>
-                        <View style={{ width: scale(34) }} /> {/* Empty view to center the title */}
+                        <View style={{ width: scale(34) }} />
                     </View>
                     {activeUrl && (
                         <WebView
