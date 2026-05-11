@@ -152,7 +152,7 @@ export async function signUp(
       await supabaseClient.post(
         '/doctor',
         {
-          id: user.id, 
+          id: user.id,
           email: user.email,
           full_name: meta.full_name || "Dr. New User",
           bio: meta.bio || "",

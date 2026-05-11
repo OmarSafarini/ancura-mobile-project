@@ -9,8 +9,7 @@ import { useForm } from "react-hook-form";
 import InputField from "@/components/forms/InputFeild";
 import LicenseVerificationButton from "../components/LiecenseVerficationButton";
 import UploadImageButton from "../components/UploadImageButton";
-import IconWrapper from "../../../components/common/IconWrapper";
-import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
+import BackButton from "@/components/common/BackButton";
 import { uploadDoctorProfileImage } from "@/services/Doctor/DoctorService";
 import { signUp } from "@/services/authService";
 import { useDoctor } from "@/Context/DoctorContext";
@@ -89,11 +88,11 @@ const OnSubmit = async (data: any) => {
   return (
     <AppBackground variant="clean">
       <View style={styles.container}>
-        <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
-          <Text style={styles.Text}>Profile & Settings</Text>
-          <IconWrapper size={scale(33)} bgColor={palette.white} shape="square">
-            <ArrowLeftIcon size={scale(18)} color={palette.dark} onPress={goBack} />
-          </IconWrapper>
+        <SafeAreaView style={{ paddingTop: insets.top }}>
+          <View style={styles.header}>
+            <Text style={styles.title}>Profile & Settings</Text>
+            <BackButton onPress={goBack} />
+          </View>
         </SafeAreaView>
         <View>
           <UploadImageButton
@@ -171,20 +170,21 @@ onImageSelected={(uri) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: scale(40),
+    paddingHorizontal: scale(51),
     justifyContent: "space-between",
     flex: 1,
   },
-  NavBar: {
+  header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: scale(20),
+    marginBottom: scale(56),
+    marginTop: scale(10),
   },
-  Text: {
-    fontFamily: Family.FG_Medium,
-    fontWeight: "500",
+  title: {
     fontSize: scale(24),
+    fontFamily: Family.FG_Medium,
+    color: Colors.textDark,
   },
 
   Form: {
