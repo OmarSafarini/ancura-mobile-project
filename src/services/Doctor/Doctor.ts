@@ -2,7 +2,7 @@ import { supabaseClient } from '@/services/supabase';
 
 export interface DoctorProfile {
   full_name: string;
-  avatar_url?: string | null;
+  profilePic?: string | null;
 }
 
 export const getDoctorBasicInfo = async (id: string): Promise<DoctorProfile> => {
@@ -12,7 +12,7 @@ export const getDoctorBasicInfo = async (id: string): Promise<DoctorProfile> => 
     const { data, status } = await supabaseClient.get('/doctor', {
       params: {
         id: `eq.${id}`,  
-        select: 'full_name',
+        select: 'full_name,profilePic',
       },
       paramsSerializer: (params) => {
         const searchParams = new URLSearchParams();
@@ -31,9 +31,12 @@ export const getDoctorBasicInfo = async (id: string): Promise<DoctorProfile> => 
     }
 
     const doctor = data[0];
+    console.log("DOCTOR DATA:", doctor);
+console.log("PROFILE PIC URL:", doctor.profilePic);
 
     return {
       full_name: doctor.full_name || 'Doctor',
+      profilePic: doctor.profilePic || null,
     };
 
   } catch (error: any) {
@@ -42,7 +45,7 @@ export const getDoctorBasicInfo = async (id: string): Promise<DoctorProfile> => 
 
     return {
       full_name: 'Doctor',
-      avatar_url: null,
+      profilePic: null,
     };
   }
 };

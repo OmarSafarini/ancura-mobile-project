@@ -91,6 +91,7 @@ export default function AllRepliesScreen({ navigation, route }: any) {
               id={replyData?.id}
               title={replyData?.doctor?.full_name || "Dr. Sarah Ahmed"}
               major={replyData?.doctor_major || "Clinical Psychologist"}
+              avatar={replyData?.doctor?.profilePic}
               message={replyData?.body || "Reply details."}
               time={replyData?.timestamp || "Just now"}
               CardOnPress={() => { }}
@@ -124,7 +125,7 @@ export default function AllRepliesScreen({ navigation, route }: any) {
                     title={authorName || "Unknown"}
                     discreption={item.body}
                     time={item.timestamp}
-                    avatar={undefined}
+                    avatar={item.doctor?.profilePic}
                     major={isDoctor ? "Doctor" : "Patient"}
                   />
                 );

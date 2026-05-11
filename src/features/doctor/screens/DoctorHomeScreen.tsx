@@ -53,12 +53,14 @@ const {
   return (
     <AppBackground variant="clean">
       <View style={styles.container}>
-       <View style={{ marginBottom: scale(5) }}>
+       <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
+          <View style={{ marginLeft: scale(5) }}>
             <DoctorGreeting
               name={doctor?.full_name}
               image={doctor?.profilePic}
             />
-        </View>
+          </View>
+        </SafeAreaView>
 
         <FlatList
           data={doctorCases}
