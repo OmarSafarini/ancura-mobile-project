@@ -2,7 +2,7 @@ import axios from 'axios';
 import { supabaseClient } from './supabase';
 import { saveTokens, saveUserMeta, getUserMeta, clearAllAuthData, getAccessToken } from './tokenService';
 import { useAuthStore } from '../store/authStore';
-import { AuthUser, SupabaseAuthResponse, UserRole } from '../types/auth.types';
+import { AuthUser, DoctorStatus, SupabaseAuthResponse, UserRole } from '../types/auth.types';
 
 const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL!;
 const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
@@ -47,10 +47,18 @@ export async function signIn(
 
     const table = role === 'patient' ? 'patient' : 'doctor';
 
-    const { data: profileRows } = await supabaseClient.get<{ id: string }[]>(
-      `/${table}`,
-      { params: { id: `eq.${user.id}`, select: 'id' } },
-    );
+  const { data: profileRows } = await supabaseClient.get<
+  { id: string; verify_status?: string }[]
+>(
+  `/${table}`,
+  {
+    params: {
+      id: `eq.${user.id}`,
+      select: 'id,verify_status',
+    },
+  },
+
+);
 
     if (!profileRows || profileRows.length === 0) {
       await clearAllAuthData();
@@ -68,7 +76,8 @@ export async function signIn(
 
     await saveUserMeta({ id: user.id, email: user.email, role });
 
-    const authUser: AuthUser = { id: user.id, email: user.email, role };
+    const authUser: AuthUser = { id: user.id, email: user.email, role ,  verify_status: profileRows[0]?.verify_status as DoctorStatus,
+};
     setSession(authUser, access_token);
 
   } catch (err: any) {
@@ -157,7 +166,8 @@ export async function signUp(
 
     await saveUserMeta({ id: user.id, email: user.email, role });
 
-    const authUser: AuthUser = { id: user.id, email: user.email, role };
+    const authUser: AuthUser = { id: user.id, email: user.email, role ,  verify_status: role === 'doctor' ? 'pending' : undefined,
+};
     setSession(authUser, access_token);
 
   } catch (err: any) {

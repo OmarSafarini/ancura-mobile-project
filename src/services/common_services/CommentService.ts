@@ -4,14 +4,14 @@ export const getCommentsByReplyId = async (replyId: number) => {
   const { data } = await supabaseClient.get('/comment', {
     params: {
       reply_id: `eq.${replyId}`,
-      select: '*,doctor(fullname),patient(nickname)',
+      select: '*,doctor(full_name),patient(nickname)',
       order: 'timestamp',
     },
   });
 
   return (data ?? []).map((item: any) => ({
     ...item,
-    author_name: item.doctor?.fullname || item.patient?.nickname,
+    author_name: item.doctor?.full_name || item.patient?.nickname,
     author_role: item.doctor ? 'Doctor' : 'Patient',
   }));
 };
