@@ -31,18 +31,12 @@ export default function RootNavigator() {
     );
   }
 
-const isDoctorVerified = role === 'doctor' && user?.doctorStatus === 'verified';
-
    return (
     <RootStack.Navigator screenOptions={{ headerShown: false }}>
       {role === 'patient' ? (
         <RootStack.Screen name="PatientApp" component={PatientNavigator} />
       ) : role === 'doctor' ? (
-        isDoctorVerified ? (
-          <RootStack.Screen name="DoctorApp" component={DoctorNavigator} />
-        ) : (
-          <RootStack.Screen name="Auth" component={AuthNavigator} />
-        )
+        <RootStack.Screen name="DoctorApp" component={DoctorNavigator} />
       ) : (
         <RootStack.Screen name="Auth" component={AuthNavigator} />
       )}
