@@ -7,6 +7,7 @@ import {
   ScrollView,
   Alert,
   SafeAreaView,
+  ActivityIndicator,
 } from "react-native";
 import { useForm } from "react-hook-form";
 import type { DocumentPickerAsset } from "expo-document-picker";
@@ -26,6 +27,7 @@ import EmergencyCheckBox from "../components/EmergencyCheckBox";
 import { createCase } from "@/services/Patient/Cases";
 import { useAuthStore } from "@/store/authStore";
 import { useQueryClient } from "@tanstack/react-query";
+import { uploadDocumentToStorage } from "@/services/Doctor/storageService";
 
 
 type FormValues = {
