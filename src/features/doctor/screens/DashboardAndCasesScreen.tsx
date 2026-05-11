@@ -70,8 +70,8 @@ const doctorCases: CaseData[] = casesData ?? [];
         <View style={styles.contentWrapper}>
 
           <View style={styles.greetingContainer}>
-            <DoctorGreeting name={doctorInfo?.full_name || "Doctor"} 
-            image={doctorInfo?.avatar_url ? { uri: doctorInfo.avatar_url } : undefined} />
+            <DoctorGreeting name={doctorInfo?.full_name} 
+            image={doctorInfo?.profilePic ? { uri: doctorInfo.profilePic } : undefined} />
           </View>
 
           <View style={styles.box}>
@@ -105,9 +105,10 @@ const doctorCases: CaseData[] = casesData ?? [];
                         title: item.title,
                         description: item.description,
                         timestamp: item.timestamp,
-                        status: item.status ? "Resolved" : "Under Review",
+                        status: "empty",
                         isEmergency: item.isEmergency ?? false,
                         isReplied: item.isReplied ?? false,
+                        time_ago: item.time_ago,
                       }}
                     onPress={() => navigation.navigate("CaseDetailsAndRepliesScreen", { caseId: item.id, caseData: item, role: 'doctor' })}
                   />

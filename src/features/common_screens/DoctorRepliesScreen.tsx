@@ -105,8 +105,8 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
           <ReplyText title="Doctor's Replies" color={Colors.secondary} />
         </View>
 
-        <ReplyText title="Doctor's Replies" color={Colors.secondary} />
-      </View>
+        {/* <ReplyText title="Doctor's Replies" color={Colors.secondary} /> */}
+    
 
       <View style={styles.scrollWrapper}>
         <FlatList
@@ -122,6 +122,7 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
             <DoctorReplyCard
               id={item.id}
               title={item.doctor?.full_name}
+              avatar={item.doctor?.profilePic}
               major={item.doctor_major}
               message={item.body}
               time={item.timestamp}
@@ -139,6 +140,7 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
           <View style={styles.patientBottom}>
             <View style={{ width: "70%" }}>
               <ResolvedSlideButton onSlideComplete={handleSlideComplete} />
+            </View>
             </View>
           )}
 

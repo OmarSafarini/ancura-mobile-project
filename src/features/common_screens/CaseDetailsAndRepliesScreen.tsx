@@ -193,6 +193,7 @@ export default function CaseDetailScreen({ navigation, route }: any) {
                   major={item.doctor_major}
                   message={item.body}
                   time={item.timestamp}
+                  avatar={item.doctor?.profilePic}
                   CardOnPress={handleViewDoctorReplies}
                   ChatOnPress={() => handleViewAllReplies(item)}
                   onLike={() =>{}}
@@ -201,7 +202,7 @@ export default function CaseDetailScreen({ navigation, route }: any) {
               )}
             />
           </View>
-
+</View>
           <View style={styles.bottomContainer}>
             {isPatient && (
               <View style={styles.patientBottom}>
