@@ -118,7 +118,7 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
           renderItem={({ item }) => (
             <DoctorReplyCard
               id={item.id}
-              title={item.doctor?.fullname}
+              title={item.doctor?.full_name}
               major={item.doctor_major}
               message={item.body}
               time={item.timestamp}

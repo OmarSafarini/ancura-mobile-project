@@ -152,7 +152,7 @@ const onSend = async (data: FormData) => {
               renderItem={({ item }) => (
                 <DoctorReplyCard
                   id={item.id}
-                  title={item.doctor?.fullname}
+                  title={item.doctor?.full_name}
                   major={item.doctor_major}
                   message={item.body}
                   time={item.timestamp}

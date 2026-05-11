@@ -93,7 +93,7 @@ export default function AllRepliesScreen({ navigation, route }: any) {
           <View style={styles.staticContent}>
             <DoctorReplyCard
               id={replyData?.id}
-              title={replyData?.doctor?.fullname || "Dr. Sarah Ahmed"}
+              title={replyData?.doctor?.full_name || "Dr. Sarah Ahmed"}
               major={replyData?.doctor_major || "Clinical Psychologist"}
               message={replyData?.body || "Reply details."}
               time={replyData?.timestamp || "Just now"}
@@ -120,7 +120,7 @@ export default function AllRepliesScreen({ navigation, route }: any) {
                 const isDoctor = !!item.doctor;
 
                 const authorName = isDoctor
-                  ? item.doctor?.fullname
+                  ? item.doctor?.full_name
                   : item.patient?.nickname;
 
                 return (

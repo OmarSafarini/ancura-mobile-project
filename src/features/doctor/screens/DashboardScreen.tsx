@@ -107,7 +107,7 @@ export default function DoctorDashboard({ navigation }: any) {
       >
         <View style={styles.headerContainer}>
           <DoctorGreeting
-            name={doctorInfo?.fullname || "Doctor"}
+            name={doctorInfo?.full_name || "Doctor"}
             image={doctorInfo?.avatar_url ? { uri: doctorInfo.avatar_url } : undefined}
           />
 
