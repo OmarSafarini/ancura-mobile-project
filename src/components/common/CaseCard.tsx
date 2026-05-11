@@ -53,7 +53,7 @@ export default function CaseCard({ data, onPress }: Props) {
       </View>
       <View style={styles.bottomRow}>
         <Text style={styles.time}>{data.time_ago}</Text>
-        {status !== "Empty" && config.IconComponent && (
+        {status !== "empty" && config.IconComponent && (
           <View style={styles.reviewContainer}>
             <View style={[styles.iconCircle, { backgroundColor: config.iconBackground }]}>
               <config.IconComponent width={scale(10)} height={scale(10)} />
@@ -73,7 +73,6 @@ const styles = StyleSheet.create({
     borderRadius: scale(15),
     padding: scale(12),
     justifyContent: "space-between",
-
   },
   emergencyShadow: {
     shadowColor: Colors.warning,

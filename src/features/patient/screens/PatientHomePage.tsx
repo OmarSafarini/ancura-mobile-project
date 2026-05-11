@@ -143,6 +143,7 @@ export default function PatientHomePage() {
               )}
               contentContainerStyle={{
                 paddingBottom: scale(90),
+                paddingHorizontal:scale(6),
                 paddingTop: scale(10),
               }}
             />
@@ -182,8 +183,8 @@ const styles = StyleSheet.create({
     borderRadius: scale(16),
   },
   container: {
+    flex: 1, 
     padding: scale(40),
-    flex: 1,
   },
   Text: {
     fontFamily: Family.FG_Regular,
