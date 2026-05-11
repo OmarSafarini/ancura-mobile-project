@@ -27,6 +27,7 @@
     "expo-font": "~55.0.6",
     "expo-image-picker": "~55.0.19",
     "expo-linear-gradient": "~55.0.13",
+    "expo-local-authentication": "~55.0.13",
     "expo-secure-store": "~55.0.13",
     "expo-status-bar": "~55.0.5",
     "lodash": "^4.18.1",

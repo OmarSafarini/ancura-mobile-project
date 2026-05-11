@@ -1,19 +1,28 @@
-import axios from 'axios';
-import { supabaseClient } from './supabase';
-import { saveTokens, saveUserMeta, getUserMeta, clearAllAuthData, getAccessToken } from './tokenService';
-import { useAuthStore } from '../store/authStore';
-import { AuthUser, DoctorStatus, SupabaseAuthResponse, UserRole } from '../types/auth.types';
+import axios from "axios";
+import { supabaseClient } from "./supabase";
+import {
+  saveTokens,
+  saveUserMeta,
+  getUserMeta,
+  clearAllAuthData,
+  getAccessToken,
+} from "./tokenService";
+import { useAuthStore } from "../store/authStore";
+import {
+  AuthUser,
+  DoctorStatus,
+  SupabaseAuthResponse,
+  UserRole,
+} from "../types/auth.types";
 
 const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL!;
 const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
-
 
 /**
    @param email    
    @param password 
    @param role     
  */
-
 
 export async function signIn(
   email: string,
@@ -27,13 +36,13 @@ export async function signIn(
   setError(null);
 
   try {
-    const { data: authData } = await axios.post<SupabaseAuthResponse>(
+    const { data: authData } = await supabaseClient.post<SupabaseAuthResponse>(
       `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
       { email, password },
       {
         headers: {
           apikey: SUPABASE_ANON_KEY,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       },
     );
@@ -45,52 +54,60 @@ export async function signIn(
       refreshToken: refresh_token,
     });
 
-    const table = role === 'patient' ? 'patient' : 'doctor';
+    const table = role === "patient" ? "patient" : "doctor";
+    let selectQuery = "id";
+    if (role === "doctor") {
+      selectQuery = "id,verify_status";
+    }
 
-  const { data: profileRows } = await supabaseClient.get<
-  { id: string; verify_status?: string }[]
->(
-  `/${table}`,
-  {
-    params: {
-      id: `eq.${user.id}`,
-      select: 'id,verify_status',
-    },
-  },
-
-);
+    const { data: profileRows } = await axios.get(
+      `${SUPABASE_URL}/rest/v1/${table}?id=eq.${user.id}&select=${selectQuery}`,
+      {
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${access_token}`,
+        },
+      },
+    );
 
     if (!profileRows || profileRows.length === 0) {
       await clearAllAuthData();
       await axios.post(
         `${SUPABASE_URL}/auth/v1/logout`,
         {},
-        { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${access_token}` } },
+        {
+          headers: {
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: `Bearer ${access_token}`,
+          },
+        },
       );
       throw new Error(
-        role === 'patient'
-          ? 'This account is not registered as a patient. Try logging in as a doctor.'
-          : 'This account is not registered as a doctor. Try logging in as a patient.',
+        role === "patient"
+          ? "This account is not registered as a patient. Try logging in as a doctor."
+          : "This account is not registered as a doctor. Try logging in as a patient.",
       );
     }
 
     await saveUserMeta({ id: user.id, email: user.email, role });
 
-    const authUser: AuthUser = { id: user.id, email: user.email, role ,  verify_status: profileRows[0]?.verify_status as DoctorStatus,
-};
+    const authUser: AuthUser = {
+      id: user.id,
+      email: user.email,
+      role,
+      verify_status: profileRows[0]?.verify_status as DoctorStatus,
+    };
     setSession(authUser, access_token);
-
   } catch (err: any) {
     const message =
       err?.response?.data?.error_description ??
       err?.message ??
-      'An unexpected error occurred. Please try again.';
+      "An unexpected error occurred. Please try again.";
     clearSession();
     setError(message);
     throw err;
   }
 }
-
 
 /**
    @param email 
@@ -99,12 +116,11 @@ export async function signIn(
    @param meta 
  */
 
-
 export async function signUp(
   email: string,
   password: string,
   role: UserRole,
-  meta: any = {}
+  meta: any = {},
 ): Promise<void> {
   const { setSession, setAuthenticating, setError, clearSession } =
     useAuthStore.getState();
@@ -119,7 +135,7 @@ export async function signUp(
       {
         headers: {
           apikey: SUPABASE_ANON_KEY,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       },
     );
@@ -127,7 +143,7 @@ export async function signUp(
     const { access_token, refresh_token, user } = authData;
 
     if (!user || (!access_token && !refresh_token)) {
-      throw new Error('account created successfully, please verify your email');
+      throw new Error("account created successfully, please verify your email");
     }
 
     await saveTokens({
@@ -135,22 +151,22 @@ export async function signUp(
       refreshToken: refresh_token,
     });
 
-    if (role === 'patient') {
+    if (role === "patient") {
       const generatedNickname = `USR-${Math.floor(100000 + Math.random() * 900000)}`;
 
       await supabaseClient.post(
-        '/patient',
+        "/patient",
         {
           id: user.id,
           nickname: generatedNickname,
           age: meta.age,
           gender: meta.gender,
         },
-        { headers: { Prefer: 'return=minimal' } }
+        { headers: { Prefer: "return=minimal" } },
       );
     } else {
       await supabaseClient.post(
-        '/doctor',
+        "/doctor",
         {
           id: user.id,
           email: user.email,
@@ -160,16 +176,19 @@ export async function signUp(
           profilePic: meta.profilePic || "",
           points: 0,
         },
-        { headers: { Prefer: 'return=minimal' } }
+        { headers: { Prefer: "return=minimal" } },
       );
     }
 
     await saveUserMeta({ id: user.id, email: user.email, role });
 
-    const authUser: AuthUser = { id: user.id, email: user.email, role ,  verify_status: role === 'doctor' ? 'pending' : undefined,
-};
+    const authUser: AuthUser = {
+      id: user.id,
+      email: user.email,
+      role,
+      verify_status: role === "doctor" ? "pending" : undefined,
+    };
     setSession(authUser, access_token);
-
   } catch (err: any) {
     console.error("Supabase API Error Data:", err?.response?.data);
 
@@ -177,14 +196,12 @@ export async function signUp(
       err?.response?.data?.msg ??
       err?.response?.data?.error_description ??
       err?.message ??
-      'An error occurred while creating the account. Please check the data.';
+      "An error occurred while creating the account. Please check the data.";
     setError(message);
     clearSession();
     throw err;
   }
 }
-
-
 
 export async function signOut(): Promise<void> {
   const { clearSession, setAuthenticating } = useAuthStore.getState();
@@ -205,14 +222,11 @@ export async function signOut(): Promise<void> {
       );
     }
   } catch {
-
   } finally {
     await clearAllAuthData();
     clearSession();
   }
 }
-
-
 
 export async function restoreSession(): Promise<void> {
   const { setSession, clearSession } = useAuthStore.getState();
@@ -238,13 +252,11 @@ export async function restoreSession(): Promise<void> {
     };
 
     setSession(authUser, accessToken);
-
   } catch {
     await clearAllAuthData();
     clearSession();
   }
 }
-
 
 export async function resetPasswordForEmail(email: string): Promise<void> {
   const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL!;
@@ -254,13 +266,17 @@ export async function resetPasswordForEmail(email: string): Promise<void> {
     await axios.post(
       `${SUPABASE_URL}/auth/v1/recover`,
       { email },
-      { headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json' } }
+      {
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          "Content-Type": "application/json",
+        },
+      },
     );
   } catch (error: any) {
     throw error;
   }
 }
-
 
 export async function verifyOTP(email: string, token: string): Promise<string> {
   const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL!;
@@ -269,8 +285,13 @@ export async function verifyOTP(email: string, token: string): Promise<string> {
   try {
     const { data } = await axios.post<SupabaseAuthResponse>(
       `${SUPABASE_URL}/auth/v1/verify`,
-      { type: 'recovery', email, token },
-      { headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json' } }
+      { type: "recovery", email, token },
+      {
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          "Content-Type": "application/json",
+        },
+      },
     );
 
     return data.access_token;
@@ -279,7 +300,11 @@ export async function verifyOTP(email: string, token: string): Promise<string> {
   }
 }
 
-export async function updatePassword(email: string, newPassword: string, tempAccessToken: string): Promise<void> {
+export async function updatePassword(
+  email: string,
+  newPassword: string,
+  tempAccessToken: string,
+): Promise<void> {
   const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL!;
   const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
 
@@ -291,13 +316,12 @@ export async function updatePassword(email: string, newPassword: string, tempAcc
         headers: {
           apikey: SUPABASE_ANON_KEY,
           Authorization: `Bearer ${tempAccessToken}`,
-          'Content-Type': 'application/json'
-        }
-      }
+          "Content-Type": "application/json",
+        },
+      },
     );
 
-
-    await signIn(email, newPassword, 'doctor');
+    await signIn(email, newPassword, "doctor");
   } catch (error: any) {
     throw error;
   }

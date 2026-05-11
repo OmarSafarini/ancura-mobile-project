@@ -73,7 +73,6 @@ const styles = StyleSheet.create({
     borderRadius: scale(15),
     padding: scale(12),
     justifyContent: "space-between",
-
   },
   emergencyShadow: {
     shadowColor: Colors.warning,

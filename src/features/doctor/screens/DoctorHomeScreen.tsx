@@ -1,10 +1,7 @@
 import AppBackground from "@/components/base/AppBackground";
-import IconWrapper from "@/components/common/IconWrapper";
 import { StyleSheet, View, Text, SafeAreaView, FlatList } from "react-native";
-import { Colors as colors, palette } from "@/utils/colors";
 import { scale } from "@/utils/responsive";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Family } from "@/utils/typography";
 import CaseCard from "@/components/common/CaseCard";
 import { CaseData } from "@/types/ICaseData";
 import { IDoctor } from "@/types/IDoctor";
@@ -56,7 +53,7 @@ const {
   return (
     <AppBackground variant="clean">
       <View style={styles.container}>
-        <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
+       <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
           <View style={{ marginLeft: scale(5) }}>
             <DoctorGreeting
               name={doctor?.full_name}
@@ -87,8 +84,9 @@ const {
             />
           )}
           contentContainerStyle={{
-            paddingBottom: scale(90),
-            paddingTop: scale(10),
+             paddingBottom: scale(90),
+    paddingTop: scale(10),
+    paddingHorizontal: scale(16),
           }}
         />
       </View>
@@ -108,19 +106,8 @@ const styles = StyleSheet.create({
     borderRadius: scale(50),
   },
   container: {
-    padding: scale(40),
     flex: 1,
+      paddingHorizontal: scale(16),
   },
-  greeting: {
-    fontSize: scale(16),
-    fontFamily: Family.FG_Regular,
-    color: palette.darkGray,
-  },
-  userName: {
-    fontSize: scale(18),
-    fontFamily: Family.FG_Medium,
-    fontWeight: "500",
-    color: palette.dark,
-  },
- 
 });
+
