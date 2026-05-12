@@ -19,5 +19,8 @@ export const useAddNotification = () => {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["notifications", variables.patientId] });
     },
+    onError: (error) => {
+      console.error("Failed to add notification:", error);
+    }
   });
 };

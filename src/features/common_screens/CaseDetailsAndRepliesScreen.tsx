@@ -16,6 +16,8 @@ import ReplyField from "@/components/forms/ReplyFeild";
 import ArrowInCircle from "@/components/common/SubmitButton";
 import ScrollToBottomButton from "../patient/components/ScrollToBottom";
 import DeleteCasePopUp from "@/components/common/DeleteCasePopUp";
+import { useAddNotification } from "@/hooks/useAddNotification";
+import { useAddActivitylog } from "@/hooks/useAddActivitylog";
 
 import { scale } from "@/utils/responsive";
 import { Colors } from "@/utils/colors";
@@ -76,11 +78,29 @@ export default function CaseDetailScreen({ navigation, route }: any) {
     enabled: !!caseId,
   });
 
+  const { mutate: sendNotification } = useAddNotification();
+  const { mutate: addActivitylog } = useAddActivitylog();
+
   const { mutate: submitReply, isPending } = useMutation({
     mutationFn: postReply,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['replies', caseId] });
       resetField('doctorReply');
+
+      addActivitylog({
+        doctor_id: authUser?.id,
+        history_title: "New Reply Added",
+        body: `You replied to case: ${caseData?.title}`,
+        status: "comment",
+      });
+
+      if (isDoctor && caseData?.patient_id) {
+        sendNotification({
+          patientId: caseData.patient_id,
+          title: `New reply received for your case: ${caseData?.title}`,
+          status: 'doctor_replied'
+        });
+      }
     },
     onError: (error: any) => {
       console.error('Failed to post reply:', error?.response?.data || error.message);

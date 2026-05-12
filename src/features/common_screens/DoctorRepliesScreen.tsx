@@ -15,6 +15,8 @@ import { Colors } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import { getRepliesByCaseId, postReply } from "@/services/common_services/ReplyService";
 import { useAuthStore } from "@/store/authStore";
+import { useAddNotification } from "@/hooks/useAddNotification";
+import { useAddActivitylog } from "@/hooks/useAddActivitylog";
 
 type FormData = { doctorReply: string };
 
@@ -39,19 +41,49 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
     enabled: !!caseId,
   });
 
+  const { mutate: sendNotification } = useAddNotification();
+  const { mutate: addActivitylog } = useAddActivitylog();
+
+  
   const { mutate: submitReply } = useMutation({
-    mutationFn: postReply,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['replies', caseId] });
-      resetField('doctorReply');
-      setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
-      }, 300);
-    },
-    onError: (error: any) => {
-      console.error('Failed to post reply:', error?.response?.data || error.message);
-    },
-  });
+  mutationFn: postReply,
+
+  onSuccess: () => {
+    queryClient.invalidateQueries({
+      queryKey: ['replies', caseId]
+    });
+
+    resetField('doctorReply');
+
+    addActivitylog({
+      doctor_id: authUser?.id,
+      history_title: "New Reply Added",
+      body: `You replied to case: ${caseData?.title}`,
+      status: "alert",
+    });
+
+    if (isDoctor && caseData?.patient_id) {
+      sendNotification({
+        patientId: caseData.patient_id,
+        title: `New reply received for your case: ${caseData?.title}`,
+        status: 'doctor_replied'
+      });
+    }
+
+    setTimeout(() => {
+      flatListRef.current?.scrollToEnd({
+        animated: true
+      });
+    }, 300);
+  },
+
+  onError: (error: any) => {
+    console.error(
+      'Failed to post reply:',
+      error?.response?.data || error.message
+    );
+  },
+});
 
   const onSend = async (data: FormData) => {
     if (!data.doctorReply.trim()) return;
