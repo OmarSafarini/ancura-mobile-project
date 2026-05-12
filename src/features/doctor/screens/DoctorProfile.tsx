@@ -15,6 +15,7 @@ import LogoutButton from "@/components/common/LogoutButton";
 import LocationIcon from "../../../assets/icons/LocationIcoon";
 import EmailIcon from "../../../assets/icons/EmailIcon";
 import TickIcon from "@/assets/icons/TickIcon";
+import BackButton from "@/components/common/BackButton";
 import { IDoctor } from "@/types/IDoctor";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -58,8 +59,6 @@ export default function DoctorProfile({ navigation }: any) {
     },
   });
 
-  const insets = useSafeAreaInsets();
-
     if (doctorLoading ||LicenseLoading) {
     return (
         <Loading />
@@ -82,20 +81,10 @@ export default function DoctorProfile({ navigation }: any) {
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.container}>
-            <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
-              <Text style={styles.Text}>Profile & Settings</Text>
-              <IconWrapper
-                size={scale(33)}
-                bgColor={palette.white}
-                shape="square"
-              >
-                <ArrowLeftIcon
-                  size={scale(18)}
-                  color={palette.dark}
-                  onPress={goBack}
-                />
-              </IconWrapper>
-            </SafeAreaView>
+            <View style={styles.header}>
+              <Text style={styles.title}>Profile & Settings</Text>
+              <BackButton onPress={goBack} />
+            </View>
 
             <View style={styles.profileCard}>
               <View style={styles.DoctorInfo}>
