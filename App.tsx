@@ -5,6 +5,7 @@ import { useAppFonts } from "./src/utils/useAppFonts";
 import RootNavigator from "./src/layout/RootNavigator";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { DoctorProvider } from "@/Context/DoctorContext";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,7 +25,7 @@ export default function App() {
   }
 
   return (
-    <>
+    <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
 
         <DoctorProvider>
@@ -39,7 +40,7 @@ export default function App() {
 
         <FlashMessage position="top" />
       </QueryClientProvider>
-    </>
+    </SafeAreaProvider>
   );
 }
 

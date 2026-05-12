@@ -16,6 +16,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCommentsByReplyId, postComment } from "@/services/common_services/CommentService";
 import { useAuthStore } from "@/store/authStore";
 import { useAddNotification } from "@/hooks/useAddNotification"; // added by omar
+import { useAddActivitylog } from "@/hooks/useAddActivitylog";
 
 type FormData = {
   doctorReply: string;
@@ -30,6 +31,7 @@ export default function AllRepliesScreen({ navigation, route }: any) {
   const role = route?.params?.role || 'patient';
 
   const { mutate: sendNotification } = useAddNotification(); // added by omar
+  const { mutate: addActivitylog } = useAddActivitylog();
   const isPatient = role === "patient";
 
   const authUser = useAuthStore((state) => state.user);
@@ -49,10 +51,18 @@ export default function AllRepliesScreen({ navigation, route }: any) {
 
       // 2. added by omar
       if (authRole === 'doctor' && caseData?.patient_id) {
+        // ADD ACTIVITY LOG
+        addActivitylog({
+          doctor_id: authUser?.id,
+          history_title: "Comment Added",
+          body: `You commented on a reply for case: ${caseData?.title}`,
+          status: "comment",
+        });
+
         sendNotification({
           patientId: caseData.patient_id,
           title: `New reply received for your case: ${caseData?.title}`,
-          status: 'Success'
+          status: 'doctor_replied'
         });
       }
 

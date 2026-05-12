@@ -9,11 +9,13 @@ import NotificationCard from "@/components/common/NotificationCard";
 import { useNavigation } from "@react-navigation/native";
 import { getPatientNotification } from "@/services/Patient/Notification";
 import { useQuery } from "@tanstack/react-query";
+import { useMarkNotificationAsRead } from "@/hooks/useMarkNotificationAsRead";
 
 // ✅ Import the store here
 import { useAuthStore } from "@/store/authStore"; 
 
 export default function Notification() {
+    const { mutate: markAsRead } = useMarkNotificationAsRead();
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const translateY = useRef(new Animated.Value(20)).current; 
     const navigation = useNavigation();
@@ -35,13 +37,11 @@ export default function Notification() {
         ]).start();
     }, []);
 
-    const { data: notifications, isLoading } = useQuery({
+    const { data: notifications, isLoading, refetch } = useQuery({
         queryKey: ["notifications", user?.id], 
-        
         queryFn: () => getPatientNotification(user?.id), 
-        
         enabled: !!user?.id 
-    });
+    }); 
 
     const renderHeader = () => (
         <View style={styles.header}>
@@ -55,6 +55,8 @@ export default function Notification() {
     const renderItem = ({ item }) => (
         <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY }] }}>
             <Pressable
+                onPress={() => {
+                    if (!item.is_read) markAsRead(item.id);}}
                 android_ripple={{ color: Colors.formBackground }}
                 style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.97 : 1 }] }]}>
                 <NotificationCard {...item} />
@@ -62,7 +64,7 @@ export default function Notification() {
         </Animated.View>
     );
 
-    return (
+    return (    
         <AppBackground variant="clean" style={styles.background}>
             <SafeAreaView style={styles.safeArea}>
                 <FlatList
@@ -72,6 +74,8 @@ export default function Notification() {
                     ListHeaderComponent={renderHeader}
                     contentContainerStyle={styles.listContainer}
                     showsVerticalScrollIndicator={false}
+                    refreshing={isLoading}
+                    onRefresh={refetch}
                 />
             </SafeAreaView>
         </AppBackground>

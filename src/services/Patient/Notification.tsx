@@ -27,8 +27,27 @@ export const addPatientNotification = async (payload:any) => {
       payload
     );
     return res.data;
-  } catch (error) {
-    console.error("addPatientNotification ERROR:", error);
+  } catch (error:any) {
+    console.error("addPatientNotification ERROR:",error?.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const markNotificationAsRead = async (id: number) => {
+  try {
+    const res = await supabaseClient.patch(
+      `/notification?id=eq.${id}`,
+      {
+        isRead: true,
+      }
+    );
+
+    return res.data;
+  } catch (error: any) {
+    console.error(
+      "markNotificationAsRead ERROR:",
+      error?.response?.data || error.message
+    );
     throw error;
   }
 };

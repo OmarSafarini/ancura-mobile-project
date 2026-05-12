@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabaseClient } from "@/services/supabase"; 
 import { Text, View, StyleSheet, FlatList, ActivityIndicator, SafeAreaView} from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -13,6 +14,7 @@ import StartwithTickIcon from "@/assets/icons/StartwithTickIcon";
 import ArrowIcon from "@/assets/icons/ArrowIcon";
 import HandLikeIcon from "@/assets/icons/HandLikeIcon";
 import StarIcon from "@/assets/icons/StarIcon";
+import { useAuthStore } from "@/store/authStore";
 
 
 const ACTIVITY_UI_MAP = {
@@ -26,26 +28,17 @@ const ACTIVITY_UI_MAP = {
 
 export default function ActivityLog() {
     const navigation = useNavigation();
-    
-    const [activities, setActivities] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const user = useAuthStore((state) => state.user);
 
-    useEffect(() => {
-        const fetchActivities = async () => {
-            try {
-                const response = await supabaseClient.get('/activity_log?select=*');
-                setActivities(response.data);
-            } catch (err) {
-                console.error("Error fetching activity logs:", err);
-                setError("Failed to load activities.");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchActivities();
-    }, []);
+    const { data: activities = [], isLoading, error, refetch } = useQuery({
+        queryKey: ["activitylog", user?.id],
+        queryFn: async () => {
+            if (!user?.id) return [];
+            const response = await supabaseClient.get(`/activity_log?doctor_id=eq.${user.id}&select=*&order=date.desc`);
+            return response.data;
+        },
+        enabled: !!user?.id,
+    });
 
     return (
         <AppBackground variant="clean" style={styles.screen}>
@@ -62,7 +55,7 @@ export default function ActivityLog() {
                     <ActivityIndicator size="large" color={Colors.primary} style={{ marginTop: scale(40) }} />
                 )}
                 {error && (
-                    <Text style={{ textAlign: 'center', marginTop: scale(20), color: 'red' }}>{error}</Text>
+                    <Text style={{ textAlign: 'center', marginTop: scale(20), color: 'red' }}>{error instanceof Error ? error.message : "Failed to load activities."}</Text>
                 )}
 
                 {/* Data State */}
@@ -72,6 +65,8 @@ export default function ActivityLog() {
                         keyExtractor={(item, index) => (item?.id ?? index).toString()}
                         showsVerticalScrollIndicator={false}
                         contentContainerStyle={styles.listContent}
+                        refreshing={isLoading}
+                        onRefresh={refetch}
                         renderItem={({ item }) => {
                             const itemStatus = item.status ? item.status.toLowerCase() : 'default';
                             const uiConfig = ACTIVITY_UI_MAP[itemStatus] || ACTIVITY_UI_MAP['default'];
