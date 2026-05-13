@@ -24,10 +24,13 @@ console.log("DATA FROM SQLITE:", rows);
 
 export async function saveCasesToLocal(cases: any[]) {
   const db = await initDB();
+  // Clear the table first to ensure consistency (remove items deleted on server)
+  await db.runAsync("DELETE FROM patient_cases;");
+  
   for (const c of cases) {
     await db.runAsync(
-      `INSERT OR REPLACE INTO patient_cases (id, title, status, description,time_ago )
-       VALUES (?, ?, ?, ?,?);`,
+      `INSERT OR REPLACE INTO patient_cases (id, title, status, description, time_ago)
+       VALUES (?, ?, ?, ?, ?);`,
       c.id,
       c.title,
       c.status,
@@ -35,6 +38,11 @@ export async function saveCasesToLocal(cases: any[]) {
       c.time_ago
     );
   }
+}
+
+export async function deleteLocalCase(id: number) {
+  const db = await initDB();
+  await db.runAsync("DELETE FROM patient_cases WHERE id = ?;", id);
 }
 
 export async function getLocalCases() {

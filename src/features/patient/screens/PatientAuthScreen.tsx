@@ -55,9 +55,10 @@ export default function PatientAuthScreen({ navigation }: any) {
   const onSubmit = async (data: any) => {
     console.log("Form Submitted! Data:", data);
     try {
+      const trimmedEmail = data.email.trim();
       if (authMode === 'signin') {
         console.log("Attempting to sign in...");
-        await signIn(data.email, data.password, 'patient');
+        await signIn(trimmedEmail, data.password, 'patient');
         
         const supported = await checkBiometricSupport();
         const creds = await getBiometricCredentials('patient');
@@ -79,7 +80,7 @@ export default function PatientAuthScreen({ navigation }: any) {
         }
       } else {
         console.log("Attempting to sign up...");
-        await signUp(data.email, data.password, 'patient', {
+        await signUp(trimmedEmail, data.password, 'patient', {
           age: parseInt(data.age, 10),
           gender: data.gender ? data.gender.toLowerCase() : 'male',
         });
@@ -144,7 +145,7 @@ export default function PatientAuthScreen({ navigation }: any) {
               placeholder="your@email.com"
               rules={{
                 required: "Email is required",
-                pattern: { value: /\S+@\S+\.\S+/, message: "Invalid email format" },
+                pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email format" },
               }}
               keyboardType="email-address"
               autoCapitalize="none"

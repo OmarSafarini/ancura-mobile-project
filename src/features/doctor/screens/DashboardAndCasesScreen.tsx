@@ -59,7 +59,7 @@ export default function DoctorDashboardAndCases({ navigation }: any) {
   retry: 2,
 });
 
-const doctorCases: CaseData[] = casesData ?? [];
+const doctorCases: CaseData[] = (casesData ?? []).filter((c) => c.status !== "resolved" && c.status !== "Resolved");
   return (
     <AppBackground>
       <SafeAreaView style={{ flex: 1 }}>

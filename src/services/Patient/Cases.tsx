@@ -33,7 +33,7 @@ export const editCase = async (
   payload: Partial<CaseInput>
 ): Promise<CaseData> => {
   try {
-    const { data } = await supabaseClient.patch(`/post?id=eq.${caseId}`, payload);
+    const { data } = await supabaseClient.patch(`/case?id=eq.${caseId}`, payload);
 
     return Array.isArray(data) ? data[0] : data;
   } catch (error) {

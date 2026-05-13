@@ -3,7 +3,8 @@ import { Control, useForm } from "react-hook-form";
 import { View, FlatList, StyleSheet, SafeAreaView } from "react-native";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getRepliesByCaseId, postReply } from '@/services/common_services/ReplyService';
-import { deleteCase } from '@/services/common_services/Case';
+import { deleteCase, updateCaseStatus } from '@/services/common_services/Case';
+import { deleteLocalCase } from "@/services/localDb";
 import { useAuthStore } from '@/store/authStore';
 import AppBackground from "@/components/base/AppBackground";
 import BackButton from "@/components/common/BackButton";
@@ -122,12 +123,29 @@ export default function CaseDetailScreen({ navigation, route }: any) {
       // ── Remove the specific case detail cache ──
       queryClient.removeQueries({ queryKey: ['case', caseId] });
 
+      // ── Remove from SQLite ──
+      deleteLocalCase(Number(caseId));
+
       setShowDeletePopup(false);
       navigation.goBack();
     },
     onError: (error: any) => {
       console.error('Failed to delete case:', error?.response?.data || error.message);
       setShowDeletePopup(false);
+    },
+  });
+
+  // ─── Resolve Case Mutation ─────────────────────────────────────────
+  const { mutate: handleResolveCase, isPending: isResolving } = useMutation({
+    mutationFn: () => updateCaseStatus(caseId, 'resolved'),
+    onSuccess: () => {
+      // ── Refresh data ──
+      queryClient.invalidateQueries({ queryKey: ['patientPost'] });
+      queryClient.invalidateQueries({ queryKey: ['cases'] }); // For doctor view if applicable
+      queryClient.invalidateQueries({ queryKey: ['case', caseId] });
+    },
+    onError: (error: any) => {
+      console.error('Failed to resolve case:', error?.response?.data || error.message);
     },
   });
 
@@ -170,6 +188,7 @@ export default function CaseDetailScreen({ navigation, route }: any) {
                 <>
                   <ToggleButton
                     title="Edit Case"
+                    onPress={() => navigation.navigate('EditCaseScreen', { caseId, caseData })}
                     Icon={PencilIcon}
                     bgColor={Colors.secondary}
                     textColor="#FFFFFF"
@@ -228,9 +247,7 @@ export default function CaseDetailScreen({ navigation, route }: any) {
               <View style={styles.patientBottom}>
                 <View style={{ width: "70%" }}>
                   <ResolvedSlideButton
-                    onSlideComplete={() => {
-                      console.log("Case Marked as Resolved");
-                    }}
+                    onSlideComplete={handleResolveCase}
                   />
                 </View>
 

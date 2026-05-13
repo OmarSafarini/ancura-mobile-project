@@ -42,3 +42,16 @@ export const deleteCase = async (caseId: string): Promise<void> => {
     throw error;
   }
 };
+
+export const updateCaseStatus = async (caseId: string, status: string): Promise<void> => {
+  try {
+    await supabaseClient.patch('/case', { status }, {
+      params: {
+        id: `eq.${caseId}`,
+      },
+    });
+  } catch (error: any) {
+    console.error('Error updating case status:', error.response?.data || error.message);
+    throw error;
+  }
+};

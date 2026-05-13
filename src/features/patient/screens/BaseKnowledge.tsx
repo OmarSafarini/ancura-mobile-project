@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Text, View, StyleSheet, FlatList, Pressable, Animated, Modal, SafeAreaView } from "react-native";
+import { Text, View, StyleSheet, FlatList, Animated, Modal, SafeAreaView } from "react-native";
 import { WebView } from "react-native-webview";
-import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 import DocumentIcon from "@/assets/icons/DoucmentIcon";
 import AppBackground from "@/components/base/AppBackground";
 import Article from "@/features/patient/components/Article";
@@ -11,6 +10,7 @@ import { scale } from "@/utils/responsive";
 import { Family } from "@/utils/typography";
 import YoutubeIcon from "@/assets/icons/YoutubeIcon";
 import { useNavigation } from "@react-navigation/native";
+import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 
 const ARTICLE_CATEGORIES = ["Articles", "Exercises"];
 
@@ -32,7 +32,9 @@ export function BaseKnowledge() {
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const translateY = useRef(new Animated.Value(20)).current;
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-    const [activeUrl, setActiveUrl] = useState<string | null>(null); // State for WebView
+    const [activeUrl, setActiveUrl] = useState<string | null>(null);
+    const [canGoBack, setCanGoBack] = useState(false);
+    const webViewRef = useRef<WebView>(null);
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -59,9 +61,20 @@ export function BaseKnowledge() {
     });
 
     const handleResourcePress = (item: typeof RESOURCES[0]) => {
-        // Instead of Linking.openURL, we set the active URL to display in the WebView
         if (item.url) {
             setActiveUrl(item.url);
+        }
+    };
+
+    const handleBackPress = () => {
+        if (activeUrl) {
+            if (canGoBack && webViewRef.current) {
+                webViewRef.current.goBack();
+            } else {
+                setActiveUrl(null);
+            }
+        } else {
+            navigation.goBack();
         }
     };
 
@@ -69,9 +82,11 @@ export function BaseKnowledge() {
         <View style={styles.headerWrapper}>
             <View style={styles.header}>
                 <Text style={styles.title}>Self-Help & Resources</Text>
-                <Pressable style={styles.iconWrapper} onPress={() => navigation.goBack()}>
-                    <ArrowLeftIcon color={Colors.textDark2} size={scale(18)} />
-                </Pressable>
+                <ArrowLeftIcon 
+                    color={Colors.textDark2} 
+                    size={scale(18)} 
+                    onPress={handleBackPress}
+                />
             </View>
             <View style={styles.articleContainer}>
                 {ARTICLE_CATEGORIES.map((title) => (
@@ -108,7 +123,6 @@ export function BaseKnowledge() {
                 />
             </SafeAreaView>
 
-            {/* WebView Modal Overlay */}
             <Modal
                 visible={activeUrl !== null}
                 animationType="slide"
@@ -116,17 +130,21 @@ export function BaseKnowledge() {
             >
                 <SafeAreaView style={styles.webViewSafeArea}>
                     <View style={styles.webViewHeader}>
-                        <Pressable style={styles.iconWrapper} onPress={() => setActiveUrl(null)}>
-                            <ArrowLeftIcon color={Colors.textDark2} size={scale(18)} />
-                        </Pressable>
+                        <ArrowLeftIcon 
+                            color={Colors.textDark2} 
+                            size={scale(18)} 
+                            onPress={handleBackPress}
+                        />
                         <Text style={styles.webViewHeaderTitle} numberOfLines={1}>Resource</Text>
                         <View style={{ width: scale(34) }} />
                     </View>
                     {activeUrl && (
                         <WebView
+                            ref={webViewRef}
                             source={{ uri: activeUrl }}
                             style={styles.webView}
                             startInLoadingState={true}
+                            onNavigationStateChange={(navState) => setCanGoBack(navState.canGoBack)}
                         />
                     )}
                 </SafeAreaView>
@@ -184,10 +202,9 @@ const styles = StyleSheet.create({
     separator: {
         height: scale(17),
     },
-    // WebView Styles
     webViewSafeArea: {
         flex: 1,
-        backgroundColor: "#fff", // Adjust to match your app's theme
+        backgroundColor: "#fff",
     },
     webViewHeader: {
         flexDirection: "row",
