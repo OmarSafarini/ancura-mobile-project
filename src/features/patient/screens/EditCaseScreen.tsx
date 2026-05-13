@@ -24,6 +24,7 @@ import { Family } from "@/utils/typography";
 import FileBar from "@/components/common/FileBar";
 import IconWrapper from "@/components/common/IconWrapper";
 import { editCase } from "@/services/Patient/Cases";
+import { useQueryClient } from "@tanstack/react-query";
 
 type FormValues = {
   title: string;
@@ -39,6 +40,7 @@ type CaseFileItem = {
 
 const EditCaseScreen = ({ navigation, route }: any) => {
   const [caseFiles, setCaseFiles] = useState<CaseFileItem[]>([]);
+  const queryClient = useQueryClient();
 
   const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
     defaultValues: {
@@ -72,6 +74,10 @@ const EditCaseScreen = ({ navigation, route }: any) => {
         isEmergency: data.isEmergency,
         file: files.length ? files : null,
       });
+
+      queryClient.invalidateQueries({ queryKey: ["case", Number(caseId)] });
+      queryClient.invalidateQueries({ queryKey: ["patientPost"] });
+      queryClient.invalidateQueries({ queryKey: ["cases"] });
 
       Alert.alert("Success", "Case updated successfully.");
       navigation.goBack();

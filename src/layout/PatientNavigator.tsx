@@ -36,6 +36,7 @@ function PatientHomeStackNavigator() {
       <HomeStack.Screen name="EditCaseScreen" component={EditCaseScreen} />
       <HomeStack.Screen name="AllRepliesScreen" component={AllRepliesScreen} />
       <HomeStack.Screen name="DoctorRepliesScreen" component={DoctorRepliesScreen} />
+      <HomeStack.Screen name="BaseKnowledge" component={BaseKnowledgeScreen} />
     </HomeStack.Navigator>
   );
 }

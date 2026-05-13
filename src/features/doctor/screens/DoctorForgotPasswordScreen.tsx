@@ -26,8 +26,9 @@ export default function DoctorForgotPasswordScreen({ navigation }: any) {
     try {
       setLoading(true);
       setError('');
-      await resetPasswordForEmail(data.email);
-      navigation.navigate('DoctorVerificationScreen', { email: data.email });
+      const trimmedEmail = data.email.trim();
+      await resetPasswordForEmail(trimmedEmail);
+      navigation.navigate('DoctorVerificationScreen', { email: trimmedEmail });
     } catch (e: any) {
       setError(e.message || "Error sending code. Please check your email.");
     } finally {
@@ -65,7 +66,7 @@ export default function DoctorForgotPasswordScreen({ navigation }: any) {
               placeholder="doctor@example.com"
               rules={{
                 required: "Email is required",
-                pattern: { value: /\S+@\S+\.\S+/, message: "Invalid email" }
+                pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email format" }
               }}
             />
             {error ? <Text style={{ color: Colors.error, marginTop: 10 }}>{error}</Text> : null}

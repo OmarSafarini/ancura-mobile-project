@@ -11,7 +11,6 @@ import { getPatientNotification } from "@/services/Patient/Notification";
 import { useQuery } from "@tanstack/react-query";
 import { useMarkNotificationAsRead } from "@/hooks/useMarkNotificationAsRead";
 
-// ✅ Import the store here
 import { useAuthStore } from "@/store/authStore"; 
 
 export default function Notification() {

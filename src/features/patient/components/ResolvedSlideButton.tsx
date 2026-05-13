@@ -44,8 +44,9 @@ const ResolvedSlideButton: React.FC<ResolvedSlideButtonProps> = ({ onSlideComple
     PanResponder.create({
       // Only take control when horizontal gesture is dominant → safe with parent ScrollViews
       onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: (_, gs) =>
-        Math.abs(gs.dx) > Math.abs(gs.dy) && Math.abs(gs.dx) > 5,
+      onStartShouldSetPanResponderCapture: () => true,
+      onMoveShouldSetPanResponder: (_, gs) => Math.abs(gs.dx) > 5,
+      onMoveShouldSetPanResponderCapture: (_, gs) => Math.abs(gs.dx) > 5,
       onPanResponderGrant: () => {
         thumbX.stopAnimation((val) => {
           thumbXSnapshot.current = val;
@@ -87,6 +88,8 @@ const ResolvedSlideButton: React.FC<ResolvedSlideButtonProps> = ({ onSlideComple
       onPanResponderTerminate: () => {
         Animated.spring(thumbX, { toValue: 0, useNativeDriver: false }).start();
       },
+      onPanResponderTerminationRequest: () => false,
+      onShouldBlockNativeResponder: () => true,
     })
   ).current;
 
@@ -97,6 +100,7 @@ const ResolvedSlideButton: React.FC<ResolvedSlideButtonProps> = ({ onSlideComple
     <View
       style={[styles.container, style]}
       onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}
+      {...panResponder.panHandlers}
     >
       {/* Render only after width is measured */}
       {isReady && (
@@ -115,11 +119,10 @@ const ResolvedSlideButton: React.FC<ResolvedSlideButtonProps> = ({ onSlideComple
               </Svg>
             </Animated.View>
           </View>
-
+ 
           {/* Sliding thumb with tick */}
           <Animated.View
             style={[styles.thumb, { transform: [{ translateX: thumbX }] }]}
-            {...panResponder.panHandlers}
           >
             <TickIcon size={THUMB_SIZE} />
           </Animated.View>

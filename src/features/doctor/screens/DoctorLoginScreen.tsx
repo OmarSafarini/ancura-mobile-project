@@ -55,7 +55,8 @@ export default function DoctorLoginScreen({ navigation }: any) {
 
   const onSubmit = async (data: any) => {
     try {
-      await signIn(data.email, data.password, "doctor");
+      const trimmedEmail = data.email.trim();
+      await signIn(trimmedEmail, data.password, "doctor");
 
       const supported = await checkBiometricSupport();
       const creds = await getBiometricCredentials("doctor");
@@ -130,7 +131,10 @@ export default function DoctorLoginScreen({ navigation }: any) {
               name="email"
               label="Email"
               placeholder="USR-978896"
-              rules={{ required: "Email is required" }}
+              rules={{ 
+                required: "Email is required",
+                pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email format" }
+              }}
             />
 
             <View style={{ height: scale(15) }} />

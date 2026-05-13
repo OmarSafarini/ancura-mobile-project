@@ -87,9 +87,11 @@ export default function PatientHomePage() {
     return <Text>Error loading cases</Text>;
   }
 
+  const displayCases = patientPost || localCases;
+
   const filteredCases = filterStatus
-    ? localCases?.filter((c) => c.status === filterStatus)
-    : localCases;
+    ? displayCases?.filter((c: any) => c.status === filterStatus)
+    : displayCases;
 
   const STATUS_OPTIONS = [
     { label: "All", value: null },
@@ -136,7 +138,7 @@ export default function PatientHomePage() {
             />
           ))}
         </View>
-        {filteredCases.length > 0 ? (
+        {filteredCases && filteredCases.length > 0 ? (
           <View>
             <FlatList
               data={filteredCases}

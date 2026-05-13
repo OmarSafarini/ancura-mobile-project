@@ -57,8 +57,9 @@ const OnSubmit = async (data: any) => {
 
 
     console.log(setDoctorData);
+    const trimmedEmail = data.Email.trim();
     await signUp(
-      data.Email,
+      trimmedEmail,
       data.Password,
       "doctor",
       {
@@ -76,7 +77,7 @@ const OnSubmit = async (data: any) => {
         full_name: data.FullName,
         bio: data.Bio,
         location: data.Location,
-        email: data.Email,
+        email: trimmedEmail,
         profilePic: imageUrl,
       });
     }
@@ -131,10 +132,10 @@ onImageSelected={(uri) => {
             label="Email"
             placeholder="UserName@gmail.com"
             rules={{
-              required: "Location is required",
+              required: "Email is required",
               pattern: {
-                value: /\S+@\S+\.\S+/,
-                message: "Invalid email",
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Invalid email format",
               },
             }}
           />
