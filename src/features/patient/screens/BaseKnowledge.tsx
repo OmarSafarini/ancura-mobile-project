@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Text, View, StyleSheet, FlatList, Animated, Modal, SafeAreaView } from "react-native";
+import { Text, View, StyleSheet, FlatList, Animated, Modal, SafeAreaView, Pressable } from "react-native";
 import { WebView } from "react-native-webview";
 import DocumentIcon from "@/assets/icons/DoucmentIcon";
 import AppBackground from "@/components/base/AppBackground";
@@ -82,11 +82,13 @@ export function BaseKnowledge() {
         <View style={styles.headerWrapper}>
             <View style={styles.header}>
                 <Text style={styles.title}>Self-Help & Resources</Text>
-                <ArrowLeftIcon 
-                    color={Colors.textDark2} 
-                    size={scale(18)} 
-                    onPress={handleBackPress}
-                />
+                <Pressable style={styles.iconWrapper} onPress={handleBackPress}>
+                    <ArrowLeftIcon 
+                        color={Colors.textDark2} 
+                        size={scale(18)} 
+                        onPress={handleBackPress}
+                    />
+                </Pressable>
             </View>
             <View style={styles.articleContainer}>
                 {ARTICLE_CATEGORIES.map((title) => (
@@ -130,11 +132,13 @@ export function BaseKnowledge() {
             >
                 <SafeAreaView style={styles.webViewSafeArea}>
                     <View style={styles.webViewHeader}>
+                        <Pressable style={styles.iconWrapper} onPress={handleBackPress}>
                         <ArrowLeftIcon 
                             color={Colors.textDark2} 
                             size={scale(18)} 
                             onPress={handleBackPress}
                         />
+                        </Pressable>
                         <Text style={styles.webViewHeaderTitle} numberOfLines={1}>Resource</Text>
                         <View style={{ width: scale(34) }} />
                     </View>
@@ -179,6 +183,14 @@ const styles = StyleSheet.create({
         borderRadius: scale(6),
         backgroundColor: Colors.formBackground,
         padding: scale(8),
+        // Added shadow for visibility against white backgrounds
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 2,
+        borderWidth: 1,
+        borderColor: "#F0F0F0",
     },
     title: {
         fontSize: scale(24),
@@ -225,4 +237,5 @@ const styles = StyleSheet.create({
     webView: {
         flex: 1,
     }
+
 });
