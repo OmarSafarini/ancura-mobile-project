@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -26,8 +26,10 @@ import { ILicense } from "@/types/ILicense";
 import { signOut } from "../../../services/authService";
 import { getUserMeta } from "@/services/tokenService";
 import Loading from "@/components/common/Loading";
+import { getDoctorDashboardStats } from "@/services/Doctor/DoctorDashboard";
 
 export default function DoctorProfile({ navigation }: any) {
+    const [stats,setStats]=useState(0);
   const {
     data: doctor,
     isLoading: doctorLoading,
@@ -59,6 +61,15 @@ export default function DoctorProfile({ navigation }: any) {
     },
   });
 
+  const loadStats = async () => {
+  const stats = await getDoctorDashboardStats(doctor.id);
+  setStats(stats.comments);
+};
+useEffect(()=>{
+  if(doctor?.id){ 
+     loadStats();
+    }
+},[doctor])
     if (doctorLoading ||LicenseLoading) {
     return (
         <Loading />
@@ -85,7 +96,7 @@ export default function DoctorProfile({ navigation }: any) {
               <Text style={styles.title}>Profile & Settings</Text>
               <BackButton onPress={goBack} />
             </View>
-
+          <View style={styles.AlignCenter}>
             <View style={styles.profileCard}>
               <View style={styles.DoctorInfo}>
                 <Image
@@ -107,7 +118,7 @@ export default function DoctorProfile({ navigation }: any) {
               <View style={styles.statsRow}>
                 <View style={styles.statItem}>
                   <Text style={styles.statNumber}>
-                    {doctor?.comments_count}
+                    {stats}
                   </Text>
                   <Text style={styles.statLabel}>Comments</Text>
                 </View>
@@ -119,7 +130,7 @@ export default function DoctorProfile({ navigation }: any) {
                 </View>
 
                 <View style={styles.statItem}>
-                  <Text style={styles.statNumber}>{doctor?.years_exp}</Text>
+                  <Text style={styles.statNumber}>{license?.expire_date}</Text>
                   <Text style={styles.statLabel}>Years </Text>
                   <Text style={styles.statLabel}> Experence</Text>
                 </View>
@@ -163,9 +174,10 @@ export default function DoctorProfile({ navigation }: any) {
               <Text style={styles.BioText}>About {doctor?.full_name}</Text>
               <Text style={styles.bio}>{doctor?.bio}</Text>
             </View>
-            <View style={{ paddingBottom: scale(20) }}>
+            <View style={{ paddingTop: scale(20) }}>
               <LogoutButton onPress={LogOut} />
             </View>
+          </View>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -187,7 +199,10 @@ const styles = StyleSheet.create({
     marginBottom: scale(56),
     marginTop: scale(10),
   },
-
+  AlignCenter:{
+    alignItems:"center",
+    gap: scale(30),
+  },
   title: {
     fontSize: scale(24),
     fontFamily: Family.FG_Medium,

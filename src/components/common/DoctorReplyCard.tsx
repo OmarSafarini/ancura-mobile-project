@@ -94,6 +94,7 @@ const styles = StyleSheet.create({
     borderRadius: Card_Radius,
     padding: scale(18),
     gap: scale(20),
+    width:"100%"
   },
   header: {
     flexDirection: "row",
