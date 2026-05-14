@@ -281,8 +281,9 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingBottom: scale(30),
     paddingHorizontal: scale(24),
-    position: "absolute",
-    bottom: scale(30),
+    // position: "absolute",
+    // bottom: scale(30),
+   
   },
 
   patientBottom: {
