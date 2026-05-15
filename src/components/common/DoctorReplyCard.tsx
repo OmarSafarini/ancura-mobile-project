@@ -67,7 +67,7 @@ export default function DoctorReplyCard({
       <Text style={styles.message}>{message}</Text>
 
       <View style={styles.footer}>
-        <View style={styles.actions}>
+        {/* <View style={styles.actions}>
           <Pressable onPress={() => onLike(id)}>
             <HandLikeIcon size={18} color="#707070" />
           </Pressable>
@@ -75,7 +75,7 @@ export default function DoctorReplyCard({
           <Pressable onPress={() => onDislike(id)}>
             <DisLikeIcon size={18} color="#707070" />
           </Pressable>
-        </View>
+        </View> */}
 
         <Pressable style={styles.ReplyContainer} onPress={ChatOnPress}>
           <ChatIcon size={18} color="#707070" />
@@ -89,7 +89,8 @@ export default function DoctorReplyCard({
 // ________________ STYLES ________________
 const styles = StyleSheet.create({
   container: {
-    alignSelf: "center",
+    //alignSelf: "center",
+    width: "100%",
     backgroundColor: "#e4e0ebad",
     borderRadius: Card_Radius,
     padding: scale(18),
@@ -146,10 +147,10 @@ const styles = StyleSheet.create({
     paddingTop: scale(10),
     marginTop: scale(10),
   },
-  actions: {
-    flexDirection: "row",
-    gap: scale(10),
-  },
+  // actions: {
+  //   flexDirection: "row",
+  //   gap: scale(10),
+  // },
   ReplyContainer: {
     flexDirection: "row",
     gap: scale(5),
