@@ -28,7 +28,6 @@ export default function App() {
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
 
-        <DoctorProvider>
 
           <NavigationContainer>
 
@@ -36,7 +35,6 @@ export default function App() {
             
           </NavigationContainer>
 
-        </DoctorProvider>
 
         <FlashMessage position="top" />
       </QueryClientProvider>

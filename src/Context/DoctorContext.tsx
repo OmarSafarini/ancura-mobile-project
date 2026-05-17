@@ -1,5 +1,5 @@
 import { IDoctor } from "@/types/IDoctor";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useMemo, useState } from "react";
 
 
 type DoctorContextType = {
@@ -13,9 +13,15 @@ const DoctorContext = createContext<DoctorContextType | null>(null);
 
 export function DoctorProvider({ children }: any) {
   const [doctorData, setDoctorData] = useState<Partial<IDoctor>>({});
-
+     const value = useMemo(
+    () => ({
+      doctorData,
+      setDoctorData,
+    }),
+    [doctorData]
+  );
   return (
-    <DoctorContext.Provider value={{ doctorData, setDoctorData }}>
+    <DoctorContext.Provider value={value}>
       {children}
     </DoctorContext.Provider>
   );
