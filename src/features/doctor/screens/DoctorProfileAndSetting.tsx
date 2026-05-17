@@ -19,8 +19,8 @@ import { useAuthStore } from "@/store/authStore";
 export default function DoctorProfileAndSettings({ navigation }: any) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const insets = useSafeAreaInsets();
-const {doctorData,setDoctorData } = useDoctor();
-  const { control, handleSubmit ,reset } = useForm({
+  const { doctorData, setDoctorData } = useDoctor();
+  const { control, handleSubmit, reset } = useForm({
     defaultValues: {
       FullName: "",
       Location: "",
@@ -39,59 +39,50 @@ const {doctorData,setDoctorData } = useDoctor();
         Password: "",
         Bio: doctorData.bio || "",
       });
-    }, [doctorData, reset])
+    }, [doctorData, reset]),
   );
-  
-const OnSubmit = async (data: any) => {
-  let imageUrl = "";
-  try {
-    if (selectedImage) {
-      imageUrl = await uploadDoctorProfileImage(
-        selectedImage,
-        "doctor_profile.jpg",
-        "image/jpeg"
-      );
-    }
 
-    // Remove early setDoctorData since we set it after signUp with the ID
-
-
-    console.log(setDoctorData);
-    const trimmedEmail = data.Email.trim();
-    await signUp(
-      trimmedEmail,
-      data.Password,
-      "doctor",
-      {
-        full_name: data.FullName,
-        bio: data.Bio,
-        location: data.Location,
-        profilePic: imageUrl,
+  const OnSubmit = async (data: any) => {
+    let imageUrl = "";
+    try {
+      if (selectedImage) {
+        imageUrl = await uploadDoctorProfileImage(
+          selectedImage,
+          "doctor_profile.jpg",
+          "image/jpeg",
+        );
       }
-    );
-
-    const user = useAuthStore.getState().user;
-    if (user) {
-      setDoctorData({
-        id: user.id,
+      // Remove early setDoctorData since we set it after signUp with the ID
+      console.log("DoctorData",doctorData);
+      const trimmedEmail = data.Email.trim();
+      await signUp(trimmedEmail, data.Password, "doctor", {
         full_name: data.FullName,
         bio: data.Bio,
         location: data.Location,
-        email: trimmedEmail,
         profilePic: imageUrl,
       });
+
+      const user = useAuthStore.getState().user;
+      if (user) {
+        setDoctorData({
+          id: user.id,
+          full_name: data.FullName,
+          bio: data.Bio,
+          location: data.Location,
+          email: trimmedEmail,
+          profilePic: imageUrl,
+        });
+      }
+
+      navigation.navigate("LicenseVerification");
+    } catch (error) {
+      console.log("ERROR:", error);
     }
-
- navigation.navigate("LicenseVerification");
-  } catch (error) {
-    console.log("ERROR:", error);
-  }
-};
-
-  const goBack = () => {
-  navigation.navigate("DoctorLoginScreen");
   };
 
+  const goBack = () => {
+    navigation.navigate("DoctorLoginScreen");
+  };
 
   return (
     <AppBackground variant="clean">
@@ -104,11 +95,11 @@ const OnSubmit = async (data: any) => {
         </SafeAreaView>
         <View>
           <UploadImageButton
-onImageSelected={(uri) => {
-    setSelectedImage(uri);
-  }}
-  />
-          </View>
+            onImageSelected={(uri) => {
+              setSelectedImage(uri);
+            }}
+          />
+        </View>
 
         <View style={styles.Form}>
           <InputField
