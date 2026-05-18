@@ -6,7 +6,6 @@ import { IDoctor } from '@/types/IDoctor';
 export const getAllCases = async (): Promise<CaseData[]> => {
   try{
   const res = await supabaseClient.get(`/post_with_time?select=*&order=timestamp.desc`);
-  console.log(res.data)
   return res.data;
   }catch(error){
      console.error("getAllCasesDoctor ERROR:", error);
@@ -18,7 +17,6 @@ export const getAllCases = async (): Promise<CaseData[]> => {
 export const getDoctorProfile = async (doctorId: string): Promise<IDoctor> => {
   try{
     const res = await supabaseClient.get(`/doctor?id=eq.${doctorId}&select=*`);
-   console.log(res.data);
   return res.data?.[0];
   }catch(error){
      console.error("getDoctorProfile ERROR:", error);
@@ -32,7 +30,6 @@ export const getDoctorLicense = async (doctorId: string) => {
     const res = await supabaseClient.get(
     `/license?doctor_id=eq.${doctorId}&select=*`,
   );
-    console.log(res.data)
   return res.data?.[0];
   }catch(error){
      console.error("getDoctorLicense ERROR:", error);

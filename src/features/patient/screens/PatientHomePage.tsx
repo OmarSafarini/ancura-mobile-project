@@ -87,8 +87,11 @@ export default function PatientHomePage() {
     return <Text>Error loading cases</Text>;
   }
 
-  const displayCases = patientPost || localCases;
-
+const displayCases =
+  patientPost && patientPost.length > 0
+    ? patientPost
+    : localCases;
+    
   const filteredCases = filterStatus
     ? displayCases?.filter((c: any) => c.status === filterStatus)
     : displayCases;

@@ -29,8 +29,8 @@ import Loading from "@/components/common/Loading";
 import { getDoctorDashboardStats } from "@/services/Doctor/DoctorDashboard";
 
 export default function DoctorProfile({ navigation }: any) {
-    const [Comments,setComments]=useState(0);
-    const [Score,SetScore]=useState(0);
+  const [Comments, setComments] = useState(0);
+  const [Score, SetScore] = useState(0);
 
   const {
     data: doctor,
@@ -46,7 +46,7 @@ export default function DoctorProfile({ navigation }: any) {
       }
       return getDoctorProfile(meta.id);
     },
-    refetchInterval: 5000,
+    refetchOnMount: true,
   });
 
   const {
@@ -62,23 +62,23 @@ export default function DoctorProfile({ navigation }: any) {
       }
       return getDoctorLicense(meta!.id);
     },
-    refetchInterval: 5000,
+    refetchOnMount: true,
   });
 
   const loadStats = async () => {
-  const stats = await getDoctorDashboardStats(doctor.id);
-  setComments(stats.comments);
-  SetScore(stats.score);
-};
-useEffect(()=>{
-  if(doctor?.id){ 
-     loadStats();
+    const stats = await getDoctorDashboardStats(doctor.id);
+    setComments(stats.comments);
+    SetScore(stats.score);
+  };
+
+  useEffect(() => {
+    if (doctor?.id) {
+      loadStats();
     }
-},[doctor])
-    if (doctorLoading ||LicenseLoading) {
-    return (
-        <Loading />
-    );
+  }, [doctor]);
+
+  if (doctorLoading || LicenseLoading) {
+    return <Loading />;
   }
 
   if (doctorError || LicenseError) {
@@ -101,88 +101,82 @@ useEffect(()=>{
               <Text style={styles.title}>Profile & Settings</Text>
               <BackButton onPress={goBack} />
             </View>
-          <View style={styles.AlignCenter}>
-            <View style={styles.profileCard}>
-              <View style={styles.DoctorInfo}>
-                <Image
-                  source={{ uri: doctor?.profilePic }}
-                  style={styles.image}
-                />
-                <View style={{ gap: scale(10) }}>
-                  <Text style={styles.name}>{doctor?.full_name}</Text>
-                  <View style={styles.TextWithIcon}>
-                    <LocationIcon />
-                    <Text style={styles.sub}> {doctor?.location}</Text>
+            <View style={styles.AlignCenter}>
+              <View style={styles.profileCard}>
+                <View style={styles.DoctorInfo}>
+                  <Image
+                    source={{ uri: doctor?.profilePic }}
+                    style={styles.image}
+                  />
+                  <View style={{ gap: scale(10) }}>
+                    <Text style={styles.name}>{doctor?.full_name}</Text>
+                    <View style={styles.TextWithIcon}>
+                      <LocationIcon />
+                      <Text style={styles.sub}> {doctor?.location}</Text>
+                    </View>
+                    <View style={styles.TextWithIcon}>
+                      <EmailIcon />
+                      <Text style={styles.sub}>{doctor?.email}</Text>
+                    </View>
                   </View>
-                  <View style={styles.TextWithIcon}>
-                    <EmailIcon />
-                    <Text style={styles.sub}>{doctor?.email}</Text>
+                </View>
+                <View style={styles.statsRow}>
+                  <View style={styles.statItem}>
+                    <Text style={styles.statNumber}>{Comments}</Text>
+                    <Text style={styles.statLabel}>Comments</Text>
+                  </View>
+
+                  <View style={styles.statItem}>
+                    <Text style={styles.statNumber}>{Score}</Text>
+                    <Text style={styles.statLabel}>Reputation </Text>
+                    <Text style={styles.statLabel}> Score</Text>
+                  </View>
+
+                  <View style={styles.statItem}>
+                    <Text style={styles.statNumber}>{license?.years_exp}</Text>
+                    <Text style={styles.statLabel}>Years </Text>
+                    <Text style={styles.statLabel}> Experence</Text>
                   </View>
                 </View>
               </View>
-              <View style={styles.statsRow}>
-                <View style={styles.statItem}>
-                  <Text style={styles.statNumber}>
-                    {Comments}
-                  </Text>
-                  <Text style={styles.statLabel}>Comments</Text>
+              <View style={styles.card}>
+                <View style={styles.CardTextContainer}>
+                  <Text style={styles.cardTitle}>License Verification</Text>
+
+                  <View style={styles.TextContainer}>
+                    <Text style={styles.cardText}>License Number : </Text>
+                    <Text style={styles.cardText}>
+                      {license?.license_number}
+                    </Text>
+                  </View>
+
+                  <View style={styles.TextContainer}>
+                    <Text style={styles.cardText}>Licensing Authority :</Text>
+                    <Text style={styles.cardText}>{license?.authority}</Text>
+                  </View>
+
+                  <View style={styles.TextContainer}>
+                    <Text style={styles.cardText}>Issue Date : </Text>
+                    <Text style={styles.cardText}>{license?.issue_date}</Text>
+                  </View>
                 </View>
 
-                <View style={styles.statItem}>
-                  <Text style={styles.statNumber}>{Score}</Text>
-                  <Text style={styles.statLabel}>Reputation </Text>
-                  <Text style={styles.statLabel}> Score</Text>
-                </View>
-
-                <View style={styles.statItem}>
-                  <Text style={styles.statNumber}>{license?.years_exp}</Text>
-                  <Text style={styles.statLabel}>Years </Text>
-                  <Text style={styles.statLabel}> Experence</Text>
-                </View>
-              </View>
-            </View>
-            <View style={styles.card}>
-              <View style={styles.CardTextContainer}>
-                <Text style={styles.cardTitle}>License Verification</Text>
-
-                <View style={styles.TextContainer}>
-                  <Text style={styles.cardText}>License Number : </Text>
-                  <Text style={styles.cardText}>
-                    {license?.license_number}
-                  </Text>
-                </View>
-
-                <View style={styles.TextContainer}>
-                  <Text style={styles.cardText}>Licensing Authority :</Text>
-                  <Text style={styles.cardText}>
-                    {license?.authority}
-                  </Text>
-                </View>
-
-                <View style={styles.TextContainer}>
-                  <Text style={styles.cardText}>Issue Date : </Text>
-                  <Text style={styles.cardText}>
-                    {license?.issue_date}
-                  </Text>
-                </View>
+                {license?.is_verified && (
+                  <View style={styles.VerfiedContainer}>
+                    <TickIcon size={20} />
+                    <Text style={styles.verified}>Verified by Admin</Text>
+                  </View>
+                )}
               </View>
 
-              {license?.is_verified && (
-                <View style={styles.VerfiedContainer}>
-                  <TickIcon size={20} />
-                  <Text style={styles.verified}>Verified by Admin</Text>
-                </View>
-              )}
+              <View style={[styles.card, styles.BioCard]}>
+                <Text style={styles.BioText}>About {doctor?.full_name}</Text>
+                <Text style={styles.bio}>{doctor?.bio}</Text>
+              </View>
+              <View style={{ paddingTop: scale(20) }}>
+                <LogoutButton onPress={LogOut} />
+              </View>
             </View>
-
-            <View style={[styles.card, styles.BioCard]}>
-              <Text style={styles.BioText}>About {doctor?.full_name}</Text>
-              <Text style={styles.bio}>{doctor?.bio}</Text>
-            </View>
-            <View style={{ paddingTop: scale(20) }}>
-              <LogoutButton onPress={LogOut} />
-            </View>
-          </View>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -204,8 +198,8 @@ const styles = StyleSheet.create({
     marginBottom: scale(56),
     marginTop: scale(10),
   },
-  AlignCenter:{
-    alignItems:"center",
+  AlignCenter: {
+    alignItems: "center",
     gap: scale(30),
   },
   title: {
