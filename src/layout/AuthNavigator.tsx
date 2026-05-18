@@ -20,29 +20,28 @@ const Stack = createNativeStackNavigator();
 
 export default function AuthNavigator() {
   return (
-            // <DoctorProvider>
+    <DoctorProvider>
+      <Stack.Navigator
+        initialRouteName="EntryScreen"
+        screenOptions={{
+          headerShown: false, 
+        }}
+      >
+        {/* 1. Initial Welcome Flow */}
+        <Stack.Screen name="EntryScreen" component={EntryScreen} />
+        <Stack.Screen name="RoleSelectionScreen" component={RoleSelectionScreen} />
 
-    <Stack.Navigator
-      initialRouteName="EntryScreen"
-      screenOptions={{
-        headerShown: false, 
-      }}
-    >
-      {/* 1. Initial Welcome Flow */}
-      <Stack.Screen name="EntryScreen" component={EntryScreen} />
-      <Stack.Screen name="RoleSelectionScreen" component={RoleSelectionScreen} />
+        {/* 2. Patient Auth Flow */}
+        <Stack.Screen name="PatientAuthScreen" component={PatientAuthScreen} />
 
-      {/* 2. Patient Auth Flow */}
-      <Stack.Screen name="PatientAuthScreen" component={PatientAuthScreen} />
-
-      {/* 3. Doctor Auth Flow */}
-      <Stack.Screen name="DoctorLoginScreen" component={DoctorLoginScreen} />
-      <Stack.Screen name="DoctorForgotPasswordScreen" component={DoctorForgotPasswordScreen} />
-      <Stack.Screen name="DoctorVerificationScreen" component={DoctorVerificationScreen} />
-      <Stack.Screen name="DoctorNewPasswordScreen" component={DoctorNewPasswordScreen} />
-      <Stack.Screen name="DoctorProfileAndSettings" component={DoctorProfileAndSettings} />
-      <Stack.Screen name="LicenseVerification" component={LicenseVerification} />
-    </Stack.Navigator>
-   
+        {/* 3. Doctor Auth Flow */}
+        <Stack.Screen name="DoctorLoginScreen" component={DoctorLoginScreen} />
+        <Stack.Screen name="DoctorForgotPasswordScreen" component={DoctorForgotPasswordScreen} />
+        <Stack.Screen name="DoctorVerificationScreen" component={DoctorVerificationScreen} />
+        <Stack.Screen name="DoctorNewPasswordScreen" component={DoctorNewPasswordScreen} />
+        <Stack.Screen name="DoctorProfileAndSettings" component={DoctorProfileAndSettings} />
+        <Stack.Screen name="LicenseVerification" component={LicenseVerification} />
+      </Stack.Navigator>
+    </DoctorProvider>
   );
 }

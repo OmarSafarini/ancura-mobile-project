@@ -65,16 +65,15 @@ export default function DoctorProfile({ navigation }: any) {
     refetchOnMount: true,
   });
 
-  const loadStats = async () => {
-    const stats = await getDoctorDashboardStats(doctor.id);
-    setComments(stats.comments);
-    SetScore(stats.score);
-  };
-
   useEffect(() => {
-    if (doctor?.id) {
-      loadStats();
-    }
+    const loadStats = async () => {
+      if (doctor?.id) {
+        const stats = await getDoctorDashboardStats(doctor.id);
+        setComments(stats.comments);
+        SetScore(stats.score);
+      }
+    };
+    loadStats();
   }, [doctor]);
 
   if (doctorLoading || LicenseLoading) {
@@ -101,23 +100,24 @@ export default function DoctorProfile({ navigation }: any) {
               <Text style={styles.title}>Profile & Settings</Text>
               <BackButton onPress={goBack} />
             </View>
-          <View style={styles.AlignCenter}>
-            <View style={styles.profileCard}>
-              <View style={styles.DoctorInfo}>
-                <Image
-                  source={{ uri: doctor?.profilePic }}
-                  style={styles.image}
-                  transition={150}
-                />
-                <View style={{ gap: scale(10) }}>
-                  <Text style={styles.name}>{doctor?.full_name}</Text>
-                  <View style={styles.TextWithIcon}>
-                    <LocationIcon />
-                    <Text style={styles.sub}> {doctor?.location}</Text>
-                  </View>
-                  <View style={styles.TextWithIcon}>
-                    <EmailIcon />
-                    <Text style={styles.sub}>{doctor?.email}</Text>
+            <View style={styles.AlignCenter}>
+              <View style={styles.profileCard}>
+                <View style={styles.DoctorInfo}>
+                  <Image
+                    source={{ uri: doctor?.profilePic }}
+                    style={styles.image}
+                    transition={150}
+                  />
+                  <View style={{ gap: scale(10) }}>
+                    <Text style={styles.name}>{doctor?.full_name}</Text>
+                    <View style={styles.TextWithIcon}>
+                      <LocationIcon />
+                      <Text style={styles.sub}> {doctor?.location}</Text>
+                    </View>
+                    <View style={styles.TextWithIcon}>
+                      <EmailIcon />
+                      <Text style={styles.sub}>{doctor?.email}</Text>
+                    </View>
                   </View>
                 </View>
                 <View style={styles.statsRow}>
@@ -135,46 +135,46 @@ export default function DoctorProfile({ navigation }: any) {
                   <View style={styles.statItem}>
                     <Text style={styles.statNumber}>{license?.years_exp}</Text>
                     <Text style={styles.statLabel}>Years </Text>
-                    <Text style={styles.statLabel}> Experence</Text>
+                    <Text style={styles.statLabel}> Experience</Text>
                   </View>
                 </View>
-              </View>
-              <View style={styles.card}>
-                <View style={styles.CardTextContainer}>
-                  <Text style={styles.cardTitle}>License Verification</Text>
+                <View style={styles.card}>
+                  <View style={styles.CardTextContainer}>
+                    <Text style={styles.cardTitle}>License Verification</Text>
 
-                  <View style={styles.TextContainer}>
-                    <Text style={styles.cardText}>License Number : </Text>
-                    <Text style={styles.cardText}>
-                      {license?.license_number}
-                    </Text>
+                    <View style={styles.TextContainer}>
+                      <Text style={styles.cardText}>License Number : </Text>
+                      <Text style={styles.cardText}>
+                        {license?.license_number}
+                      </Text>
+                    </View>
+
+                    <View style={styles.TextContainer}>
+                      <Text style={styles.cardText}>Licensing Authority :</Text>
+                      <Text style={styles.cardText}>{license?.authority}</Text>
+                    </View>
+
+                    <View style={styles.TextContainer}>
+                      <Text style={styles.cardText}>Issue Date : </Text>
+                      <Text style={styles.cardText}>{license?.issue_date}</Text>
+                    </View>
                   </View>
 
-                  <View style={styles.TextContainer}>
-                    <Text style={styles.cardText}>Licensing Authority :</Text>
-                    <Text style={styles.cardText}>{license?.authority}</Text>
-                  </View>
-
-                  <View style={styles.TextContainer}>
-                    <Text style={styles.cardText}>Issue Date : </Text>
-                    <Text style={styles.cardText}>{license?.issue_date}</Text>
-                  </View>
+                  {license?.is_verified && (
+                    <View style={styles.VerfiedContainer}>
+                      <TickIcon size={20} />
+                      <Text style={styles.verified}>Verified by Admin</Text>
+                    </View>
+                  )}
                 </View>
 
-                {license?.is_verified && (
-                  <View style={styles.VerfiedContainer}>
-                    <TickIcon size={20} />
-                    <Text style={styles.verified}>Verified by Admin</Text>
-                  </View>
-                )}
-              </View>
-
-              <View style={[styles.card, styles.BioCard]}>
-                <Text style={styles.BioText}>About {doctor?.full_name}</Text>
-                <Text style={styles.bio}>{doctor?.bio}</Text>
-              </View>
-              <View style={{ paddingTop: scale(20) }}>
-                <LogoutButton onPress={LogOut} />
+                <View style={[styles.card, styles.BioCard]}>
+                  <Text style={styles.BioText}>About {doctor?.full_name}</Text>
+                  <Text style={styles.bio}>{doctor?.bio}</Text>
+                </View>
+                <View style={{ paddingTop: scale(20) }}>
+                  <LogoutButton onPress={LogOut} />
+                </View>
               </View>
             </View>
           </View>
