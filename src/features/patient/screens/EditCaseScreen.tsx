@@ -6,9 +6,10 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { useForm } from "react-hook-form";
-import * as DocumentPicker from "expo-document-picker";
+import type { DocumentPickerAsset } from "expo-document-picker";
 
 import AppBackground from "@/components/base/AppBackground";
 import InputField from "@/components/forms/InputFeild";
@@ -24,23 +25,31 @@ import { Family } from "@/utils/typography";
 import FileBar from "@/components/common/FileBar";
 import IconWrapper from "@/components/common/IconWrapper";
 import { editCase } from "@/services/Patient/Cases";
-import { useQueryClient } from "@tanstack/react-query";
+import { useAuthStore } from "@/store/authStore";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getPatintProfile } from "@/services/Patient/PatinetService";
+import { uploadDocumentToStorage } from "@/services/Doctor/storageService";
 
 type FormValues = {
   title: string;
   description: string;
   isEmergency: boolean;
-  files: DocumentPicker.DocumentPickerAsset[];
-};
-
-type CaseFileItem = {
-  id: string;
-  title: string;
+  files: DocumentPickerAsset[];
 };
 
 const EditCaseScreen = ({ navigation, route }: any) => {
-  const [caseFiles, setCaseFiles] = useState<CaseFileItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const user = useAuthStore((state) => state.user);
   const queryClient = useQueryClient();
+
+  const { data: patient } = useQuery({
+    queryKey: ["patient"],
+    queryFn: async () => {
+      if (!user?.id) throw new Error("No user id");
+      return getPatintProfile(user.id);
+    },
+    enabled: !!user?.id,
+  });
 
   const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
     defaultValues: {
@@ -52,7 +61,7 @@ const EditCaseScreen = ({ navigation, route }: any) => {
   });
 
   const isEmergency = watch("isEmergency");
-  const pickedFiles = watch("files");
+  const pickedFiles = watch("files") || [];
 
   const onSubmit = async (data: FormValues) => {
     const rawCaseId = route?.params?.caseId ?? route?.params?.caseData?.id;
@@ -64,20 +73,36 @@ const EditCaseScreen = ({ navigation, route }: any) => {
     }
 
     try {
-      const files = data.files
-        .map((file) => file.uri || file.name)
-        .filter(Boolean) as string[];
+      setIsLoading(true);
+
+      const uploadedFileUrls = await Promise.all(
+        data.files.map(async (file) => {
+          if (!file.uri) return null;
+          
+          if (file.uri.startsWith("http://") || file.uri.startsWith("https://")) {
+            return file.uri;
+          }
+
+          return await uploadDocumentToStorage(
+            file.uri,
+            file.name || `file_${Date.now()}`,
+            file.mimeType || 'application/octet-stream',
+            'case-files'
+          );
+        })
+      );
+
+      const validUrls = uploadedFileUrls.filter(Boolean) as string[];
 
       await editCase(Number(caseId), {
         title: data.title.trim(),
         description: data.description.trim(),
         isEmergency: data.isEmergency,
-        file: files.length ? files : null,
+        file: validUrls.length > 0 ? validUrls[0] : null,
       });
 
-      queryClient.invalidateQueries({ queryKey: ["case", Number(caseId)] });
       queryClient.invalidateQueries({ queryKey: ["patientPost"] });
-      queryClient.invalidateQueries({ queryKey: ["cases"] });
+      queryClient.invalidateQueries({ queryKey: ["case", Number(caseId)] });
 
       Alert.alert("Success", "Case updated successfully.");
       navigation.goBack();
@@ -85,11 +110,16 @@ const EditCaseScreen = ({ navigation, route }: any) => {
       const message =
         error instanceof Error ? error.message : "Failed to update case.";
       Alert.alert("Error", message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const deleteFile = (id: string) => {
-    setCaseFiles((prevFiles) => prevFiles.filter((file) => file.id !== id));
+    const remainingPickedFiles = pickedFiles.filter(
+      (file) => (file.uri || file.name) !== id
+    );
+    setValue("files", remainingPickedFiles);
   };
 
   useEffect(() => {
@@ -102,27 +132,16 @@ const EditCaseScreen = ({ navigation, route }: any) => {
 
     if (caseData.file) {
       const existingFile = String(caseData.file);
-      setCaseFiles([{ id: existingFile, title: existingFile.split("/").pop() ?? "Attachment" }]);
+      setValue("files", [
+        {
+          uri: existingFile,
+          name: existingFile.split("/").pop() ?? "Attachment",
+        } as any,
+      ]);
     } else {
-      setCaseFiles([]);
+      setValue("files", []);
     }
   }, [route?.params?.caseData, setValue]);
-
-  useEffect(() => {
-    if (!pickedFiles?.length) return;
-
-    setCaseFiles((prevFiles) => {
-      const existingIds = new Set(prevFiles.map((file) => file.id));
-      const newItems = pickedFiles
-        .map((file) => ({
-          id: file.uri || file.name,
-          title: file.name,
-        }))
-        .filter((file) => !existingIds.has(file.id));
-
-      return [...prevFiles, ...newItems];
-    });
-  }, [pickedFiles]);
 
   return (
     <AppBackground variant="clean">
@@ -132,7 +151,7 @@ const EditCaseScreen = ({ navigation, route }: any) => {
       >
         <View style={styles.header}>
           <View style={styles.headerTitleRow}>
-            <Text style={styles.headerText}>Hi USR-XXXXX</Text>
+            <Text style={styles.headerText}>Hi {patient?.nickname || "USR-XXXXX"}</Text>
             <TouchableOpacity
               style={styles.backButton}
               onPress={() => navigation.goBack()}
@@ -148,7 +167,6 @@ const EditCaseScreen = ({ navigation, route }: any) => {
         </View>
 
         <View style={styles.form}>
-
           <InputField
             control={control as any}
             name="title"
@@ -160,6 +178,7 @@ const EditCaseScreen = ({ navigation, route }: any) => {
               fontFamily: Family.FG_Medium,
               color: "#000",
             }}
+            rules={{ required: "Title is required" }}
           />
 
           <InputField
@@ -175,27 +194,39 @@ const EditCaseScreen = ({ navigation, route }: any) => {
               fontFamily: Family.FG_Regular,
               color: "#6D7EB5",
             }}
+            rules={{ required: "Description is required" }}
           />
 
           <AttachmentsField
-            files={watch("files")}
+            files={pickedFiles}
             onFilesChange={(files) => setValue("files", files)}
+            maxFiles={1}
           />
 
           <View style={styles.tagsContainer}>
-            {caseFiles.map((file) => (
-              <View key={file.id} style={styles.fileRow}>
-                <View style={{ flex: 1 }}>
-                  <FileBar title={file.title}
-                   icon={
-                    <IconWrapper size={13} bgColor="#ffffff" shape="circle" border="#6D7EB5">
-                      <ArrowLeftIcon size={8} color="#6D7EB5" />
-                    </IconWrapper>
-                   } />
+            {pickedFiles.map((file) => {
+              const fileId = file.uri || file.name;
+              return (
+                <View key={fileId} style={styles.fileRow}>
+                  <View style={{ flex: 1 }}>
+                    <FileBar
+                      title={file.name}
+                      icon={
+                        <IconWrapper
+                          size={13}
+                          bgColor="#ffffff"
+                          shape="circle"
+                          border="#6D7EB5"
+                        >
+                          <ArrowLeftIcon size={8} color="#6D7EB5" />
+                        </IconWrapper>
+                      }
+                    />
+                  </View>
+                  <DeleteIconButton onPress={() => deleteFile(fileId)} />
                 </View>
-                <DeleteIconButton onPress={() => deleteFile(file.id)} />
-              </View>
-            ))}
+              );
+            })}
           </View>
 
           <View style={styles.emergencyContainer}>
@@ -211,20 +242,26 @@ const EditCaseScreen = ({ navigation, route }: any) => {
           </View>
         </View>
 
-
         <View style={styles.footer}>
-          <NormalButton
-            title="Confirm Edit"
-            onPress={handleSubmit(onSubmit)}
-            bgColor="#8EB392"
-            textColor="#fff"
-          />
+          {isLoading ? (
+            <ActivityIndicator size="large" color="#8EB392" />
+          ) : (
+            <NormalButton
+              title="Confirm Edit"
+              onPress={handleSubmit(onSubmit)}
+              bgColor="#8EB392"
+              textColor="#fff"
+              textStyle={{
+                fontSize: scale(20),
+                fontFamily: Family.FG_Regular,
+              }}
+            />
+          )}
         </View>
       </ScrollView>
     </AppBackground>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -271,41 +308,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  editBadge: {
-    alignSelf: "flex-start",
-    borderWidth: 1,
-    borderColor: "#6D7EB5",
-    borderRadius: scale(11),
-    paddingHorizontal: scale(12),
-    paddingVertical: scale(4),
-    marginBottom: scale(16),
-  },
-
-  editText: {
-    fontSize: scale(10),
-    color: "#6D7EB5",
-    fontFamily: Family.FG_Regular,
-  },
-
   form: {
     gap: scale(24),
   },
 
   tagsContainer: {
     gap: scale(8),
-  },
-
-  tag: {
-    backgroundColor: "#F5F5F5",
-    borderWidth: 0.5,
-    borderColor: "#6D7EB5",
-    borderRadius: scale(11),
-    padding: scale(8),
-  },
-
-  tagText: {
-    fontSize: scale(10),
-    color: "#000",
   },
 
   fileRow: {
@@ -331,6 +339,5 @@ const styles = StyleSheet.create({
     marginTop: scale(40),
   },
 });
-
 
 export default EditCaseScreen;

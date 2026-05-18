@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   ScrollView,
   Alert,
   SafeAreaView,
@@ -26,9 +25,9 @@ import { Family } from "@/utils/typography";
 import EmergencyCheckBox from "../components/EmergencyCheckBox";
 import { createCase } from "@/services/Patient/Cases";
 import { useAuthStore } from "@/store/authStore";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getPatintProfile } from "@/services/Patient/PatinetService";
 import { uploadDocumentToStorage } from "@/services/Doctor/storageService";
-
 
 type FormValues = {
   title: string;
@@ -37,16 +36,19 @@ type FormValues = {
   files: DocumentPickerAsset[];
 };
 
-type CaseFileItem = {
-  id: string;
-  title: string;
-};
-
 const CreateCase = ({ navigation }: any) => {
-  const [caseFiles, setCaseFiles] = useState<CaseFileItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const user = useAuthStore((state) => state.user);
   const queryClient = useQueryClient();
+
+  const { data: patient } = useQuery({
+    queryKey: ["patient"],
+    queryFn: async () => {
+      if (!user?.id) throw new Error("No user id");
+      return getPatintProfile(user.id);
+    },
+    enabled: !!user?.id,
+  });
 
   const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
     defaultValues: {
@@ -58,7 +60,7 @@ const CreateCase = ({ navigation }: any) => {
   });
 
   const isEmergency = watch("isEmergency");
-  const pickedFiles = watch("files");
+  const pickedFiles = watch("files") || [];
   const titleValue = watch("title");
 
   const onSubmit = async (data: FormValues) => {
@@ -88,7 +90,7 @@ const CreateCase = ({ navigation }: any) => {
         patient_id: user.id,
         title: data.title.trim(),
         description: data.description.trim(),
-        file: validUrls.length > 0 ? validUrls : null,
+        file: validUrls.length > 0 ? validUrls[0] : null,
         isEmergency: data.isEmergency,
       });
 
@@ -106,28 +108,11 @@ const CreateCase = ({ navigation }: any) => {
   };
 
   const deleteFile = (id: string) => {
-    setCaseFiles((prevFiles) => prevFiles.filter((file) => file.id !== id));
     const remainingPickedFiles = pickedFiles.filter(
       (file) => (file.uri || file.name) !== id
     );
     setValue("files", remainingPickedFiles);
   };
-
-  useEffect(() => {
-    if (!pickedFiles?.length) return;
-
-    setCaseFiles((prevFiles) => {
-      const existingIds = new Set(prevFiles.map((file) => file.id));
-      const newItems = pickedFiles
-        .map((file) => ({
-          id: file.uri || file.name,
-          title: file.name,
-        }))
-        .filter((file) => !existingIds.has(file.id));
-
-      return [...prevFiles, ...newItems];
-    });
-  }, [pickedFiles]);
 
   return (
     <AppBackground variant="clean">
@@ -138,7 +123,7 @@ const CreateCase = ({ navigation }: any) => {
         >
         <View style={styles.header}>
           <View style={styles.headerTitleRow}>
-            <Text style={styles.headerText}>Hi USR-XXXXX</Text>
+            <Text style={styles.headerText}>Hi {patient?.nickname || "USR-XXXXX"}</Text>
             <BackButton onPress={() => navigation.goBack()} />
           </View>
           <Text style={styles.headerSubtitle}>
@@ -179,31 +164,35 @@ const CreateCase = ({ navigation }: any) => {
           />
 
           <AttachmentsField
-            files={watch("files")}
+            files={pickedFiles}
             onFilesChange={(files) => setValue("files", files)}
+            maxFiles={1}
           />
 
           <View style={styles.tagsContainer}>
-            {caseFiles.map((file) => (
-              <View key={file.id} style={styles.fileRow}>
-                <View style={{ flex: 1 }}>
-                  <FileBar
-                    title={file.title}
-                    icon={
-                      <IconWrapper
-                        size={13}
-                        bgColor="#ffffff"
-                        shape="circle"
-                        border="#6D7EB5"
-                      >
-                        <ArrowLeftIcon size={8} color="#6D7EB5" />
-                      </IconWrapper>
-                    }
-                  />
+            {pickedFiles.map((file) => {
+              const fileId = file.uri || file.name;
+              return (
+                <View key={fileId} style={styles.fileRow}>
+                  <View style={{ flex: 1 }}>
+                    <FileBar
+                      title={file.name}
+                      icon={
+                        <IconWrapper
+                          size={13}
+                          bgColor="#ffffff"
+                          shape="circle"
+                          border="#6D7EB5"
+                        >
+                          <ArrowLeftIcon size={8} color="#6D7EB5" />
+                        </IconWrapper>
+                      }
+                    />
+                  </View>
+                  <DeleteIconButton onPress={() => deleteFile(fileId)} />
                 </View>
-                <DeleteIconButton onPress={() => deleteFile(file.id)} />
-              </View>
-            ))}
+              );
+            })}
           </View>
 
           <View style={styles.emergencyContainer}>
