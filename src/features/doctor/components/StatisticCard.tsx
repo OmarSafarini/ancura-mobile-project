@@ -18,6 +18,7 @@ const StatsCard = (props: StatisticCardProps) => {
       return (
         <TimeCard
           value={props.value}
+          unit={props.unit}
         />
       );
 
