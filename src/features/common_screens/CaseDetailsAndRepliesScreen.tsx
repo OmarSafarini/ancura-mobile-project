@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { Control, useForm } from "react-hook-form";
 import { View, FlatList, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform } from "react-native";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -25,6 +25,7 @@ import { Colors } from "@/utils/colors";
 
 import PencilIcon from "@/assets/icons/PencilIcon";
 import TrashIcon from "@/assets/icons/TrashIcon";
+import { useCaseReplies } from "@/hooks/useCaseReplies";
 
 
 type FormData = {
@@ -41,74 +42,36 @@ const STATUS_MAP: Record<string, "under_review" | "doctor_replied" | "resolved">
 };
 
 export default function CaseDetailScreen({ navigation, route }: any) {
-  const authUser = useAuthStore((state) => state.user);
-  const caseId = route?.params?.caseId;
-  const caseData = route?.params?.caseData;
-  const role = route?.params?.role || 'patient';
+  const { caseId, caseData, role = 'patient' } = route.params;
   console.log("Opened Case Details for ID: ", caseId, " as Role: ", role);
-
+  
   const isDoctor = role === "doctor";
   const isPatient = role === "patient";
-
-  // ─── Delete Popup State ────────────────────────────────────────────
-  const [showDeletePopup, setShowDeletePopup] = useState(false);
-
-  const handleViewDoctorReplies = () => {
-    navigation.navigate('DoctorRepliesScreen', { caseId, caseData });
-  };
-
-  const handleViewAllReplies = (reply: any) => {
-    navigation.navigate('AllRepliesScreen', {
-      caseId,
-      caseData,
-      replyId: reply.id,
-      replyData: reply
-    });
-  };
-
-  const handleViewGoBack = () => {
-    navigation.goBack();
-  };
-
-
+  
+  const authUser = useAuthStore((state) => state.user);
   const queryClient = useQueryClient();
 
-  const { data: replies = [] } = useQuery({
-    queryKey: ['replies', caseId],
-    queryFn: () => getRepliesByCaseId(caseId),
-    enabled: !!caseId,
+
+  const flatListRef = useRef<FlatList>(null);
+
+
+  const { replies, sendReply, isSubmitting } = useCaseReplies({ caseId, caseData, role });
+
+
+  const { control, handleSubmit, resetField } = useForm<FormData>({
+    defaultValues: { doctorReply: "" },
   });
 
-  const { mutate: sendNotification } = useAddNotification();
-  const { mutate: addActivitylog } = useAddActivitylog();
+  const onSend = useCallback((data: FormData) => {
+    const trimmed = data.doctorReply?.trim();
+    if (!trimmed) return;
+    sendReply(trimmed);
+    resetField('doctorReply');
+  }, [sendReply, resetField]);
 
-  const { mutate: submitReply, isPending } = useMutation({
-    mutationFn: postReply,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['replies', caseId] });
-      resetField('doctorReply');
-
-      addActivitylog({
-        doctor_id: authUser?.id as string,
-        history_title: "New Reply Added",
-        body: `You replied to case: ${caseData?.title}`,
-        status: "comment",
-      });
-
-      if (isDoctor && caseData?.patient_id) {
-        sendNotification({
-          patientId: caseData.patient_id,
-          title: `New reply received for your case: ${caseData?.title}`,
-          status: 'doctor_replied'
-        });
-      }
-    },
-    onError: (error: any) => {
-      console.error('Failed to post reply:', error?.response?.data || error.message);
-    },
-  });
 
   // ─── Delete Case Mutation ──────────────────────────────────────────
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
   const { mutate: handleDeleteCase, isPending: isDeleting } = useMutation({
     mutationFn: () => deleteCase(caseId),
     onSuccess: () => {
@@ -149,25 +112,24 @@ export default function CaseDetailScreen({ navigation, route }: any) {
     },
   });
 
-  const onSend = async (data: FormData) => {
-    if (!data.doctorReply.trim()) return;
-    if (!authUser?.id) return;
 
-    submitReply({
-      caseId: caseId,
-      doctorId: authUser.id,
-      patientId: caseData?.patient_id,
-      body: data.doctorReply.trim(),
-    });
-  };
-  const { control, handleSubmit, resetField } = useForm<FormData>({
-    defaultValues: { doctorReply: "" },
-  });
-
-  const flatListRef = useRef<FlatList>(null);
-
-  const scrollToBottom = () => {
+ const scrollToBottom = useCallback(() => {
     flatListRef.current?.scrollToEnd({ animated: true });
+  }, []);
+
+
+  const handleViewDoctorReplies = useCallback(() => {
+    navigation.navigate('DoctorRepliesScreen', { caseId, caseData, role });
+  }, [navigation, caseId, caseData, role]);
+
+  const handleViewAllReplies = useCallback((reply: any) => {
+    navigation.navigate('AllRepliesScreen', {
+      caseId, caseData, role, replyId: reply.id, replyData: reply
+    });
+  }, [navigation, caseId, caseData, role]);
+
+   const handleViewGoBack = () => {
+    navigation.goBack();
   };
 
   return (
@@ -212,9 +174,7 @@ export default function CaseDetailScreen({ navigation, route }: any) {
           </View>
 
           <View style={styles.mainContent}>
-            <CaseDetailsCard
-              caseId={caseId}
-            />
+            <CaseDetailsCard caseId={caseId} />
 
             <View style={styles.replySection}>
               <ReplyText title="Doctor's Reply" color={Colors.primary} onPress={handleViewDoctorReplies} />
@@ -226,9 +186,7 @@ export default function CaseDetailScreen({ navigation, route }: any) {
                 showsVerticalScrollIndicator={false}
                 style={styles.list}
                 contentContainerStyle={styles.listContent}
-                ItemSeparatorComponent={() => (
-                  <View style={{ height: scale(16) }} />
-                )}
+                ItemSeparatorComponent={() => ( <View style={{ height: scale(16) }} />)}
                 renderItem={({ item }) => (
                   <DoctorReplyCard
                     id={item.id}
@@ -239,8 +197,6 @@ export default function CaseDetailScreen({ navigation, route }: any) {
                     avatar={item.doctor?.profilePic}
                     CardOnPress={handleViewDoctorReplies}
                     ChatOnPress={() => handleViewAllReplies(item)}
-                    onLike={() => { }}
-                    onDislike={() => { }}
                   />
                 )}
               />

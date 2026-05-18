@@ -7,7 +7,6 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, Dimensions, Pressable } from "react-native";
 import { Image } from "expo-image";
 import VerificationIcon from "@/assets/icons/VerificationIcon";
-import DisLikeIcon from "@/assets/icons/DisLikeIcon";
 import { scale } from "@/utils/responsive";
 
 
@@ -37,8 +36,6 @@ export default function DoctorReplyCard({
   message,
   time,
   avatar,
-  onLike,
-  onDislike,
   CardOnPress,
   ChatOnPress
 }: DoctorReplyCardProps) {
@@ -69,15 +66,7 @@ export default function DoctorReplyCard({
       <Text style={styles.message}>{message}</Text>
 
       <View style={styles.footer}>
-        {/* <View style={styles.actions}>
-          <Pressable onPress={() => onLike(id)}>
-            <HandLikeIcon size={18} color="#707070" />
-          </Pressable>
 
-          <Pressable onPress={() => onDislike(id)}>
-            <DisLikeIcon size={18} color="#707070" />
-          </Pressable>
-        </View> */}
 
         <Pressable style={styles.ReplyContainer} onPress={ChatOnPress}>
           <ChatIcon size={18} color="#707070" />
