@@ -21,6 +21,7 @@ export default function DoctorProfileAndSettings({ navigation }: any) {
   const insets = useSafeAreaInsets();
   const { doctorData, setDoctorData } = useDoctor();
   const { control, handleSubmit, reset } = useForm({
+    mode: "onChange",
     defaultValues: {
       FullName: "",
       Location: "",

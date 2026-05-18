@@ -1,6 +1,6 @@
-import React, { useRef, useEffect } from "react";
+import React from "react";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
-import { Text, View, StyleSheet, FlatList, Animated, Pressable, SafeAreaView } from "react-native";
+import { Text, View, StyleSheet, FlatList, Pressable, SafeAreaView } from "react-native";
 import { Colors } from "@/utils/colors";
 import { scale } from "@/utils/responsive";
 import { Family } from "@/utils/typography";
@@ -10,35 +10,19 @@ import { useNavigation } from "@react-navigation/native";
 import { getPatientNotification } from "@/services/Patient/Notification";
 import { useQuery } from "@tanstack/react-query";
 import { useMarkNotificationAsRead } from "@/hooks/useMarkNotificationAsRead";
+import FadeInView from "@/utils/FadeInView";
 
 import { useAuthStore } from "@/store/authStore"; 
 
 export default function Notification() {
     const { mutate: markAsRead } = useMarkNotificationAsRead();
-    const fadeAnim = useRef(new Animated.Value(0)).current;
-    const translateY = useRef(new Animated.Value(20)).current; 
     const navigation = useNavigation();
 
     const user = useAuthStore((state) => state.user);
 
-    useEffect(() => {
-        Animated.parallel([
-            Animated.timing(fadeAnim, {
-                toValue: 1,
-                duration: 500,
-                useNativeDriver: true,
-            }),
-            Animated.timing(translateY, {
-                toValue: 0,
-                duration: 500,
-                useNativeDriver: true,
-            })
-        ]).start();
-    }, []);
-
     const { data: notifications, isLoading, refetch } = useQuery({
         queryKey: ["notifications", user?.id], 
-        queryFn: () => getPatientNotification(user?.id), 
+        queryFn: () => getPatientNotification(user?.id as string), 
         enabled: !!user?.id 
     }); 
 
@@ -51,8 +35,8 @@ export default function Notification() {
         </View>
     );
 
-    const renderItem = ({ item }) => (
-        <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY }] }}>
+    const renderItem = ({ item, index }: { item: any; index: number }) => (
+        <FadeInView delay={index * 50} duration={400}>
             <Pressable
                 onPress={() => {
                     if (!item.is_read) markAsRead(item.id);}}
@@ -60,7 +44,7 @@ export default function Notification() {
                 style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.97 : 1 }] }]}>
                 <NotificationCard {...item} />
             </Pressable>
-        </Animated.View>
+        </FadeInView>
     );
 
     return (    
@@ -96,9 +80,19 @@ const styles = StyleSheet.create({
         marginTop: scale(10), 
     },
     iconWrapper: {
+        width: scale(34),
+        height: scale(34),
+        justifyContent: 'center',
+        alignItems: 'center',
         borderRadius: scale(6),
         backgroundColor: Colors.formBackground,
-        padding: scale(8),
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 2,
+        borderWidth: 1,
+        borderColor: "#F0F0F0",
     },
     title: {
         fontSize: scale(24),

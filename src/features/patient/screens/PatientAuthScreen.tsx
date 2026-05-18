@@ -38,6 +38,7 @@ export default function PatientAuthScreen({ navigation }: any) {
   }, []);
 
   const { control, handleSubmit, reset } = useForm({
+    mode: 'onChange',
     defaultValues: {
       email: '',
       password: '',
@@ -59,7 +60,7 @@ export default function PatientAuthScreen({ navigation }: any) {
       if (authMode === 'signin') {
         console.log("Attempting to sign in...");
         await signIn(trimmedEmail, data.password, 'patient');
-        
+
         const supported = await checkBiometricSupport();
         const creds = await getBiometricCredentials('patient');
         if (supported && !creds) {
@@ -68,8 +69,8 @@ export default function PatientAuthScreen({ navigation }: any) {
             "Would you like to enable biometric login for future use?",
             [
               { text: "No", style: "cancel" },
-              { 
-                text: "Yes", 
+              {
+                text: "Yes",
                 onPress: async () => {
                   await saveBiometricCredentials(data.email, data.password, 'patient');
                   setHasBiometrics(true);
@@ -218,8 +219,8 @@ export default function PatientAuthScreen({ navigation }: any) {
                     disabled={isAuthenticating}
                   />
                 </View>
-                <TouchableOpacity 
-                  style={styles.biometricButton} 
+                <TouchableOpacity
+                  style={styles.biometricButton}
                   onPress={handleBiometricLogin}
                 >
                   <Ionicons name="finger-print" size={scale(28)} color={Colors.primary} />

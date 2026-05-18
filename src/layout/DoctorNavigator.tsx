@@ -58,9 +58,9 @@ export default function DoctorNavigator() {
   return (
     <RootStack.Navigator screenOptions={{ headerShown: false }}>
       <RootStack.Screen name="DoctorTabs" component={DoctorTabNavigator} />
-      <RootStack.Screen name="CaseDetailsAndRepliesScreen" component={CaseDetailsAndRepliesScreen} />
-      <RootStack.Screen name="DoctorRepliesScreen" component={DoctorRepliesScreen} />
-      <RootStack.Screen name="AllRepliesScreen" component={AllRepliesScreen} />
+      <RootStack.Screen name="CaseDetailsAndRepliesScreen" component={CaseDetailsAndRepliesScreen} options={{ gestureEnabled: false }} />
+      <RootStack.Screen name="DoctorRepliesScreen" component={DoctorRepliesScreen} options={{ gestureEnabled: false }} />
+      <RootStack.Screen name="AllRepliesScreen" component={AllRepliesScreen} options={{ gestureEnabled: false }} />
       <RootStack.Screen name="ProfileTab" component={DoctorProfile} />
     </RootStack.Navigator>
   );

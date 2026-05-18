@@ -4,7 +4,8 @@ import HandLikeFilledIcon from "@/assets/icons/HandLikeFilledIcon";
 import { palette, Colors as colors } from "../../utils/colors";
 import { Family } from "../../utils/typography";
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, Dimensions, Pressable } from "react-native";
+import { View, Text, StyleSheet, Dimensions, Pressable } from "react-native";
+import { Image } from "expo-image";
 import VerificationIcon from "@/assets/icons/VerificationIcon";
 import DisLikeIcon from "@/assets/icons/DisLikeIcon";
 import { scale } from "@/utils/responsive";
@@ -49,6 +50,7 @@ export default function DoctorReplyCard({
             avatar ? { uri: avatar } : require("../../../assets/icon.png")
           }
           style={styles.avatar}
+          transition={150}
         />
         <View style={styles.headerContent}>
           <View style={styles.nameRow}>
@@ -95,7 +97,6 @@ const styles = StyleSheet.create({
     borderRadius: Card_Radius,
     padding: scale(18),
     gap: scale(20),
-    width:"100%"
   },
   header: {
     flexDirection: "row",

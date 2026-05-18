@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
+import { Image } from "expo-image";
 import { scale } from "@/utils/responsive";
 import { Family } from "@/utils/typography";
 
@@ -24,7 +25,7 @@ function greeting() {
 const DoctorGreeting = ({ name, image }: Props) => {
   return (
     <View style={styles.container}>
-      <Image source={image} style={styles.avatar} />
+      <Image source={image} style={styles.avatar} transition={150} />
 
       <View style={styles.textContainer}>
         <Text style={styles.greeting}>{greeting()}</Text>
