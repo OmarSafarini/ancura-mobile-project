@@ -11,7 +11,7 @@ import {
 import { Image } from "expo-image";
 import { Colors as colors, palette } from "@/utils/colors";
 import NotificationsIcon from "@/assets/icons/NotificationsIcon";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { scale } from "@/utils/responsive";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Family } from "@/utils/typography";
@@ -35,14 +35,15 @@ export default function PatientHomePage() {
   const [selected, setSelcted] = useState("All");
   const [localCases, setLocalCases] = useState<any[]>([]);
 
-  useEffect(() => {
-    loadLocal();
-  }, []);
-
-  const loadLocal = async () => {
+  const loadLocal = useCallback(async () => {
     const data = await getLocalCases();
     setLocalCases(data);
-  };
+  }, []);
+
+  useEffect(() => {
+    loadLocal();
+  }, [loadLocal]);
+
   const {
     data: patient,
     isLoading: patientLoading,
@@ -75,12 +76,11 @@ export default function PatientHomePage() {
         throw error;
       }
     },
+    refetchOnMount: true,
   });
 
   if (patientLoading || patientPstLoading) {
-    return (
-      <Loading />
-    );
+    return <Loading />;
   }
 
   if (patientError || patientPostError) {
