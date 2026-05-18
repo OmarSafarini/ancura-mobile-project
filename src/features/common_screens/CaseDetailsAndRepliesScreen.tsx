@@ -106,6 +106,9 @@ export default function CaseDetailScreen({ navigation, route }: any) {
       queryClient.invalidateQueries({ queryKey: ['patientPost'] });
       queryClient.invalidateQueries({ queryKey: ['cases'] }); // For doctor view if applicable
       queryClient.invalidateQueries({ queryKey: ['case', caseId] });
+      
+      // Navigate to patient dashboard (Home)
+      navigation.navigate('PatientTabs', { screen: 'PatientHomeTab' });
     },
     onError: (error: any) => {
       console.error('Failed to resolve case:', error?.response?.data || error.message);
