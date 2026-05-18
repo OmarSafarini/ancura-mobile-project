@@ -157,7 +157,8 @@ const styles = StyleSheet.create({
   screen: {
     flexGrow: 1,
     alignItems: "center",
-    paddingVertical: scale(20),
+    paddingTop: scale(20),
+    paddingBottom: scale(100),
   },
 
   contentWrapper: {

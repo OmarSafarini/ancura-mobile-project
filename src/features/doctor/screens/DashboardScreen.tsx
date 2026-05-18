@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
 
   statisticsGrid: {
     flexDirection: 'row',
-    gap: scale(22),
+    gap: scale(12),
     marginBottom: scale(34),
     justifyContent: 'center',
   },
