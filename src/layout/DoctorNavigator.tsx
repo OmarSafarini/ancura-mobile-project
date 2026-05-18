@@ -15,6 +15,7 @@ import ActivityLogScreen from '../features/doctor/screens/ActivityLog';
 import DoctorProfile from '../features/doctor/screens/DoctorProfile';
 
 import DoctorBNB from '../features/doctor/components/DoctorBNB';
+import { DoctorProvider } from '@/Context/DoctorContext';
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
@@ -56,12 +57,26 @@ function DoctorTabNavigator() {
 
 export default function DoctorNavigator() {
   return (
-    <RootStack.Navigator screenOptions={{ headerShown: false }}>
-      <RootStack.Screen name="DoctorTabs" component={DoctorTabNavigator} />
-      <RootStack.Screen name="CaseDetailsAndRepliesScreen" component={CaseDetailsAndRepliesScreen} options={{ gestureEnabled: false }} />
-      <RootStack.Screen name="DoctorRepliesScreen" component={DoctorRepliesScreen} options={{ gestureEnabled: false }} />
-      <RootStack.Screen name="AllRepliesScreen" component={AllRepliesScreen} options={{ gestureEnabled: false }} />
-      <RootStack.Screen name="ProfileTab" component={DoctorProfile} />
-    </RootStack.Navigator>
+    <DoctorProvider>
+      <RootStack.Navigator screenOptions={{ headerShown: false }}>
+        <RootStack.Screen name="DoctorTabs" component={DoctorTabNavigator} />
+        <RootStack.Screen
+          name="CaseDetailsAndRepliesScreen"
+          component={CaseDetailsAndRepliesScreen}
+          options={{ gestureEnabled: false }}
+        />
+        <RootStack.Screen
+          name="DoctorRepliesScreen"
+          component={DoctorRepliesScreen}
+          options={{ gestureEnabled: false }}
+        />
+        <RootStack.Screen
+          name="AllRepliesScreen"
+          component={AllRepliesScreen}
+          options={{ gestureEnabled: false }}
+        />
+        <RootStack.Screen name="ProfileTab" component={DoctorProfile} />
+      </RootStack.Navigator>
+    </DoctorProvider>
   );
 }

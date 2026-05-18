@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { View, FlatList, StyleSheet, Text, SafeAreaView, KeyboardAvoidingView, Platform } from "react-native";
 import AppBackground from "@/components/base/AppBackground";
 import BackButton from "@/components/common/BackButton";
@@ -17,6 +17,7 @@ import { getCommentsByReplyId, postComment } from "@/services/common_services/Co
 import { useAuthStore } from "@/store/authStore";
 import { useAddNotification } from "@/hooks/useAddNotification"; // added by omar
 import { useAddActivitylog } from "@/hooks/useAddActivitylog";
+import { useReplyComments } from "@/hooks/useReplyComment";
 
 type FormData = {
   doctorReply: string;
@@ -24,79 +25,40 @@ type FormData = {
 
 export default function AllRepliesScreen({ navigation, route }: any) {
   const queryClient = useQueryClient();
+  const listRef = useRef<FlatList>(null);
+
   const caseData = route?.params?.caseData;
   const replyId = route?.params?.replyId;
   const replyData = route?.params?.replyData;
   const caseId = route?.params?.caseId;
   const role = route?.params?.role || 'patient';
 
-  const { mutate: sendNotification } = useAddNotification(); // added by omar
-  const { mutate: addActivitylog } = useAddActivitylog();
   const isPatient = role === "patient";
 
   const authUser = useAuthStore((state) => state.user);
   const authRole = useAuthStore((state) => state.role);
 
-  const { data: comments = [], isLoading } = useQuery({
-    queryKey: ['comments', replyId],
-    queryFn: () => getCommentsByReplyId(replyId),
-    enabled: !!replyId,
-  });
-
-  const { mutate: submitComment, isPending } = useMutation({
-    mutationFn: postComment,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['comments', replyId] });
-      resetField('doctorReply');
-
-      // 2. added by omar
-      if (authRole === 'doctor' && caseData?.patient_id) {
-        // ADD ACTIVITY LOG
-        addActivitylog({
-          doctor_id: authUser?.id as string,
-          history_title: "Comment Added",
-          body: `You commented on a reply for case: ${caseData?.title}`,
-          status: "comment",
-        });
-
-        sendNotification({
-          patientId: caseData.patient_id,
-          title: `New reply received for your case: ${caseData?.title}`,
-          status: 'doctor_replied'
-        });
-      }
-
-      setTimeout(() => {
-        listRef.current?.scrollToEnd({ animated: true });
-      }, 300);
-    },
-    onError: (error: any) => {
-      console.error('Failed to post comment:', error?.response?.data || error.message);
-    },
-  });
-
-  const onSend = async (data: FormData) => {
-    if (!data.doctorReply.trim()) return;
-    if (!authUser?.id || !authRole) return;
-
-    submitComment({
-      replyId,
-      body: data.doctorReply.trim(),
-      userId: authUser.id,
-      role: authRole,
-    });
-  };
-  const handleViewGoBack = () => {
-    navigation.goBack();
-  };
-
   const { control, handleSubmit, resetField } = useForm<FormData>({
     defaultValues: { doctorReply: "" },
   });
 
-  const listRef = useRef<FlatList>(null);
+  const { comments, sendComment, isSubmitting } = useReplyComments({ 
+    replyId, 
+    caseData 
+  });
 
+  const onSend = useCallback((data: FormData) => {
+    const trimmed = data.doctorReply?.trim();
+    if (!trimmed) return;
+    
+    sendComment(trimmed);
+    resetField('doctorReply');
+  }, [sendComment, resetField]);
   
+  const handleViewGoBack = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
+
 
   return (
     <AppBackground style={{ flex: 1 }}>
@@ -122,8 +84,6 @@ export default function AllRepliesScreen({ navigation, route }: any) {
               time={replyData?.timestamp || "Just now"}
               CardOnPress={() => { }}
               ChatOnPress={() => { }}
-              onLike={() => { }}
-              onDislike={() => { }}
             />
             <ReplyText title="All Replies" color={Colors.primary} />
           </View>
