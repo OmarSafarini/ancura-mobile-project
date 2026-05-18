@@ -5,8 +5,8 @@ import {
   StyleSheet,
   SafeAreaView,
   ScrollView,
-  Image,
 } from "react-native";
+import { Image } from "expo-image";
 import AppBackground from "@/components/base/AppBackground";
 import { scale } from "@/utils/responsive";
 import { Colors, palette } from "@/utils/colors";
@@ -101,23 +101,23 @@ export default function DoctorProfile({ navigation }: any) {
               <Text style={styles.title}>Profile & Settings</Text>
               <BackButton onPress={goBack} />
             </View>
-            <View style={styles.AlignCenter}>
-              <View style={styles.profileCard}>
-                <View style={styles.DoctorInfo}>
-                  <Image
-                    source={{ uri: doctor?.profilePic }}
-                    style={styles.image}
-                  />
-                  <View style={{ gap: scale(10) }}>
-                    <Text style={styles.name}>{doctor?.full_name}</Text>
-                    <View style={styles.TextWithIcon}>
-                      <LocationIcon />
-                      <Text style={styles.sub}> {doctor?.location}</Text>
-                    </View>
-                    <View style={styles.TextWithIcon}>
-                      <EmailIcon />
-                      <Text style={styles.sub}>{doctor?.email}</Text>
-                    </View>
+          <View style={styles.AlignCenter}>
+            <View style={styles.profileCard}>
+              <View style={styles.DoctorInfo}>
+                <Image
+                  source={{ uri: doctor?.profilePic }}
+                  style={styles.image}
+                  transition={150}
+                />
+                <View style={{ gap: scale(10) }}>
+                  <Text style={styles.name}>{doctor?.full_name}</Text>
+                  <View style={styles.TextWithIcon}>
+                    <LocationIcon />
+                    <Text style={styles.sub}> {doctor?.location}</Text>
+                  </View>
+                  <View style={styles.TextWithIcon}>
+                    <EmailIcon />
+                    <Text style={styles.sub}>{doctor?.email}</Text>
                   </View>
                 </View>
                 <View style={styles.statsRow}>

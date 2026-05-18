@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { View, Text, StyleSheet, ScrollView, Pressable, SafeAreaView } from "react-native";
-import { useQuery } from '@tanstack/react-query';
 import AppBackground from "@/components/base/AppBackground";
 import DoctorGreeting from "../components/DoctorGreeting";
 import CaseCard from "@/components/common/CaseCard";
@@ -10,122 +9,120 @@ import ClockIcon from "@/assets/icons/ClockIcon";
 import ChatIcon from "../../../assets/icons/ChatIcon";
 import StartwithTickIcon from "../../../assets/icons/StartwithTickIcon";
 import StatisticsSection from "../components/ViewStatisticSection";
-import { getAllCases } from "@/services/common_services/Case";
+import Loading from "@/components/common/Loading";
 import { Colors, palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import { scale } from "@/utils/responsive";
-import { CaseData } from "@/types/ICaseData";
-import { getDoctorBasicInfo } from "@/services/Doctor/Doctor";
-import { useAuthStore } from "@/store/authStore";
+import { useUserSession } from "@/hooks/useUserSession";
+import { useDoctorBasicInfo } from "@/hooks/useDoctorBasicInfo";
+import { useGetDoctorCases } from "@/hooks/useGetDoctorCases";
 
 export default function DoctorDashboardAndCases({ navigation }: any) {
-   const user = useAuthStore((state) => state.user);
+  const scrollRef = useRef<ScrollView>(null);
 
-  const handleViewAllCases = () => {
-    navigation.navigate('DoctorHomeScreen');
-  };
+  const { doctorId } = useUserSession();
+  const { data: doctorInfo } = useDoctorBasicInfo(doctorId);
+  const { previewCases, isPending, isFetching, isError, refetch } = useGetDoctorCases();
 
-  const handleViewDashboardScreen = () => {
-    navigation.navigate('DashboardScreen');
-  };
+  const handleViewAllCases = useCallback(() => {
+    navigation.navigate("DoctorHomeScreen");
+  }, [navigation]);
 
-  const { data: doctorId } = useQuery({
-    queryKey: ['doctorSession'],
-    queryFn: async () => {
-      if (!user?.id) throw new Error('No session found');
-      return user.id as string;
+  const handleViewDashboardScreen = useCallback(() => {
+    navigation.navigate("DashboardScreen");
+  }, [navigation]);
+
+  const handleOpenCase = useCallback(
+    (item: any) => {
+      navigation.navigate("CaseDetailsAndRepliesScreen", {
+        caseId: item.id,
+        caseData: item,
+        role: "doctor",
+      });
     },
-    staleTime: Infinity,
-  });
+    [navigation]
+  );
 
-  const { data: doctorInfo } = useQuery({
-    queryKey: ['doctorBasicInfo', doctorId],
-    queryFn: () => getDoctorBasicInfo(doctorId!),
-    enabled: !!doctorId,
-    staleTime: 30 * 60 * 1000, 
-  });
+  const handleRetry = useCallback(() => {
+    refetch();
+    scrollRef.current?.scrollTo({ y: 0, animated: true });
+  }, [refetch]);
 
- const {
-  data: casesData,
-  isPending,
-  isError,
-  error,
-  refetch,
-} = useQuery({
-  queryKey: ["doctorCases"],
-  queryFn: getAllCases,
-  staleTime: 5 * 60 * 1000,
-  gcTime: 10 * 60 * 1000,
-  retry: 2,
-});
+  const caseCards = useMemo(
+    () =>
+      previewCases.map((item) => (
+        <View key={item.id} style={styles.cardContainer}>
+          <CaseCard
+            data={{
+              ...item,
+              status: "empty",
+            }}
+            onPress={() => handleOpenCase(item)}
+          />
+        </View>
+      )),
+    [previewCases, handleOpenCase]
+  );
 
-const doctorCases: CaseData[] = (casesData ?? []).filter((c) => c.status !== "resolved" && c.status !== "Resolved");
+  if (isPending && previewCases.length === 0) {
+    return <Loading text="Loading cases..." />;
+  }
+
   return (
     <AppBackground>
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView
+          ref={scrollRef}
           contentContainerStyle={styles.screen}
           showsVerticalScrollIndicator={false}
         >
-        <View style={styles.contentWrapper}>
-
-          <View style={styles.greetingContainer}>
-            <DoctorGreeting name={doctorInfo?.full_name} 
-            image={doctorInfo?.profilePic ? { uri: doctorInfo.profilePic } : undefined} />
-          </View>
-
-          <View style={styles.box}>
-            <View style={styles.chartBox}>
-              <StatisticsSection data={dashboardChartData} onPress={handleViewDashboardScreen} />
+          <View style={styles.contentWrapper}>
+            <View style={styles.greetingContainer}>
+              <DoctorGreeting
+                name={doctorInfo?.full_name || "Doctor"}
+                image={doctorInfo?.profilePic ? { uri: doctorInfo.profilePic } : undefined}
+              />
             </View>
 
-            <View style={styles.iconsColumn}>
-              <IconWrapper size={scale(65)} bgColor={Colors.secondary} shape="square">
-                <ClockIcon size={scale(29)} color={palette.white} />
-              </IconWrapper>
+            {isError ? (
+              <Pressable onPress={handleRetry}>
+                <Text style={styles.errorText}>Failed to load cases. Press to retry.</Text>
+              </Pressable>
+            ) : null}
 
-              <IconWrapper size={scale(65)} bgColor={palette.white} shape="square">
-                <ChatIcon size={scale(27)} color={Colors.primary} />
-              </IconWrapper>
+            {isFetching && !isPending ? (
+              <Text style={styles.updatingText}>Updating cases...</Text>
+            ) : null}
 
-              <IconWrapper size={scale(65)} bgColor={Colors.primary} shape="square">
-                <StartwithTickIcon size={scale(29)} color={palette.white} />
-              </IconWrapper>
-            </View>
-          </View>
+            <View style={styles.box}>
+              <View style={styles.chartBox}>
+                <StatisticsSection data={dashboardChartData} onPress={handleViewDashboardScreen} />
+              </View>
 
-          <View style={styles.casesContainer}>
-            <View style={styles.grid}>
-              {doctorCases.slice(0, 6).map((item) => (
-                <View key={item.id} style={styles.cardContainer}>
-                  <CaseCard
-                    data={{
-                        id: item.id,
-                        patient_id: item.patient_id,
-                        title: item.title,
-                        description: item.description,
-                        timestamp: item.timestamp,
-                        status: "empty",
-                        isEmergency: item.isEmergency ?? false,
-                        isReplied: item.isReplied ?? false,
-                        time_ago: item.time_ago,
-                      }}
-                    onPress={() => navigation.navigate("CaseDetailsAndRepliesScreen", { caseId: item.id, caseData: item, role: 'doctor' })}
-                  />
-                </View>
-              ))}
+              <View style={styles.iconsColumn}>
+                <IconWrapper size={scale(65)} bgColor={Colors.secondary} shape="square">
+                  <ClockIcon size={scale(29)} color={palette.white} />
+                </IconWrapper>
+
+                <IconWrapper size={scale(65)} bgColor={palette.white} shape="square">
+                  <ChatIcon size={scale(27)} color={Colors.primary} />
+                </IconWrapper>
+
+                <IconWrapper size={scale(65)} bgColor={Colors.primary} shape="square">
+                  <StartwithTickIcon size={scale(29)} color={palette.white} />
+                </IconWrapper>
+              </View>
             </View>
 
-            <Pressable
-              style={styles.viewCasesContainer}
-              onPress={handleViewAllCases}
-            >
-              <Text style={styles.viewCases}>View all cases</Text>
-            </Pressable>
-          </View>
+            <View style={styles.casesContainer}>
+              <View style={styles.grid}>{caseCards}</View>
 
-        </View>
-      </ScrollView>
+              <Pressable style={styles.viewCasesContainer} onPress={handleViewAllCases}>
+                <Text style={styles.viewCases}>View all cases</Text>
+              </Pressable>
+            </View>
+          </View>
+        </ScrollView>
       </SafeAreaView>
     </AppBackground>
   );

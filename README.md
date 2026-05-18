@@ -76,6 +76,8 @@ npm install -D @types/react @types/react-native
 npm install -D babel-plugin-module-resolver
 npm install -D eslint eslint-config-expo
 npm install -D babel-preset-expo
+npm install date-fns
+npx expo install expo-sqlite
 ```
 
 ### 4. Start the dev server

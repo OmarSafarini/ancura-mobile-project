@@ -13,65 +13,17 @@ import { scale } from "@/utils/responsive";
 import { useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/authStore";
 import { getDoctorDashboardStats } from "@/services/Doctor/DoctorDashboard";
-import { getDoctorBasicInfo } from "@/services/Doctor/Doctor";
+import { useDoctorBasicInfo } from "@/hooks/useDoctorBasicInfo";
+import { useUserSession } from "@/hooks/useUserSession";
+import { useAnimatedCounter } from "@/hooks/useAnimatedCounter";
+import Loading from "@/components/common/Loading";
 
-function useDoctorId(userId?: string) {
-  return useQuery({
-    queryKey: ['doctorSession', userId],
-    queryFn: async () => {
-      if (!userId) throw new Error('No session found');
-      return userId;
-    },
-    staleTime: Infinity,
-    retry: 1,
-    enabled: !!userId,
-  });
-}
-
-// --- Animated Counter Hook ---
-function useAnimatedCounter(target: number, duration = 700) {
-  const [display, setDisplay] = useState(0);
-  const animValue = useRef(new Animated.Value(0)).current;
-
-  const animate = useCallback(() => {
-    animValue.setValue(0);
-    const listener = animValue.addListener(({ value }) => {
-      setDisplay(Math.floor(value));
-    });
-
-    Animated.timing(animValue, {
-      toValue: target,
-      duration,
-      useNativeDriver: false,
-    }).start(() => {
-      animValue.removeListener(listener);
-      setDisplay(target);
-    });
-
-    return listener;
-  }, [target, duration]);
-
-  useEffect(() => {
-    const listenerId = animate();
-    return () => animValue.removeListener(listenerId);
-  }, [animate]);
-
-  return { display, animate };
-}
 
 export default function DoctorDashboard({ navigation }: any) {
-  const user = useAuthStore((state) => state.user);
+  const { doctorId } = useUserSession();
 
   const [selectedPeriod, setSelectedPeriod] = useState<'Weekly' | 'Monthly' | 'All Time'>('Weekly');
-
-  const { data: doctorId } = useDoctorId(user?.id);
-
-  const { data: doctorInfo } = useQuery({
-    queryKey: ['doctorBasicInfo', doctorId],
-    queryFn: () => getDoctorBasicInfo(doctorId!),
-    enabled: !!doctorId,
-    staleTime: 30 * 60 * 1000,
-  });
+  const { data: doctorInfo } = useDoctorBasicInfo(doctorId);
 
   const {
     data: stats = { comments: 0, time: 0, score: 0, chart: [] },
@@ -83,8 +35,14 @@ export default function DoctorDashboard({ navigation }: any) {
     staleTime: 3 * 60 * 1000,
   });
 
+  const avgTimeValue =
+  stats.time >= 1440
+    ? Math.round((stats.time / 1440) * 10) / 10
+    : Math.round((stats.time / 60) * 10) / 10;
+  const avgTimeUnit = stats.time >= 1440 ? "d" : "h";
+
   const comments = useAnimatedCounter(stats.comments);
-  const time = useAnimatedCounter(stats.time);
+  const time = useAnimatedCounter(avgTimeValue);
   const score = useAnimatedCounter(stats.score);
 
   useFocusEffect(
@@ -99,6 +57,14 @@ export default function DoctorDashboard({ navigation }: any) {
     navigation.navigate('ActivityTab');
   };
 
+    if (isPending) {
+  return (
+    <AppBackground>
+      <Loading text="Loading dashboard..." />
+    </AppBackground>
+  );
+}
+
   return (
     <AppBackground>
       <ScrollView
@@ -108,7 +74,7 @@ export default function DoctorDashboard({ navigation }: any) {
         <View style={styles.headerContainer}>
           <DoctorGreeting
             name={doctorInfo?.full_name || "Doctor"}
-            image={doctorInfo?.avatar_url ? { uri: doctorInfo.avatar_url } : undefined}
+            image={doctorInfo?.profilePic ? { uri: doctorInfo.profilePic } : undefined}
           />
 
           <TimePeriodSelector
@@ -131,7 +97,7 @@ export default function DoctorDashboard({ navigation }: any) {
           </View>
 
           <View style={styles.rightColumn}>
-            <StatsCard type="time" value={time.display} />
+            <StatsCard type="time" value={time.display} unit={avgTimeUnit} />
             <StatsCard type="score" value={score.display} />
           </View>
         </View>

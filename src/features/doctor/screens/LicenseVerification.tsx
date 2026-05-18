@@ -29,28 +29,20 @@ import { supabaseClient } from "@/services/supabase";
 import { uploadDocumentToStorage } from "@/services/Doctor/storageService";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDoctor } from "@/Context/DoctorContext";
+import { useMutation } from "@tanstack/react-query";
 export function LicenseVerification({ navigation }: any) {
-  const { control, handleSubmit } = useForm();
-  const [selectedDocument, setSelectedDocument] = useState<null | {
-    name: string;
-    uri: string;
-    size?: number;
-    mimeType?: string;
-  }>(null);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const { doctorData } = useDoctor();
-  console.log("Doctor Data", doctorData);
-  console.log("Dr Id", doctorData.id);
+    const { control, handleSubmit } = useForm();
+    const [selectedDocument, setSelectedDocument] = useState<null | { name: string, uri: string, size?: number, mimeType?: string }>(null);
+    const [showSuccess, setShowSuccess] = useState(false);
+    const { doctorData } = useDoctor(); 
 
-  const handleDocumentUpload = async () => {
-    try {
-      const r = doctorData.id;
-      console.log("Dr Id", r);
-      const result = await DocumentPicker.getDocumentAsync({
-        type: ["application/pdf", "image/*"],
-        copyToCacheDirectory: true,
-      });
+    const handleDocumentUpload = async () => {
+        try { 
+            const r = doctorData.id
+            const result = await DocumentPicker.getDocumentAsync({
+                type: ['application/pdf', 'image/*'],
+                copyToCacheDirectory: true,
+            });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const file = result.assets[0];
@@ -77,29 +69,14 @@ export function LicenseVerification({ navigation }: any) {
     }
   };
 
-  const formatToSQLDate = (dateStr: string) => {
-    const [day, month, year] = dateStr.split("/");
-    return `${year}-${month}-${day}`;
-  };
-
-  const onSubmit = async (formData: any) => {
-    if (!selectedDocument) {
-      Alert.alert(
-        "Missing Document",
-        "Please upload your license document before submitting.",
-      );
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const publicUrl = await uploadDocumentToStorage(
-        selectedDocument.uri,
-        selectedDocument.name,
-        selectedDocument.mimeType as string,
-        "licenses",
-      );
+    const { mutate: submitLicense, isPending: isLoading } = useMutation({
+        mutationFn: async (formData: any) => {
+            const publicUrl = await uploadDocumentToStorage(
+                selectedDocument!.uri, 
+                selectedDocument!.name, 
+                selectedDocument!.mimeType as string,
+                'licenses'
+            );
 
       const payload = {
         doctor_id: doctorData.id,
@@ -111,7 +88,28 @@ export function LicenseVerification({ navigation }: any) {
         document: publicUrl,
       };
 
-      const response = await supabaseClient.post("/license", payload);
+            const response = await supabaseClient.post('/license', payload);
+            return response;
+        },
+        onSuccess: (response) => {
+            if (response.status === 201 || response.status === 204 || response.status === 200) {
+                setShowSuccess(true);
+            }
+        },
+        onError: (error) => {
+            console.error("Submission Error:", error);
+            Alert.alert("Submission Failed", "Could not verify your license. Please check your inputs and try again.");
+        }
+    });
+
+    const onSubmit = (formData: any) => {
+        if (!selectedDocument) {
+            Alert.alert("Missing Document", "Please upload your license document before submitting.");
+            return;
+        }
+
+        submitLicense(formData);
+    };
 
       if (
         response.status === 201 ||

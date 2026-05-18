@@ -6,7 +6,7 @@ export const getAllCases = async () => {
       params: {
         select: '*',
 
-        isReplied: 'eq.false',
+        //isReplied: 'eq.false',
 
         order: 'timestamp.desc',
       },
@@ -43,15 +43,40 @@ export const deleteCase = async (caseId: string): Promise<void> => {
   }
 };
 
-export const updateCaseStatus = async (caseId: string, status: string): Promise<void> => {
+export const updateCaseStatus = async (
+  caseId: string,
+  newStatus: "under_review" | "doctor_replied" | "resolved"
+): Promise<void> => {
   try {
-    await supabaseClient.patch('/case', { status }, {
-      params: {
-        id: `eq.${caseId}`,
+    console.log("PATCH CASE STATUS:", caseId, newStatus);
+
+    const { data, status, statusText } = await supabaseClient.patch(
+      "/case",
+      {
+        status: newStatus,
+        isReplied: newStatus === "doctor_replied" ? true : undefined,
       },
-    });
+      {
+        params: {
+          id: `eq.${caseId}`,
+        },
+        headers: {
+          Prefer: "return=representation",
+        },
+      }
+    );
+
+    console.log("PATCH RESPONSE:", status, statusText);
+    console.log("PATCH DATA:", data);
+
+    if (!Array.isArray(data) || data.length === 0) {
+      console.warn("No case was updated. Check caseId:", caseId);
+    }
   } catch (error: any) {
-    console.error('Error updating case status:', error.response?.data || error.message);
+    console.error(
+      "Error updating case status:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };

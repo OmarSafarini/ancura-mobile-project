@@ -35,7 +35,7 @@ const AttachmentsField = ({
     try {
       const result = await DocumentPicker.getDocumentAsync({
         type: acceptedTypes,
-        multiple: true,
+        multiple: maxFiles > 1,
         copyToCacheDirectory: true,
       });
 
@@ -46,7 +46,7 @@ const AttachmentsField = ({
       const remainingSlots = maxFiles - selectedFiles.length;
 
       if (remainingSlots <= 0) {
-        setError(`You can upload only ${maxFiles} files.`);
+        setError(maxFiles === 1 ? "You can upload only 1 file." : `You can upload only ${maxFiles} files.`);
         return;
       }
 
@@ -81,7 +81,7 @@ const AttachmentsField = ({
       const remainingSlots = maxFiles - selectedFiles.length;
 
       if (remainingSlots <= 0) {
-        setError(`You can upload only ${maxFiles} files.`);
+        setError(maxFiles === 1 ? "You can upload only 1 file." : `You can upload only ${maxFiles} files.`);
         return;
       }
 

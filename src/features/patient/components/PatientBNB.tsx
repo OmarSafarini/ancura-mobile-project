@@ -32,7 +32,7 @@ export default function PatientBNB(props: any) {
         };
 
         const handleAddPress = () => {
-            props.navigation.navigate('PatientHomeTab', { screen: 'CreateCaseScreen' });
+            props.navigation.navigate('CreateCaseScreen');
         };
 
         if (currentTab === 'PatientProfileTab') {
