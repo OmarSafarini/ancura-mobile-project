@@ -4,6 +4,7 @@ import { getRepliesByCaseId, postReply } from '@/services/common_services/ReplyS
 import { useAuthStore } from '@/store/authStore';
 import { useAddNotification } from './useAddNotification';
 import { useAddActivitylog } from './useAddActivitylog';
+import { updateCaseStatus } from '@/services/common_services/Case';
 
 type UseCaseRepliesProps = {
   caseId: string | number;
@@ -26,9 +27,17 @@ export const useCaseReplies = ({ caseId, caseData, role = 'patient' }: UseCaseRe
   });
 
   const { mutate: submitReplyMutate, isPending: isSubmitting } = useMutation({
-    mutationFn: postReply,
+    mutationFn: async (payload: any) => {
+  await postReply(payload);
+  await updateCaseStatus(String(caseId), "doctor_replied");
+},
     onSuccess: useCallback(() => {
-      queryClient.invalidateQueries({ queryKey: ['replies', String(caseId)] });
+      //queryClient.invalidateQueries({ queryKey: ['replies', String(caseId)] });
+      queryClient.invalidateQueries({ queryKey: ["replies", String(caseId)] });
+  queryClient.invalidateQueries({ queryKey: ["cases"] });
+  queryClient.invalidateQueries({ queryKey: ["doctorCases"] });
+  queryClient.invalidateQueries({ queryKey: ["patientPost"] });
+  queryClient.invalidateQueries({ queryKey: ["case", caseId] });
 
       addActivitylog({
         doctor_id: authUser?.id as string,
