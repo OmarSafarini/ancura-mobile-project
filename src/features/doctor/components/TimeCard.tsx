@@ -6,8 +6,9 @@ import { Colors, palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import { scale } from "@/utils/responsive";
 
-export const TimeCard = ({ value }: {
+export const TimeCard = ({ value, unit }: {
   value: string | number;
+  unit: string;
 }) => {
   return (
     <View style={styles.card}>
@@ -22,7 +23,7 @@ export const TimeCard = ({ value }: {
         <View style={styles.line} />
         <Text style={styles.value}>
           {value}
-          <Text style={styles.small}>h</Text>
+          <Text style={styles.small}>{unit}</Text>
         </Text>
       </View>
     </View>

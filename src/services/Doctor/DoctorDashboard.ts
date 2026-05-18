@@ -68,7 +68,7 @@ export const getDoctorDashboardStats = async (
     const commentsCount = parseInt(countHeaders?.['content-range']?.split('/')[1] || '0', 10) || 0;
     console.log(`Total replies (comments): ${commentsCount}`);
 
-    console.log('Calculating average response time...');
+    console.log("Calculating average response time...");
 let avgResponseTime = 0;
 
 const safeDate = (value: unknown) => {
@@ -78,67 +78,79 @@ const safeDate = (value: unknown) => {
 };
 
 if (commentsCount > 0) {
-  let timeData: any = null;
+  let repliesData: any[] = [];
+  let casesData: any[] = [];
 
   try {
-    const response = await supabaseClient.get('/reply', {
+    const repliesResponse = await supabaseClient.get("/reply", {
       params: {
         ...baseParams,
-        select: `
-          timestamp,
-          case_id,
-          cases!inner(timestamp)
-        `,
+        select: "timestamp,case_id",
       },
     });
 
-    timeData = response.data;
+    repliesData = Array.isArray(repliesResponse.data)
+      ? repliesResponse.data
+      : [];
+
+    const caseIds = [
+      ...new Set(
+        repliesData
+          .map((reply: any) => reply.case_id)
+          .filter((id: any) => id !== null && id !== undefined)
+      ),
+    ];
+
+    if (caseIds.length > 0) {
+      const casesResponse = await supabaseClient.get("/case", {
+        params: {
+          id: `in.(${caseIds.join(",")})`,
+          select: "id,timestamp",
+        },
+      });
+
+      casesData = Array.isArray(casesResponse.data)
+        ? casesResponse.data
+        : [];
+    }
   } catch (error) {
-    console.error('Time data error:', error);
+    console.error("Time data error:", error);
   }
 
-  if (timeData) {
-    console.log(`Fetched ${timeData?.length || 0} replies with case data`);
+  const casesMap = new Map(
+    casesData.map((caseItem: any) => [
+      String(caseItem.id),
+      caseItem.timestamp,
+    ])
+  );
 
-    if (timeData.length > 0) {
-      let validRepliesCount = 0;
+  let validRepliesCount = 0;
 
-      const totalMinutes = timeData.reduce((sum: number, reply: any, index: number) => {
-        const replyTime = safeDate(reply.timestamp);
-        const caseTime = safeDate(reply.cases?.timestamp);
+  const totalMinutes = repliesData.reduce((sum: number, reply: any) => {
+    const replyTime = safeDate(reply.timestamp);
+    const caseTime = safeDate(casesMap.get(String(reply.case_id)));
 
-        if (!replyTime || !caseTime) {
-          console.warn(`Skipping invalid date at reply index ${index}`, {
-            replyTimestamp: reply.timestamp,
-            caseTimestamp: reply.cases?.timestamp,
-            reply,
-          });
-          return sum;
-        }
-
-        const diffMs = replyTime.getTime() - caseTime.getTime();
-        const diffMinutes = Math.max(0, Math.floor(diffMs / (1000 * 60)));
-
-        validRepliesCount++;
-
-        if (index < 3) {
-          console.log(
-            `   Reply ${index + 1}: Case time=${caseTime.toISOString()}, Reply time=${replyTime.toISOString()}, Diff=${diffMinutes} min`
-          );
-        }
-
-        return sum + diffMinutes;
-      }, 0);
-
-      if (validRepliesCount > 0) {
-        avgResponseTime = Math.floor(totalMinutes / validRepliesCount);
-        console.log(
-          `Average response time: ${avgResponseTime} minutes (from ${validRepliesCount} valid replies)`
-        );
-      } else {
-        console.log('No valid reply timestamps found, average response time remains 0');
-      }
+    if (!replyTime || !caseTime) {
+      return sum;
     }
+
+    const diffMs = replyTime.getTime() - caseTime.getTime();
+    const diffMinutes = Math.max(0, Math.floor(diffMs / (1000 * 60)));
+
+    validRepliesCount++;
+
+    return sum + diffMinutes;
+  }, 0);
+
+  if (validRepliesCount > 0) {
+    avgResponseTime = Math.floor(totalMinutes / validRepliesCount);
+
+    console.log(
+      `Average response time: ${avgResponseTime} minutes from ${validRepliesCount} replies`
+    );
+  } else {
+    console.log("No valid reply timestamps found");
+  
   }
 } else {
   console.log('No replies, skipping average time calculation');

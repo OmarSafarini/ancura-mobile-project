@@ -16,6 +16,7 @@ import { getDoctorDashboardStats } from "@/services/Doctor/DoctorDashboard";
 import { useDoctorBasicInfo } from "@/hooks/useDoctorBasicInfo";
 import { useUserSession } from "@/hooks/useUserSession";
 import { useAnimatedCounter } from "@/hooks/useAnimatedCounter";
+import Loading from "@/components/common/Loading";
 
 
 export default function DoctorDashboard({ navigation }: any) {
@@ -34,8 +35,14 @@ export default function DoctorDashboard({ navigation }: any) {
     staleTime: 3 * 60 * 1000,
   });
 
+  const avgTimeValue =
+  stats.time >= 1440
+    ? Math.round((stats.time / 1440) * 10) / 10
+    : Math.round((stats.time / 60) * 10) / 10;
+  const avgTimeUnit = stats.time >= 1440 ? "d" : "h";
+
   const comments = useAnimatedCounter(stats.comments);
-  const time = useAnimatedCounter(stats.time);
+  const time = useAnimatedCounter(avgTimeValue);
   const score = useAnimatedCounter(stats.score);
 
   useFocusEffect(
@@ -49,6 +56,14 @@ export default function DoctorDashboard({ navigation }: any) {
   const handleViewActivityLog = () => {
     navigation.navigate('ActivityTab');
   };
+
+    if (isPending) {
+  return (
+    <AppBackground>
+      <Loading text="Loading dashboard..." />
+    </AppBackground>
+  );
+}
 
   return (
     <AppBackground>
@@ -82,7 +97,7 @@ export default function DoctorDashboard({ navigation }: any) {
           </View>
 
           <View style={styles.rightColumn}>
-            <StatsCard type="time" value={time.display} />
+            <StatsCard type="time" value={time.display} unit={avgTimeUnit} />
             <StatsCard type="score" value={score.display} />
           </View>
         </View>
