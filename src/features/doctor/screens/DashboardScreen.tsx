@@ -14,64 +14,16 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/authStore";
 import { getDoctorDashboardStats } from "@/services/Doctor/DoctorDashboard";
 import { getDoctorBasicInfo } from "@/services/Doctor/Doctor";
+import { useDoctorBasicInfo } from "@/hooks/useDoctorBasicInfo";
+import { useUserSession } from "@/hooks/useUserSession";
+import { useAnimatedCounter } from "@/hooks/useAnimatedCounter";
 
-function useDoctorId(userId?: string) {
-  return useQuery({
-    queryKey: ['doctorSession', userId],
-    queryFn: async () => {
-      if (!userId) throw new Error('No session found');
-      return userId;
-    },
-    staleTime: Infinity,
-    retry: 1,
-    enabled: !!userId,
-  });
-}
-
-// --- Animated Counter Hook ---
-function useAnimatedCounter(target: number, duration = 700) {
-  const [display, setDisplay] = useState(0);
-  const animValue = useRef(new Animated.Value(0)).current;
-
-  const animate = useCallback(() => {
-    animValue.setValue(0);
-    const listener = animValue.addListener(({ value }) => {
-      setDisplay(Math.floor(value));
-    });
-
-    Animated.timing(animValue, {
-      toValue: target,
-      duration,
-      useNativeDriver: false,
-    }).start(() => {
-      animValue.removeListener(listener);
-      setDisplay(target);
-    });
-
-    return listener;
-  }, [target, duration]);
-
-  useEffect(() => {
-    const listenerId = animate();
-    return () => animValue.removeListener(listenerId);
-  }, [animate]);
-
-  return { display, animate };
-}
 
 export default function DoctorDashboard({ navigation }: any) {
-  const user = useAuthStore((state) => state.user);
+  const { doctorId } = useUserSession();
 
   const [selectedPeriod, setSelectedPeriod] = useState<'Weekly' | 'Monthly' | 'All Time'>('Weekly');
-
-  const { data: doctorId } = useDoctorId(user?.id);
-
-  const { data: doctorInfo } = useQuery({
-    queryKey: ['doctorBasicInfo', doctorId],
-    queryFn: () => getDoctorBasicInfo(doctorId!),
-    enabled: !!doctorId,
-    staleTime: 30 * 60 * 1000,
-  });
+  const { data: doctorInfo } = useDoctorBasicInfo(doctorId);
 
   const {
     data: stats = { comments: 0, time: 0, score: 0, chart: [] },
