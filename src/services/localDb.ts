@@ -47,7 +47,7 @@ export async function deleteLocalCase(id: number) {
 
 export async function getLocalCases() {
   const db = await initDB();
-console.log("datanase",db)
+  console.log("datanase",db)
   return await db.getAllAsync(
     `SELECT * FROM patient_cases ORDER BY id DESC;`
   );

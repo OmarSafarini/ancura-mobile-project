@@ -55,7 +55,6 @@ export default function DoctorProfileAndSettings({ navigation }: any) {
         );
       }
       // Remove early setDoctorData since we set it after signUp with the ID
-      console.log("DoctorData", doctorData);
       const trimmedEmail = data.Email.trim();
       await signUp(trimmedEmail, data.Password, "doctor", {
         full_name: data.FullName,
