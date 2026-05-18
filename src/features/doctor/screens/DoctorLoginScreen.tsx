@@ -47,6 +47,7 @@ export default function DoctorLoginScreen({ navigation }: any) {
   }, []);
 
   const { control, handleSubmit } = useForm({
+    mode: "onChange",
     defaultValues: {
       email: "",
       password: "",

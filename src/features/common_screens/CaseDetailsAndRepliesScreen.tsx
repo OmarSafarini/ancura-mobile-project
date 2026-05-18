@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Control, useForm } from "react-hook-form";
-import { View, FlatList, StyleSheet, SafeAreaView } from "react-native";
+import { View, FlatList, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform } from "react-native";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getRepliesByCaseId, postReply } from '@/services/common_services/ReplyService';
 import { deleteCase, updateCaseStatus } from '@/services/common_services/Case';
@@ -89,7 +89,7 @@ export default function CaseDetailScreen({ navigation, route }: any) {
       resetField('doctorReply');
 
       addActivitylog({
-        doctor_id: authUser?.id,
+        doctor_id: authUser?.id as string,
         history_title: "New Reply Added",
         body: `You replied to case: ${caseData?.title}`,
         status: "comment",
@@ -171,9 +171,13 @@ export default function CaseDetailScreen({ navigation, route }: any) {
   };
 
   return (
-    <AppBackground>
-      <SafeAreaView style={{ flex: 1 }}>
-        <View style={styles.container}>
+    <AppBackground style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+        >
+          <View style={styles.container}>
 
           {/* ─── Delete Confirmation Popup ─────────────────────── */}
           <DeleteCasePopUp
@@ -207,41 +211,41 @@ export default function CaseDetailScreen({ navigation, route }: any) {
             <BackButton onPress={handleViewGoBack} />
           </View>
 
-        <View style={styles.mainContent}>
-          <CaseDetailsCard
-            caseId={caseId}
-          />
-
-          <View style={styles.replySection}>
-            <ReplyText title="Doctor's Reply" color={Colors.primary} onPress={handleViewDoctorReplies} />
-
-            <FlatList
-              ref={flatListRef}
-              data={replies}
-              keyExtractor={(item) => String(item.id)}
-              showsVerticalScrollIndicator={false}
-              style={styles.list}
-              contentContainerStyle={styles.listContent}
-              ItemSeparatorComponent={() => (
-                <View style={{ height: scale(16) }} />
-              )}
-              renderItem={({ item }) => (
-                <DoctorReplyCard
-                  id={item.id}
-                  title={item.doctor?.full_name}
-                  major={item.doctor_major}
-                  message={item.body}
-                  time={item.timestamp}
-                  avatar={item.doctor?.profilePic}
-                  CardOnPress={handleViewDoctorReplies}
-                  ChatOnPress={() => handleViewAllReplies(item)}
-                  onLike={() =>{}}
-                  onDislike={() =>{}}
-                />
-              )}
+          <View style={styles.mainContent}>
+            <CaseDetailsCard
+              caseId={caseId}
             />
+
+            <View style={styles.replySection}>
+              <ReplyText title="Doctor's Reply" color={Colors.primary} onPress={handleViewDoctorReplies} />
+
+              <FlatList
+                ref={flatListRef}
+                data={replies}
+                keyExtractor={(item) => String(item.id)}
+                showsVerticalScrollIndicator={false}
+                style={styles.list}
+                contentContainerStyle={styles.listContent}
+                ItemSeparatorComponent={() => (
+                  <View style={{ height: scale(16) }} />
+                )}
+                renderItem={({ item }) => (
+                  <DoctorReplyCard
+                    id={item.id}
+                    title={item.doctor?.full_name}
+                    major={item.doctor_major}
+                    message={item.body}
+                    time={item.timestamp}
+                    avatar={item.doctor?.profilePic}
+                    CardOnPress={handleViewDoctorReplies}
+                    ChatOnPress={() => handleViewAllReplies(item)}
+                    onLike={() => { }}
+                    onDislike={() => { }}
+                  />
+                )}
+              />
+            </View>
           </View>
-</View>
           <View style={styles.bottomContainer}>
             {isPatient && (
               <View style={styles.patientBottom}>
@@ -271,6 +275,7 @@ export default function CaseDetailScreen({ navigation, route }: any) {
             )}
           </View>
         </View>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </AppBackground>
   );
@@ -320,7 +325,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(24),
     // position: "absolute",
     // bottom: scale(30),
-   
+
   },
 
   patientBottom: {

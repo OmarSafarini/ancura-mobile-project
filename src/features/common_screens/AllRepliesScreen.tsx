@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { View, FlatList, StyleSheet, Text, SafeAreaView } from "react-native";
+import { View, FlatList, StyleSheet, Text, SafeAreaView, KeyboardAvoidingView, Platform } from "react-native";
 import AppBackground from "@/components/base/AppBackground";
 import BackButton from "@/components/common/BackButton";
 import ReplyText from "@/components/common/ReplyText";
@@ -53,7 +53,7 @@ export default function AllRepliesScreen({ navigation, route }: any) {
       if (authRole === 'doctor' && caseData?.patient_id) {
         // ADD ACTIVITY LOG
         addActivitylog({
-          doctor_id: authUser?.id,
+          doctor_id: authUser?.id as string,
           history_title: "Comment Added",
           body: `You commented on a reply for case: ${caseData?.title}`,
           status: "comment",
@@ -99,9 +99,13 @@ export default function AllRepliesScreen({ navigation, route }: any) {
   
 
   return (
-    <AppBackground>
+    <AppBackground style={{ flex: 1 }}>
       <SafeAreaView style={styles.safeArea} >
-        <View style={styles.container}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+        >
+          <View style={styles.container}>
 
           <View style={styles.header}>
             <Text style={styles.title}>{caseData?.title || "Case Title"}</Text>
@@ -179,6 +183,7 @@ export default function AllRepliesScreen({ navigation, route }: any) {
           </View>
 
         </View>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </AppBackground>
   );
@@ -187,6 +192,7 @@ export default function AllRepliesScreen({ navigation, route }: any) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    backgroundColor: "transparent",
   },
   container: {
     flex: 1,

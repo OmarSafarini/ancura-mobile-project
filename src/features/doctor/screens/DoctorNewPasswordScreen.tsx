@@ -15,6 +15,7 @@ import { useState } from 'react';
 
 export default function DoctorNewPasswordScreen({ navigation, route }: any) {
   const { control, handleSubmit } = useForm({
+    mode: 'onChange',
     defaultValues: {
       newPassword: '',
       confirmPassword: '',

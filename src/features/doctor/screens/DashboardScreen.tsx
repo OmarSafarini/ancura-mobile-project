@@ -108,7 +108,7 @@ export default function DoctorDashboard({ navigation }: any) {
         <View style={styles.headerContainer}>
           <DoctorGreeting
             name={doctorInfo?.full_name || "Doctor"}
-            image={doctorInfo?.avatar_url ? { uri: doctorInfo.avatar_url } : undefined}
+            image={doctorInfo?.profilePic ? { uri: doctorInfo.profilePic } : undefined}
           />
 
           <TimePeriodSelector

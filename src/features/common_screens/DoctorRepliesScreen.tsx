@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { View, FlatList, StyleSheet, Text, SafeAreaView } from "react-native";
+import { View, FlatList, StyleSheet, Text, SafeAreaView, KeyboardAvoidingView, Platform } from "react-native";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Control, useForm } from "react-hook-form";
 import AppBackground from "@/components/base/AppBackground";
@@ -22,7 +22,8 @@ type FormData = { doctorReply: string };
 
 export default function DoctorRepliesScreen({ navigation, route }: any) {
   const caseData = route?.params?.caseData;
-  const role = route?.params?.role || 'doctor';
+  const authRole = useAuthStore((state) => state.role);
+  const role = route?.params?.role || authRole || 'doctor';
   const caseId = route?.params?.caseId || caseData?.id;
   const isDoctor = role === "doctor";
   const isPatient = role === "patient";
@@ -44,46 +45,46 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
   const { mutate: sendNotification } = useAddNotification();
   const { mutate: addActivitylog } = useAddActivitylog();
 
-  
+
   const { mutate: submitReply } = useMutation({
-  mutationFn: postReply,
+    mutationFn: postReply,
 
-  onSuccess: () => {
-    queryClient.invalidateQueries({
-      queryKey: ['replies', caseId]
-    });
-
-    resetField('doctorReply');
-
-    addActivitylog({
-      doctor_id: authUser?.id,
-      history_title: "New Reply Added",
-      body: `You replied to case: ${caseData?.title}`,
-      status: "alert",
-    });
-
-    if (isDoctor && caseData?.patient_id) {
-      sendNotification({
-        patientId: caseData.patient_id,
-        title: `New reply received for your case: ${caseData?.title}`,
-        status: 'doctor_replied'
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['replies', caseId]
       });
-    }
 
-    setTimeout(() => {
-      flatListRef.current?.scrollToEnd({
-        animated: true
+      resetField('doctorReply');
+
+      addActivitylog({
+        doctor_id: authUser?.id as string,
+        history_title: "New Reply Added",
+        body: `You replied to case: ${caseData?.title}`,
+        status: "alert",
       });
-    }, 300);
-  },
 
-  onError: (error: any) => {
-    console.error(
-      'Failed to post reply:',
-      error?.response?.data || error.message
-    );
-  },
-});
+      if (isDoctor && caseData?.patient_id) {
+        sendNotification({
+          patientId: caseData.patient_id,
+          title: `New reply received for your case: ${caseData?.title}`,
+          status: 'doctor_replied'
+        });
+      }
+
+      setTimeout(() => {
+        flatListRef.current?.scrollToEnd({
+          animated: true
+        });
+      }, 300);
+    },
+
+    onError: (error: any) => {
+      console.error(
+        'Failed to post reply:',
+        error?.response?.data || error.message
+      );
+    },
+  });
 
   const onSend = async (data: FormData) => {
     if (!data.doctorReply.trim()) return;
@@ -125,10 +126,13 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
 
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <AppBackground style={{ flex: 1 }}>
-
-        <View style={styles.fixedHeader}>
+    <AppBackground style={{ flex: 1 }}>
+      <SafeAreaView style={[styles.safeArea, { backgroundColor: 'transparent' }]}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+        >
+          <View style={styles.fixedHeader}>
           <View style={styles.header}>
             <Text style={styles.title}>{caseData?.title || "Case Title"}</Text>
             <BackButton onPress={handleViewGoBack} />
@@ -138,41 +142,41 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
         </View>
 
         {/* <ReplyText title="Doctor's Replies" color={Colors.secondary} /> */}
-    
 
-      <View style={styles.scrollWrapper}>
-        <FlatList
-          ref={flatListRef}
-          data={replies}
-          keyExtractor={(item) => String(item.id)}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
-          ItemSeparatorComponent={() => (
-            <View style={{ height: scale(14) }} />
-          )}
-          renderItem={({ item }) => (
-            <DoctorReplyCard
-              id={item.id}
-              title={item.doctor?.full_name}
-              avatar={item.doctor?.profilePic}
-              major={item.doctor_major}
-              message={item.body}
-              time={item.timestamp}
-              CardOnPress={() => handleViewAllReplies(item)}
-              ChatOnPress={() => handleViewAllReplies(item)}
-              onLike={() =>{}}
-              onDislike={() =>{}}
-            />
-          )}
-        />
-      </View>
 
-      <View style={styles.bottomContainer}>
-        {isPatient && (
-          <View style={styles.patientBottom}>
-            <View style={{ width: "70%" }}>
-              <ResolvedSlideButton onSlideComplete={handleSlideComplete} />
-            </View>
+        <View style={styles.scrollWrapper}>
+          <FlatList
+            ref={flatListRef}
+            data={replies}
+            keyExtractor={(item) => String(item.id)}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+            ItemSeparatorComponent={() => (
+              <View style={{ height: scale(14) }} />
+            )}
+            renderItem={({ item }) => (
+              <DoctorReplyCard
+                id={item.id}
+                title={item.doctor?.full_name}
+                avatar={item.doctor?.profilePic}
+                major={item.doctor_major}
+                message={item.body}
+                time={item.timestamp}
+                CardOnPress={() => handleViewAllReplies(item)}
+                ChatOnPress={() => handleViewAllReplies(item)}
+                onLike={() => { }}
+                onDislike={() => { }}
+              />
+            )}
+          />
+        </View>
+
+        <View style={styles.bottomContainer}>
+          {isPatient && (
+            <View style={styles.patientBottom}>
+              <View style={{ width: "70%" }}>
+                <ResolvedSlideButton onSlideComplete={handleSlideComplete} />
+              </View>
             </View>
           )}
 
@@ -188,9 +192,9 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
             </View>
           )}
         </View>
-
-      </AppBackground>
-    </SafeAreaView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </AppBackground>
   );
 }
 
@@ -220,21 +224,19 @@ const styles = StyleSheet.create({
   },
 
   scrollWrapper: {
-    height: "60%",
+    flex: 1,
   },
 
   scrollContent: {
     paddingHorizontal: scale(24),
     paddingTop: scale(10),
-    paddingBottom: scale(140),
+    paddingBottom: scale(20),
   },
 
   bottomContainer: {
     width: "100%",
     paddingBottom: scale(30),
     paddingHorizontal: scale(24),
-    position: "absolute",
-    bottom: scale(30),
   },
 
   patientBottom: {

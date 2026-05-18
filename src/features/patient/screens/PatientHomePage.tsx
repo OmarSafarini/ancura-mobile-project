@@ -3,12 +3,12 @@ import { useNavigation } from "@react-navigation/native";
 import {
   StyleSheet,
   View,
-  Image,
   Text,
   SafeAreaView,
   FlatList,
   Pressable,
 } from "react-native";
+import { Image } from "expo-image";
 import { Colors as colors, palette } from "@/utils/colors";
 import NotificationsIcon from "@/assets/icons/NotificationsIcon";
 import { useEffect, useState } from "react";
@@ -39,7 +39,7 @@ export default function PatientHomePage() {
     loadLocal();
   }, []);
 
-    const loadLocal = async () => {
+  const loadLocal = async () => {
     const data = await getLocalCases();
     setLocalCases(data);
   };
@@ -56,30 +56,30 @@ export default function PatientHomePage() {
     },
   });
 
-   const {
+  const {
     data: patientPost,
     isLoading: patientPstLoading,
     isError: patientPostError,
   } = useQuery({
     queryKey: ["patientPost"],
     queryFn: async () => {
-  try {
-    const meta = await getUserMeta();
-    const data = await getPatintPosts(meta!.id);
+      try {
+        const meta = await getUserMeta();
+        const data = await getPatintPosts(meta!.id);
 
-    await saveCasesToLocal(data);
+        await saveCasesToLocal(data);
 
-    return data;
-  } catch (error) {
-    console.log("PATIENT POSTS ERROR:", error);
-    throw error;
-  }
-},
+        return data;
+      } catch (error) {
+        console.log("PATIENT POSTS ERROR:", error);
+        throw error;
+      }
+    },
   });
 
   if (patientLoading || patientPstLoading) {
     return (
-        <Loading />
+      <Loading />
     );
   }
 
@@ -105,9 +105,9 @@ export default function PatientHomePage() {
     <AppBackground variant="logo">
       <View style={styles.container}>
         <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
-          <Image style={styles.img} source={profilePic} />
-          <Pressable 
-            style={styles.iconWrapper} 
+          <Image style={styles.img} source={profilePic} transition={150} />
+          <Pressable
+            style={styles.iconWrapper}
             onPress={() => navigation.navigate("PatientNotifyTab")}
           >
             <NotificationsIcon size={scale(18)} color={colors.textDark2} />
@@ -162,7 +162,7 @@ export default function PatientHomePage() {
               )}
               contentContainerStyle={{
                 paddingBottom: scale(90),
-                paddingHorizontal:scale(6),
+                paddingHorizontal: scale(6),
                 paddingTop: scale(10),
               }}
             />
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: scale(10), 
+    marginBottom: scale(10),
   },
   iconWrapper: {
     borderRadius: scale(6),
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     borderRadius: scale(16),
   },
   container: {
-    flex: 1, 
+    flex: 1,
     padding: scale(40),
   },
   Text: {

@@ -5,8 +5,8 @@ import {
   StyleSheet,
   SafeAreaView,
   ScrollView,
-  Image,
 } from "react-native";
+import { Image } from "expo-image";
 import AppBackground from "@/components/base/AppBackground";
 import { scale } from "@/utils/responsive";
 import { Colors, palette } from "@/utils/colors";
@@ -62,9 +62,10 @@ export default function DoctorProfile({ navigation }: any) {
   });
 
   const loadStats = async () => {
-  const stats = await getDoctorDashboardStats(doctor.id);
-  setStats(stats.comments);
-};
+    if (!doctor?.id) return;
+    const stats = await getDoctorDashboardStats(doctor.id);
+    setStats(stats.comments);
+  };
 useEffect(()=>{
   if(doctor?.id){ 
      loadStats();
@@ -102,6 +103,7 @@ useEffect(()=>{
                 <Image
                   source={{ uri: doctor?.profilePic }}
                   style={styles.image}
+                  transition={150}
                 />
                 <View style={{ gap: scale(10) }}>
                   <Text style={styles.name}>{doctor?.full_name}</Text>
