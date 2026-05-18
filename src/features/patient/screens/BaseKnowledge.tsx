@@ -1,5 +1,5 @@
-import React, { useState, useRef } from "react";
-import { Text, View, StyleSheet, FlatList, Modal, SafeAreaView, Pressable } from "react-native";
+import React, { useState, useRef, useEffect } from "react";
+import { Text, View, StyleSheet, FlatList, Animated, Modal, SafeAreaView, Pressable } from "react-native";
 import { WebView } from "react-native-webview";
 import DocumentIcon from "@/assets/icons/DoucmentIcon";
 import AppBackground from "@/components/base/AppBackground";
@@ -11,7 +11,7 @@ import { Family } from "@/utils/typography";
 import YoutubeIcon from "@/assets/icons/YoutubeIcon";
 import { useNavigation } from "@react-navigation/native";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
-import FadeInView from "@/utils/FadeInView";
+import { useQuery } from "@tanstack/react-query";
 
 const ARTICLE_CATEGORIES = ["Articles", "Exercises"];
 
@@ -30,13 +30,35 @@ const RESOURCES = [
 ];
 
 export function BaseKnowledge() {
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+    const translateY = useRef(new Animated.Value(20)).current;
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [activeUrl, setActiveUrl] = useState<string | null>(null);
     const [canGoBack, setCanGoBack] = useState(false);
     const webViewRef = useRef<WebView>(null);
     const navigation = useNavigation();
 
-    const filteredResources = RESOURCES.filter((item) => {
+    useEffect(() => {
+        Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 500,
+            useNativeDriver: true,
+        }).start();
+
+        Animated.timing(translateY, {
+            toValue: 0,
+            duration: 500,
+            useNativeDriver: true,
+        }).start();
+    }, [fadeAnim, translateY]);
+
+    const { data: resources = RESOURCES } = useQuery({
+        queryKey: ['baseKnowledgeResources'],
+        queryFn: () => Promise.resolve(RESOURCES),
+        staleTime: Infinity, 
+    });
+
+    const filteredResources = resources.filter((item) => {
         if (selectedCategory === "Articles") {
             return item.tag === "Static Reading";
         } else if (selectedCategory === "Exercises") {
@@ -95,8 +117,8 @@ export function BaseKnowledge() {
                     ListHeaderComponent={renderHeader}
                     contentContainerStyle={styles.listContent}
                     ItemSeparatorComponent={() => <View style={styles.separator} />}
-                    renderItem={({ item, index }) => (
-                        <FadeInView delay={index * 50} duration={400}>
+                    renderItem={({ item }) => (
+                        <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY }] }}>
                             <SelfHelpResource 
                                 title={item.title} 
                                 tag={item.tag} 
@@ -105,7 +127,7 @@ export function BaseKnowledge() {
                                 Icon={item.Icon}
                                 onPress={() => handleResourcePress(item)}
                             />
-                        </FadeInView>
+                        </Animated.View>
                     )}
                 />
             </SafeAreaView>
@@ -165,13 +187,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: scale(51),
     },
     iconWrapper: {
-        width: scale(34),
-        height: scale(34),
-        justifyContent: 'center',
-        alignItems: 'center',
         borderRadius: scale(6),
         backgroundColor: Colors.formBackground,
-        // Added shadow for visibility against white backgrounds
+        padding: scale(8),
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,

@@ -13,13 +13,11 @@ import DoctorGreeting from "../components/DoctorGreeting";
 import Loading from "@/components/common/Loading";
 
 export default function DoctorHomeScreen({ navigation }: any) {
+  const insets = useSafeAreaInsets();
 
-
-const insets = useSafeAreaInsets();
-
-const {
-  data: doctor,
-   isLoading: doctorLoading,
+  const {
+    data: doctor,
+    isLoading: doctorLoading,
     isError: doctorError,
   } = useQuery<IDoctor>({
     queryKey: ["doctor"],
@@ -36,12 +34,11 @@ const {
   } = useQuery<CaseData[]>({
     queryKey: ["cases"],
     queryFn: getAllCases,
+    refetchOnMount: true,
   });
 
   if (doctorLoading || casesLoading) {
-    return (
-        <Loading/>
-    );
+    return <Loading />;
   }
 
   if (casesError || doctorError) {
@@ -53,11 +50,11 @@ const {
   return (
     <AppBackground variant="clean">
       <View style={styles.container}>
-       <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
-          <View style={{ marginLeft: scale(5) }}>
+        <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
+          <View style={styles.ImgContainer}>
             <DoctorGreeting
               name={doctor?.full_name}
-              image={doctor?.profilePic}
+              image={doctor?.profilePic ? { uri: doctor.profilePic } : undefined} 
             />
           </View>
         </SafeAreaView>
@@ -84,9 +81,9 @@ const {
             />
           )}
           contentContainerStyle={{
-             paddingBottom: scale(90),
-    paddingTop: scale(10),
-    paddingHorizontal: scale(16),
+            paddingBottom: scale(90),
+            paddingTop: scale(10),
+            paddingHorizontal: scale(16),
           }}
         />
       </View>
@@ -107,7 +104,9 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-      paddingHorizontal: scale(16),
+    paddingHorizontal: scale(16),
   },
+  ImgContainer:{
+    marginBottom:scale(10)
+  }
 });
-
