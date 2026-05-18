@@ -10,11 +10,11 @@ import InputField from "@/components/forms/InputFeild";
 import LicenseVerificationButton from "../components/LiecenseVerficationButton";
 import UploadImageButton from "../components/UploadImageButton";
 import BackButton from "@/components/common/BackButton";
-import { uploadDoctorProfileImage } from "@/services/Doctor/DoctorService";
 import { signUp } from "@/services/authService";
 import { useDoctor } from "@/Context/DoctorContext";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAuthStore } from "@/store/authStore";
+import { uploadDocumentToStorage } from "@/services/Doctor/storageService";
 
 export default function DoctorProfileAndSettings({ navigation }: any) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -46,14 +46,15 @@ export default function DoctorProfileAndSettings({ navigation }: any) {
     let imageUrl = "";
     try {
       if (selectedImage) {
-        imageUrl = await uploadDoctorProfileImage(
+        imageUrl = await uploadDocumentToStorage(
           selectedImage,
           "doctor_profile.jpg",
           "image/jpeg",
+          "doctor-profile",
         );
       }
       // Remove early setDoctorData since we set it after signUp with the ID
-      console.log("DoctorData",doctorData);
+      console.log("DoctorData", doctorData);
       const trimmedEmail = data.Email.trim();
       await signUp(trimmedEmail, data.Password, "doctor", {
         full_name: data.FullName,

@@ -29,7 +29,9 @@ import Loading from "@/components/common/Loading";
 import { getDoctorDashboardStats } from "@/services/Doctor/DoctorDashboard";
 
 export default function DoctorProfile({ navigation }: any) {
-    const [stats,setStats]=useState(0);
+    const [Comments,setComments]=useState(0);
+    const [Score,SetScore]=useState(0);
+
   const {
     data: doctor,
     isLoading: doctorLoading,
@@ -44,6 +46,7 @@ export default function DoctorProfile({ navigation }: any) {
       }
       return getDoctorProfile(meta.id);
     },
+    refetchInterval: 5000,
   });
 
   const {
@@ -59,11 +62,13 @@ export default function DoctorProfile({ navigation }: any) {
       }
       return getDoctorLicense(meta!.id);
     },
+    refetchInterval: 5000,
   });
 
   const loadStats = async () => {
   const stats = await getDoctorDashboardStats(doctor.id);
-  setStats(stats.comments);
+  setComments(stats.comments);
+  SetScore(stats.score);
 };
 useEffect(()=>{
   if(doctor?.id){ 
@@ -118,19 +123,19 @@ useEffect(()=>{
               <View style={styles.statsRow}>
                 <View style={styles.statItem}>
                   <Text style={styles.statNumber}>
-                    {stats}
+                    {Comments}
                   </Text>
                   <Text style={styles.statLabel}>Comments</Text>
                 </View>
 
                 <View style={styles.statItem}>
-                  <Text style={styles.statNumber}>{doctor?.points}</Text>
+                  <Text style={styles.statNumber}>{Score}</Text>
                   <Text style={styles.statLabel}>Reputation </Text>
                   <Text style={styles.statLabel}> Score</Text>
                 </View>
 
                 <View style={styles.statItem}>
-                  <Text style={styles.statNumber}>{license?.expire_date}</Text>
+                  <Text style={styles.statNumber}>{license?.years_exp}</Text>
                   <Text style={styles.statLabel}>Years </Text>
                   <Text style={styles.statLabel}> Experence</Text>
                 </View>

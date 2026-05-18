@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { Colors as colors, palette } from "@/utils/colors";
 import NotificationsIcon from "@/assets/icons/NotificationsIcon";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { scale } from "@/utils/responsive";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Family } from "@/utils/typography";
@@ -35,14 +35,15 @@ export default function PatientHomePage() {
   const [selected, setSelcted] = useState("All");
   const [localCases, setLocalCases] = useState<any[]>([]);
 
-  useEffect(() => {
-    loadLocal();
-  }, []);
-
-    const loadLocal = async () => {
+  const loadLocal = useCallback(async () => {
     const data = await getLocalCases();
     setLocalCases(data);
-  };
+  }, []);
+
+  useEffect(() => {
+    loadLocal();
+  }, [loadLocal]);
+
   const {
     data: patient,
     isLoading: patientLoading,
@@ -56,31 +57,30 @@ export default function PatientHomePage() {
     },
   });
 
-   const {
+  const {
     data: patientPost,
     isLoading: patientPstLoading,
     isError: patientPostError,
   } = useQuery({
     queryKey: ["patientPost"],
     queryFn: async () => {
-  try {
-    const meta = await getUserMeta();
-    const data = await getPatintPosts(meta!.id);
+      try {
+        const meta = await getUserMeta();
+        const data = await getPatintPosts(meta!.id);
 
-    await saveCasesToLocal(data);
+        await saveCasesToLocal(data);
 
-    return data;
-  } catch (error) {
-    console.log("PATIENT POSTS ERROR:", error);
-    throw error;
-  }
-},
+        return data;
+      } catch (error) {
+        console.log("PATIENT POSTS ERROR:", error);
+        throw error;
+      }
+    },
+    refetchOnMount: true,
   });
 
   if (patientLoading || patientPstLoading) {
-    return (
-        <Loading />
-    );
+    return <Loading />;
   }
 
   if (patientError || patientPostError) {
@@ -106,8 +106,8 @@ export default function PatientHomePage() {
       <View style={styles.container}>
         <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
           <Image style={styles.img} source={profilePic} />
-          <Pressable 
-            style={styles.iconWrapper} 
+          <Pressable
+            style={styles.iconWrapper}
             onPress={() => navigation.navigate("PatientNotifyTab")}
           >
             <NotificationsIcon size={scale(18)} color={colors.textDark2} />
@@ -162,7 +162,7 @@ export default function PatientHomePage() {
               )}
               contentContainerStyle={{
                 paddingBottom: scale(90),
-                paddingHorizontal:scale(6),
+                paddingHorizontal: scale(6),
                 paddingTop: scale(10),
               }}
             />
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: scale(10), 
+    marginBottom: scale(10),
   },
   iconWrapper: {
     borderRadius: scale(6),
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     borderRadius: scale(16),
   },
   container: {
-    flex: 1, 
+    flex: 1,
     padding: scale(40),
   },
   Text: {
