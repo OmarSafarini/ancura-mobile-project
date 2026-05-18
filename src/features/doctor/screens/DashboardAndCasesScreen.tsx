@@ -16,17 +16,42 @@ import { scale } from "@/utils/responsive";
 import { useUserSession } from "@/hooks/useUserSession";
 import { useDoctorBasicInfo } from "@/hooks/useDoctorBasicInfo";
 import { useGetDoctorCases } from "@/hooks/useGetDoctorCases";
+import { getDoctorDashboardStats } from "@/services/Doctor/DoctorDashboard";
+import { useQueryClient } from "node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup";
 
 export default function DoctorDashboardAndCases({ navigation }: any) {
   const scrollRef = useRef<ScrollView>(null);
+  const queryClient = useQueryClient();
 
   const { doctorId } = useUserSession();
   const { data: doctorInfo } = useDoctorBasicInfo(doctorId);
   const { previewCases, isPending, isFetching, isError, refetch } = useGetDoctorCases();
 
   const handleViewAllCases = useCallback(() => {
-    navigation.navigate("DoctorHomeScreen");
-  }, [navigation]);
+    if (!doctorId) return;
+
+  await Promise.all([
+    queryClient.prefetchQuery({
+      queryKey: ["doctorDashboard", "Weekly", doctorId],
+      queryFn: () => getDoctorDashboardStats(doctorId, "Weekly"),
+      staleTime: 3 * 60 * 1000,
+    }),
+
+    queryClient.prefetchQuery({
+      queryKey: ["doctorDashboard", "Monthly", doctorId],
+      queryFn: () => getDoctorDashboardStats(doctorId, "Monthly"),
+      staleTime: 3 * 60 * 1000,
+    }),
+
+    queryClient.prefetchQuery({
+      queryKey: ["doctorDashboard", "All Time", doctorId],
+      queryFn: () => getDoctorDashboardStats(doctorId, "All Time"),
+      staleTime: 3 * 60 * 1000,
+    }),
+  ]);
+
+  navigation.navigate("DashboardScreen");
+}, [navigation, queryClient, doctorId]);
 
   const handleViewDashboardScreen = useCallback(() => {
     navigation.navigate("DashboardScreen");
