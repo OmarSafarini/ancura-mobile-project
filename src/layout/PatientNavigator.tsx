@@ -26,23 +26,19 @@ import EditCaseScreen from '@/features/patient/screens/EditCaseScreen';
 const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
 
+const RootStack = createNativeStackNavigator();
+
 // --- Journey 1: Patient Home Stack ---
 function PatientHomeStackNavigator() {
   return (
     <HomeStack.Navigator screenOptions={{ headerShown: false }}>
       <HomeStack.Screen name="PatientHomePage" component={PatientHomePage} />
-      <HomeStack.Screen name="CreateCaseScreen" component={CreateCaseScreen} />
-      <HomeStack.Screen name="CaseDetailsAndRepliesScreen" component={CaseDetailsAndRepliesScreen} />
-      <HomeStack.Screen name="EditCaseScreen" component={EditCaseScreen} />
-      <HomeStack.Screen name="AllRepliesScreen" component={AllRepliesScreen} />
-      <HomeStack.Screen name="DoctorRepliesScreen" component={DoctorRepliesScreen} />
-      <HomeStack.Screen name="BaseKnowledge" component={BaseKnowledgeScreen} />
     </HomeStack.Navigator>
   );
 }
 
-// --- Main Patient Tab Navigator ---
-export default function PatientNavigator() {
+// --- Patient Tab Navigator ---
+function PatientTabNavigator() {
   return (
     <Tab.Navigator
       tabBar={(props) => <PatientBNB {...props} />}
@@ -78,5 +74,19 @@ export default function PatientNavigator() {
         options={{ tabBarLabel: 'Settings' }}
       />
     </Tab.Navigator>
+  );
+}
+
+// --- Main Patient Root Navigator ---
+export default function PatientNavigator() {
+  return (
+    <RootStack.Navigator screenOptions={{ headerShown: false }}>
+      <RootStack.Screen name="PatientTabs" component={PatientTabNavigator} />
+      <RootStack.Screen name="CreateCaseScreen" component={CreateCaseScreen} />
+      <RootStack.Screen name="CaseDetailsAndRepliesScreen" component={CaseDetailsAndRepliesScreen} options={{ gestureEnabled: false }} />
+      <RootStack.Screen name="EditCaseScreen" component={EditCaseScreen} />
+      <RootStack.Screen name="AllRepliesScreen" component={AllRepliesScreen} options={{ gestureEnabled: false }} />
+      <RootStack.Screen name="DoctorRepliesScreen" component={DoctorRepliesScreen} options={{ gestureEnabled: false }} />
+    </RootStack.Navigator>
   );
 }

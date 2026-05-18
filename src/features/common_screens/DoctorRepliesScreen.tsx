@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
-import { View, FlatList, StyleSheet, Text, SafeAreaView } from "react-native";
+import React, { useCallback, useRef } from "react";
+import { View, FlatList, StyleSheet, Text, SafeAreaView, KeyboardAvoidingView, Platform } from "react-native";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Control, useForm } from "react-hook-form";
 import AppBackground from "@/components/base/AppBackground";
@@ -17,13 +17,18 @@ import { getRepliesByCaseId, postReply } from "@/services/common_services/ReplyS
 import { useAuthStore } from "@/store/authStore";
 import { useAddNotification } from "@/hooks/useAddNotification";
 import { useAddActivitylog } from "@/hooks/useAddActivitylog";
+import { useCaseReplies } from "@/hooks/useCaseReplies";
 
 type FormData = { doctorReply: string };
 
 export default function DoctorRepliesScreen({ navigation, route }: any) {
+  
+  const authRole = useAuthStore((state) => state.role);
+  
   const caseData = route?.params?.caseData;
-  const role = route?.params?.role || 'doctor';
   const caseId = route?.params?.caseId || caseData?.id;
+  const role = route?.params?.role || authRole || 'doctor';
+
   const isDoctor = role === "doctor";
   const isPatient = role === "patient";
   const authUser = useAuthStore((state) => state.user);
@@ -35,68 +40,19 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
     defaultValues: { doctorReply: "" },
   });
 
-  const { data: replies = [] } = useQuery({
-    queryKey: ['replies', caseId],
-    queryFn: () => getRepliesByCaseId(caseId),
-    enabled: !!caseId,
+ const { replies, sendReply, isSubmitting } = useCaseReplies({ 
+    caseId, 
+    caseData, 
+    role 
   });
 
-  const { mutate: sendNotification } = useAddNotification();
-  const { mutate: addActivitylog } = useAddActivitylog();
-
-  
-  const { mutate: submitReply } = useMutation({
-  mutationFn: postReply,
-
-  onSuccess: () => {
-    queryClient.invalidateQueries({
-      queryKey: ['replies', caseId]
-    });
-
+  const onSend = useCallback((data: FormData) => {
+    const trimmed = data.doctorReply?.trim();
+    if (!trimmed) return;
+    
+    sendReply(trimmed);
     resetField('doctorReply');
-
-    addActivitylog({
-      doctor_id: authUser?.id,
-      history_title: "New Reply Added",
-      body: `You replied to case: ${caseData?.title}`,
-      status: "alert",
-    });
-
-    if (isDoctor && caseData?.patient_id) {
-      sendNotification({
-        patientId: caseData.patient_id,
-        title: `New reply received for your case: ${caseData?.title}`,
-        status: 'doctor_replied'
-      });
-    }
-
-    setTimeout(() => {
-      flatListRef.current?.scrollToEnd({
-        animated: true
-      });
-    }, 300);
-  },
-
-  onError: (error: any) => {
-    console.error(
-      'Failed to post reply:',
-      error?.response?.data || error.message
-    );
-  },
-});
-
-  const onSend = async (data: FormData) => {
-    if (!data.doctorReply.trim()) return;
-    if (!authUser?.id) return;
-
-
-    submitReply({
-      caseId: caseId,
-      doctorId: authUser.id,
-      patientId: caseData?.patient_id,
-      body: data.doctorReply.trim(),
-    });
-  };
+  }, [sendReply, resetField]);
 
 
   const handleViewAllReplies = (reply: any) => {
@@ -115,9 +71,9 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
 
 
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     flatListRef.current?.scrollToEnd({ animated: true });
-  };
+  }, []);
 
   const handleSlideComplete = () => {
     console.log("Case marked as resolved");
@@ -125,10 +81,13 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
 
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <AppBackground style={{ flex: 1 }}>
-
-        <View style={styles.fixedHeader}>
+    <AppBackground style={{ flex: 1 }}>
+      <SafeAreaView style={[styles.safeArea, { backgroundColor: 'transparent' }]}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+        >
+          <View style={styles.fixedHeader}>
           <View style={styles.header}>
             <Text style={styles.title}>{caseData?.title || "Case Title"}</Text>
             <BackButton onPress={handleViewGoBack} />
@@ -137,42 +96,35 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
           <ReplyText title="Doctor's Replies" color={Colors.secondary} />
         </View>
 
-        {/* <ReplyText title="Doctor's Replies" color={Colors.secondary} /> */}
-    
+        <View style={styles.scrollWrapper}>
+          <FlatList
+            ref={flatListRef}
+            data={replies}
+            keyExtractor={(item) => String(item.id)}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+            ItemSeparatorComponent={() => ( <View style={{ height: scale(14) }} />)}
+            renderItem={({ item }) => (
+              <DoctorReplyCard
+                id={item.id}
+                title={item.doctor?.full_name}
+                avatar={item.doctor?.profilePic}
+                major={item.doctor_major}
+                message={item.body}
+                time={item.timestamp}
+                CardOnPress={() => handleViewAllReplies(item)}
+                ChatOnPress={() => handleViewAllReplies(item)}
+              />
+            )}
+          />
+        </View>
 
-      <View style={styles.scrollWrapper}>
-        <FlatList
-          ref={flatListRef}
-          data={replies}
-          keyExtractor={(item) => String(item.id)}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
-          ItemSeparatorComponent={() => (
-            <View style={{ height: scale(14) }} />
-          )}
-          renderItem={({ item }) => (
-            <DoctorReplyCard
-              id={item.id}
-              title={item.doctor?.full_name}
-              avatar={item.doctor?.profilePic}
-              major={item.doctor_major}
-              message={item.body}
-              time={item.timestamp}
-              CardOnPress={() => handleViewAllReplies(item)}
-              ChatOnPress={() => handleViewAllReplies(item)}
-              onLike={() =>{}}
-              onDislike={() =>{}}
-            />
-          )}
-        />
-      </View>
-
-      <View style={styles.bottomContainer}>
-        {isPatient && (
-          <View style={styles.patientBottom}>
-            <View style={{ width: "70%" }}>
-              <ResolvedSlideButton onSlideComplete={handleSlideComplete} />
-            </View>
+        <View style={styles.bottomContainer}>
+          {isPatient && (
+            <View style={styles.patientBottom}>
+              <View style={{ width: "70%" }}>
+                <ResolvedSlideButton onSlideComplete={handleSlideComplete} />
+              </View>
             </View>
           )}
 
@@ -188,9 +140,9 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
             </View>
           )}
         </View>
-
-      </AppBackground>
-    </SafeAreaView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </AppBackground>
   );
 }
 
@@ -220,21 +172,19 @@ const styles = StyleSheet.create({
   },
 
   scrollWrapper: {
-    height: "60%",
+    flex: 1,
   },
 
   scrollContent: {
     paddingHorizontal: scale(24),
     paddingTop: scale(10),
-    paddingBottom: scale(140),
+    paddingBottom: scale(20),
   },
 
   bottomContainer: {
     width: "100%",
     paddingBottom: scale(30),
     paddingHorizontal: scale(24),
-    position: "absolute",
-    bottom: scale(30),
   },
 
   patientBottom: {

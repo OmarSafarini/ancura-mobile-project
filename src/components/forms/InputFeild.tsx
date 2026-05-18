@@ -4,8 +4,8 @@ import { Controller } from "react-hook-form";
 import { InputFieldProps } from "@/types/InputFieldProps";
 import { Family } from "@/utils/typography";
 import { Colors, palette } from "@/utils/colors";
-import {scale} from "@utils/responsive";
-const InputField = ({ control, name, label, placeholder, rules, isEdit=false, secureTextEntry, multiline=false, numberOfLines=1, textStyle, containerStyle }: InputFieldProps) => {
+import { scale } from "@utils/responsive";
+const InputField = ({ control, name, label, placeholder, rules, isEdit = false, secureTextEntry, multiline = false, numberOfLines = 1, textStyle, containerStyle }: InputFieldProps) => {
   const [isFocused, setIsFocused] = useState(false);
   return (
     <View style={styles.formInput}>
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
 
   label: {
     color: Colors.formLabel,
-    fontFamily:Family.HV_Bold,
+    fontFamily: Family.HV_Bold,
     fontSize: scale(12),
     lineHeight: scale(18),
   },
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   inputText: {
     fontSize: scale(18),
     color: Colors.formLabel,
-    fontFamily:Family.FG_Light,
+    fontFamily: Family.FG_Light,
     width: "100%",
   },
 
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
 
   error: {
     color: Colors.warning,
-    fontFamily:Family.FG_Light,
+    fontFamily: Family.FG_Light,
     fontSize: scale(12),
     marginTop: scale(4),
   }

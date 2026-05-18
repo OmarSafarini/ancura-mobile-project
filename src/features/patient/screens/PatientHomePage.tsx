@@ -3,12 +3,12 @@ import { useNavigation } from "@react-navigation/native";
 import {
   StyleSheet,
   View,
-  Image,
   Text,
   SafeAreaView,
   FlatList,
   Pressable,
 } from "react-native";
+import { Image } from "expo-image";
 import { Colors as colors, palette } from "@/utils/colors";
 import NotificationsIcon from "@/assets/icons/NotificationsIcon";
 import { useCallback, useEffect, useState } from "react";
@@ -105,7 +105,7 @@ export default function PatientHomePage() {
     <AppBackground variant="logo">
       <View style={styles.container}>
         <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
-          <Image style={styles.img} source={profilePic} />
+          <Image style={styles.img} source={profilePic} transition={150} />
           <Pressable
             style={styles.iconWrapper}
             onPress={() => navigation.navigate("PatientNotifyTab")}

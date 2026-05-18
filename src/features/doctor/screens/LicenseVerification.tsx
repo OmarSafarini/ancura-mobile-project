@@ -18,19 +18,16 @@ import { supabaseClient } from "@/services/supabase";
 import { uploadDocumentToStorage } from "@/services/Doctor/storageService";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDoctor } from "@/Context/DoctorContext";
+import { useMutation } from "@tanstack/react-query";
 export function LicenseVerification({ navigation }: any) {
     const { control, handleSubmit } = useForm();
     const [selectedDocument, setSelectedDocument] = useState<null | { name: string, uri: string, size?: number, mimeType?: string }>(null);
     const [showSuccess, setShowSuccess] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
     const { doctorData } = useDoctor(); 
-console.log("Licnse",doctorData);
-            console.log("Dr Id",doctorData.id);
 
     const handleDocumentUpload = async () => {
         try { 
             const r = doctorData.id
-            console.log("Dr Id",r);
             const result = await DocumentPicker.getDocumentAsync({
                 type: ['application/pdf', 'image/*'],
                 copyToCacheDirectory: true,
@@ -64,20 +61,12 @@ console.log("Licnse",doctorData);
         return `${year}-${month}-${day}`;
     };
 
-    const onSubmit = async (formData: any) => {
-        if (!selectedDocument) {
-            Alert.alert("Missing Document", "Please upload your license document before submitting.");
-            return;
-        }
-
-        setIsLoading(true);
-
-
-        try {
+    const { mutate: submitLicense, isPending: isLoading } = useMutation({
+        mutationFn: async (formData: any) => {
             const publicUrl = await uploadDocumentToStorage(
-                selectedDocument.uri, 
-                selectedDocument.name, 
-                selectedDocument.mimeType as string,
+                selectedDocument!.uri, 
+                selectedDocument!.name, 
+                selectedDocument!.mimeType as string,
                 'licenses'
             );
 
@@ -92,16 +81,26 @@ console.log("Licnse",doctorData);
             };
 
             const response = await supabaseClient.post('/license', payload);
-            
+            return response;
+        },
+        onSuccess: (response) => {
             if (response.status === 201 || response.status === 204 || response.status === 200) {
                 setShowSuccess(true);
             }
-        } catch (error) {
+        },
+        onError: (error) => {
             console.error("Submission Error:", error);
             Alert.alert("Submission Failed", "Could not verify your license. Please check your inputs and try again.");
-        } finally {
-            setIsLoading(false);
         }
+    });
+
+    const onSubmit = (formData: any) => {
+        if (!selectedDocument) {
+            Alert.alert("Missing Document", "Please upload your license document before submitting.");
+            return;
+        }
+
+        submitLicense(formData);
     };
 
 const goBack = () => {

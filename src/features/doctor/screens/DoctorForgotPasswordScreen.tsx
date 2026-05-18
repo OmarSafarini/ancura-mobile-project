@@ -15,6 +15,7 @@ import { useState } from 'react';
 
 export default function DoctorForgotPasswordScreen({ navigation }: any) {
   const { control, handleSubmit } = useForm({
+    mode: 'onChange',
     defaultValues: {
       email: '',
     }
