@@ -13,7 +13,6 @@ import { scale } from "@/utils/responsive";
 import { useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/authStore";
 import { getDoctorDashboardStats } from "@/services/Doctor/DoctorDashboard";
-import { getDoctorBasicInfo } from "@/services/Doctor/Doctor";
 import { useDoctorBasicInfo } from "@/hooks/useDoctorBasicInfo";
 import { useUserSession } from "@/hooks/useUserSession";
 import { useAnimatedCounter } from "@/hooks/useAnimatedCounter";

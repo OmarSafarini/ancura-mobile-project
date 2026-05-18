@@ -20,7 +20,7 @@ const Stack = createNativeStackNavigator();
 
 export default function AuthNavigator() {
   return (
-            <DoctorProvider>
+            // <DoctorProvider>
 
     <Stack.Navigator
       initialRouteName="EntryScreen"
@@ -43,6 +43,6 @@ export default function AuthNavigator() {
       <Stack.Screen name="DoctorProfileAndSettings" component={DoctorProfileAndSettings} />
       <Stack.Screen name="LicenseVerification" component={LicenseVerification} />
     </Stack.Navigator>
-    </DoctorProvider>
+   
   );
 }
