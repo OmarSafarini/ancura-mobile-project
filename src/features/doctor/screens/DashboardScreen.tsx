@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { View, ScrollView, StyleSheet, Animated } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 
@@ -35,10 +35,11 @@ export default function DoctorDashboard({ navigation }: any) {
     staleTime: 3 * 60 * 1000,
   });
 
-  const avgTimeValue =
-  stats.time >= 1440
+  const avgTimeValue = useMemo(() => {
+  return stats.time >= 1440
     ? Math.round((stats.time / 1440) * 10) / 10
     : Math.round((stats.time / 60) * 10) / 10;
+}, [stats.time]);
   const avgTimeUnit = stats.time >= 1440 ? "d" : "h";
 
   const comments = useAnimatedCounter(stats.comments);
