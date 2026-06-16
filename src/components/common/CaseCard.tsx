@@ -1,7 +1,8 @@
+import React, { useRef, useEffect } from "react";
 import { Colors } from "@/utils/colors";
 import { Family } from "@/utils/typography";
-import { Ionicons } from "@expo/vector-icons";
-import { Pressable, StyleSheet, Text, View, GestureResponderEvent } from "react-native";
+import { Feather } from "@expo/vector-icons";
+import { Pressable, StyleSheet, Text, View, GestureResponderEvent, Platform, Animated, Easing } from "react-native";
 import { scale } from "@/utils/responsive";
 import { CaseData } from "@/types/ICaseData";
 import UnderViewIcon from "@/assets/icons/UnderViewIcon";
@@ -16,25 +17,25 @@ type Props = {
 const STATUS_CONFIG = {
   under_review: {
     label: "Under Review",
-    containerColor: "rgba(232,112,0 , 0.24)",
+    containerColor: "rgba(232, 112, 0, 0.15)",
     IconComponent: UnderViewIcon,
     iconBackground: Colors.underReview,
   },
   doctor_replied: {
     label: "Doctor Replied",
-    containerColor: "rgba(8, 7, 14 , 0.13)",
+    containerColor: "rgba(8, 7, 14, 0.08)",
     IconComponent: DoctorRepliedIcon,
     iconBackground: Colors.secondary,
   },
   resolved: {
     label: "Resolved",
-    containerColor: Colors.secondaryLight,
+    containerColor: "rgba(195, 227, 199, 0.67)",
     IconComponent: ResolvedIcon,
     iconBackground: Colors.secondary,
   },
-  empty: {   
+  empty: {
     label: "None",
-    containerColor: "rgb(227, 223, 234)",
+    containerColor: "rgba(255, 255, 255, 0.75)",
     IconComponent: null,
     iconBackground: "transparent",
   }
@@ -44,19 +45,119 @@ export default function CaseCard({ data, onPress }: Props) {
   const status = data.status || "empty";
   const config = STATUS_CONFIG[status as keyof typeof STATUS_CONFIG] || STATUS_CONFIG["empty"];
 
+  // Base shifting color animation value
+  const colorAnim = useRef(new Animated.Value(0)).current;
+
+  // Expanding radar pulse animation value
+  const pulseAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (data.isEmergency) {
+      // Shifting border color timing loop
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(colorAnim, {
+            toValue: 1,
+            duration: 2500,
+            useNativeDriver: false,
+          }),
+          Animated.timing(colorAnim, {
+            toValue: 0,
+            duration: 2500,
+            useNativeDriver: false,
+          }),
+        ])
+      ).start();
+
+      // Expanding radar pulse timing loop
+      Animated.loop(
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 2000,
+          easing: Easing.out(Easing.ease),
+          useNativeDriver: true,
+        })
+      ).start();
+    }
+  }, [data.isEmergency, colorAnim, pulseAnim]);
+
+  // Interpolate base border colors (coral -> warm red -> hot pink)
+  const animatedBorderColor = colorAnim.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [
+      "rgba(255, 99, 132, 0.55)", // Soft rose/pink
+      "rgba(255, 33, 33, 0.95)",  // Hot premium red
+      "rgba(255, 60, 110, 0.7)",  // Warm magenta/coral
+    ],
+  });
+
+  // Interpolate radar pulse scale and opacity
+  const pulseScale = pulseAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 1.07],
+  });
+
+  const pulseOpacity = pulseAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.75, 0],
+  });
+
   return (
-    <Pressable onPress={onPress} style={[styles.container, { backgroundColor: "#FFFFFF" }, data.isEmergency && styles.emergencyShadow,]}>
+    <Pressable
+      onPress={onPress}
+      style={[
+        styles.container,
+        {
+          backgroundColor: Platform.OS === 'android' && data.isEmergency
+            ? '#FFFDFD'
+            : "rgba(255, 255, 255, 0.25)"
+        }
+      ]}
+    >
       <View style={[StyleSheet.absoluteFillObject, { backgroundColor: config.containerColor, borderRadius: scale(15) }]} pointerEvents="none" />
+
+      {data.isEmergency && (
+        <>
+          {/* Base Color-Shifting Border */}
+          <Animated.View
+            style={[
+              StyleSheet.absoluteFillObject,
+              {
+                borderWidth: scale(0.8),
+                borderRadius: scale(15),
+                borderColor: animatedBorderColor,
+              },
+            ]}
+            pointerEvents="none"
+          />
+
+          {/* Outer Pulsing Radar Expand Wave */}
+          <Animated.View
+            style={[
+              StyleSheet.absoluteFillObject,
+              {
+                borderWidth: scale(0.6),
+                borderRadius: scale(15),
+                borderColor: "rgba(255, 45, 85, 0.75)",
+                transform: [{ scale: pulseScale }],
+                opacity: pulseOpacity,
+              },
+            ]}
+            pointerEvents="none"
+          />
+        </>
+      )}
+
       <Text style={styles.title}>{data.title}</Text>
       <View style={styles.arrowContainer}>
-        <Ionicons name="chevron-forward" size={scale(16)} />
+        <Feather name="chevron-right" size={scale(12)} color={Colors.textDark} style={{ opacity: 0.8 }} />
       </View>
       <View style={styles.bottomRow}>
         <Text style={styles.time}>{data.time_ago}</Text>
         {status !== "empty" && config.IconComponent && (
           <View style={styles.reviewContainer}>
             <View style={[styles.iconCircle, { backgroundColor: config.iconBackground }]}>
-              <config.IconComponent width={scale(10)} height={scale(10)} />
+              <config.IconComponent width={scale(11.2)} height={scale(11.2)} />
             </View>
             <Text style={[styles.reviewText, { color: config.iconBackground }]}>{config.label}</Text>
           </View>
@@ -74,13 +175,6 @@ const styles = StyleSheet.create({
     padding: scale(12),
     justifyContent: "space-between",
   },
-  emergencyShadow: {
-    shadowColor: Colors.warning,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.45,
-    shadowRadius: 8,
-    elevation: 8,
-  },
   title: {
     fontSize: scale(13),
     fontFamily: Family.FG_Medium,
@@ -88,7 +182,7 @@ const styles = StyleSheet.create({
     maxWidth: "75%",
   },
   arrowContainer: {
-    backgroundColor: Colors.formBackground,
+    backgroundColor: "rgba(0, 0, 0, 0.08)",
     alignSelf: "center",
     borderRadius: scale(20),
     padding: scale(5),
@@ -108,19 +202,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.6)",
     borderRadius: scale(10),
-    paddingHorizontal: scale(6),
-    paddingVertical: scale(2),
-    gap: scale(4),
+    paddingHorizontal: scale(8),
+    paddingVertical: scale(3.2),
+    gap: scale(5),
   },
   reviewText: {
     paddingTop: scale(2),
-    fontSize: scale(7),
+    fontSize: scale(8.4),
     fontFamily: Family.FG_Regular,
   },
   iconCircle: {
-    width: scale(12),
-    height: scale(12),
-    borderRadius: scale(12),
+    width: scale(14.8),
+    height: scale(14.8),
+    borderRadius: scale(14.8),
     justifyContent: "center",
     alignItems: "center",
   },

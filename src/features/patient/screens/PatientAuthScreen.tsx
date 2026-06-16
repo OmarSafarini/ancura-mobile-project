@@ -2,19 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, KeyboardAvoidingView, ScrollView, Platform, Alert, TouchableOpacity } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { Ionicons } from '@expo/vector-icons';
-import AppBackground from '../../../components/base/AppBackground';
-import Logo from '../../../assets/icons/Logo';
-import FadeInView from '../../../utils/FadeInView';
-import AuthToggle from '../../../components/common/AuthToggle';
-import InputField from '../../../components/forms/InputFeild';
-import FormDropdown from '../../../components/forms/Dropdown';
-import NormalButton from '../../../components/common/NormalButton';
-import { Colors, palette } from '../../../utils/colors';
-import { Family } from '../../../utils/typography';
-import { scale } from '../../../utils/responsive';
-import { signIn, signUp } from '../../../services/authService';
-import { useAuthStore } from '../../../store/authStore';
-import { checkBiometricSupport, saveBiometricCredentials, getBiometricCredentials, promptBiometricAuth } from '../../../services/biometricService';
+import AppBackground from '@/components/base/AppBackground';
+import Logo from '@/assets/icons/Logo';
+import FadeInView from '@/utils/FadeInView';
+import AuthToggle from '@/components/common/AuthToggle';
+import InputField from '@/components/forms/InputFeild';
+import FormDropdown from '@/components/forms/Dropdown';
+import NormalButton from '@/components/common/NormalButton';
+import { Colors, palette } from '@/utils/colors';
+import { Family } from '@/utils/typography';
+import { scale } from '@/utils/responsive';
+import { signIn, signUp } from '@/services/authService';
+import { useAuthStore } from '@/store/authStore';
+import SuccessScreen from '@/components/common/SuccessScreen';
+import { checkBiometricSupport, saveBiometricCredentials, getBiometricCredentials, promptBiometricAuth } from '@/services/biometricService';
 
 const genderData = [
   { label: 'Male', value: 'Male' },
@@ -25,6 +26,11 @@ export default function PatientAuthScreen({ navigation }: any) {
   const [authMode, setAuthMode] = useState<"signin" | "signup">("signin");
   const [hasBiometrics, setHasBiometrics] = useState(false);
   const { isAuthenticating, error, setError } = useAuthStore();
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const handleBrowseHome = () => {
+    setShowSuccess(false);
+  };
 
   useEffect(() => {
     const checkBiometrics = async () => {
@@ -38,7 +44,6 @@ export default function PatientAuthScreen({ navigation }: any) {
   }, []);
 
   const { control, handleSubmit, reset } = useForm({
-    mode: 'onChange',
     defaultValues: {
       email: '',
       password: '',
@@ -56,10 +61,9 @@ export default function PatientAuthScreen({ navigation }: any) {
   const onSubmit = async (data: any) => {
     console.log("Form Submitted! Data:", data);
     try {
-      const trimmedEmail = data.email.trim();
       if (authMode === 'signin') {
         console.log("Attempting to sign in...");
-        await signIn(trimmedEmail, data.password, 'patient');
+        await signIn(data.email, data.password, 'patient');
 
         const supported = await checkBiometricSupport();
         const creds = await getBiometricCredentials('patient');
@@ -81,10 +85,16 @@ export default function PatientAuthScreen({ navigation }: any) {
         }
       } else {
         console.log("Attempting to sign up...");
-        await signUp(trimmedEmail, data.password, 'patient', {
-          age: parseInt(data.age, 10),
-          gender: data.gender ? data.gender.toLowerCase() : 'male',
-        });
+        await signUp(
+          data.email,
+          data.password,
+          'patient',
+          {
+            age: parseInt(data.age, 10),
+            gender: data.gender ? data.gender.toLowerCase() : 'male',
+          }
+        );
+        setShowSuccess(true);
       }
     } catch (err: any) {
       console.error("Auth Error:", err);
@@ -110,138 +120,143 @@ export default function PatientAuthScreen({ navigation }: any) {
   };
 
   return (
-    <AppBackground variant="clean">
-      <KeyboardAvoidingView
-        style={styles.keyboardView}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
+    <>
+      <AppBackground variant="clean">
+        <KeyboardAvoidingView
+          style={styles.keyboardView}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          {/* Logo Section */}
-          <FadeInView delay={0} style={styles.logoContainer}>
-            <Logo size={scale(110)} />
-          </FadeInView>
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            {/* Logo Section */}
+            <FadeInView delay={0} style={styles.logoContainer}>
+              <Logo size={scale(110)} />
+            </FadeInView>
 
-          {/* Title Section */}
-          <FadeInView delay={150} style={styles.titleContainer}>
-            <Text style={styles.titleLine1}>Your Path to</Text>
-            <Text style={styles.titleLine2}>Mental Wellness</Text>
-            <Text style={styles.titleLine3}>Starts Here!</Text>
-          </FadeInView>
+            {/* Title Section */}
+            <FadeInView delay={150} style={styles.titleContainer}>
+              <Text style={styles.titleLine1}>Your Path to</Text>
+              <Text style={styles.titleLine2}>Mental Wellness</Text>
+              <Text style={styles.titleLine3}>Starts Here!</Text>
+            </FadeInView>
 
-          {/* Toggle Section */}
-          <FadeInView delay={300} style={styles.toggleContainer}>
-            <AuthToggle value={authMode} onChange={handleModeChange} />
-          </FadeInView>
+            {/* Toggle Section */}
+            <FadeInView delay={300} style={styles.toggleContainer}>
+              <AuthToggle value={authMode} onChange={handleModeChange} />
+            </FadeInView>
 
-          {/* Form Section */}
-          <FadeInView delay={450} style={styles.formContainer}>
-            <InputField
-              control={control}
-              name="email"
-              label="Email"
-              placeholder="your@email.com"
-              rules={{
-                required: "Email is required",
-                pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email format" },
-              }}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-
-            <View style={{ height: scale(15) }} />
-
-            <InputField
-              control={control}
-              name="password"
-              label="Password"
-              placeholder="Enter Password"
-              rules={{
-                required: "Password is required",
-                minLength: { value: 8, message: "Password must be at least 8 characters" },
-                maxLength: { value: 13, message: "Password cannot exceed 13 characters" },
-              }}
-              secureTextEntry={true}
-            />
-
-            {authMode === 'signup' && (
-              <>
-                <View style={{ height: scale(15) }} />
-
-                <View style={styles.formRow}>
-                  <View style={styles.halfInput}>
-                    <InputField
-                      control={control}
-                      name="age"
-                      label="Age"
-                      placeholder="Enter Age"
-                      rules={{ required: "Age is required" }}
-                      keyboardType="numeric"
-                    />
-                  </View>
-
-                  <View style={styles.halfInput}>
-                    <FormDropdown
-                      control={control}
-                      name="gender"
-                      label="Gender"
-                      data={genderData}
-                      placeholder="Gender"
-                      rules={{ required: "Gender is required" }}
-                    />
-                  </View>
-                </View>
-              </>
-            )}
-          </FadeInView>
-
-          {/* Spacer pushing bottom elements down */}
-          <View style={styles.spacer} />
-
-          {/* Actions Section */}
-          <FadeInView delay={600} style={styles.actionsContainer}>
-            {/* Error Message */}
-            {error && (
-              <Text style={styles.errorText}>{error}</Text>
-            )}
-
-            {authMode === 'signin' && hasBiometrics ? (
-              <View style={styles.biometricRow}>
-                <View style={{ flex: 1 }}>
-                  <NormalButton
-                    title="Sign In"
-                    onPress={handleSubmit(onSubmit)}
-                    bgColor={Colors.primary}
-                    loading={isAuthenticating}
-                    disabled={isAuthenticating}
-                  />
-                </View>
-                <TouchableOpacity
-                  style={styles.biometricButton}
-                  onPress={handleBiometricLogin}
-                >
-                  <Ionicons name="finger-print" size={scale(28)} color={Colors.primary} />
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <NormalButton
-                title={authMode === 'signin' ? 'Sign In' : 'Create Account'}
-                onPress={handleSubmit(onSubmit)}
-                bgColor={Colors.primary}
-                loading={isAuthenticating}
-                disabled={isAuthenticating}
+            {/* Form Section */}
+            <FadeInView delay={450} style={styles.formContainer}>
+              <InputField
+                control={control as any}
+                name="email"
+                label="Email"
+                placeholder="your@email.com"
+                rules={{
+                  required: "Email is required",
+                  pattern: { value: /\S+@\S+\.\S+/, message: "Invalid email format" },
+                }}
               />
-            )}
+
+              <View style={{ height: scale(15) }} />
+
+              <InputField
+                control={control as any}
+                name="password"
+                label="Password"
+                placeholder="Enter Password"
+                rules={{
+                  required: "Password is required",
+                  minLength: { value: 8, message: "Password must be at least 8 characters" },
+                  maxLength: { value: 13, message: "Password cannot exceed 13 characters" },
+                }}
+                secureTextEntry={true}
+              />
+
+              {authMode === 'signup' && (
+                <>
+                  <View style={{ height: scale(15) }} />
+
+                  <View style={styles.formRow}>
+                    <View style={styles.halfInput}>
+                      <InputField
+                        control={control as any}
+                        name="age"
+                        label="Age"
+                        placeholder="Enter Age"
+                        rules={{ required: "Age is required" }}
+                      />
+                    </View>
+
+                    <View style={styles.halfInput}>
+                      <FormDropdown
+                        control={control as any}
+                        name="gender"
+                        label="Gender"
+                        data={genderData}
+                        placeholder="Gender"
+                        rules={{ required: "Gender is required" }}
+                      />
+                    </View>
+                  </View>
+                </>
+              )}
+            </FadeInView>
+
+            {/* Spacer pushing bottom elements down */}
+            <View style={styles.spacer} />
+
+            {/* Actions Section */}
+            <FadeInView delay={600} style={styles.actionsContainer}>
+              {/* Error Message */}
+              {error && (
+                <Text style={styles.errorText}>{error}</Text>
+              )}
+
+              {authMode === 'signin' && hasBiometrics ? (
+                <View style={styles.biometricRow}>
+                  <View style={{ flex: 1 }}>
+                    <NormalButton
+                      title="Sign In"
+                      onPress={handleSubmit(onSubmit)}
+                      bgColor={Colors.primary}
+                      loading={isAuthenticating}
+                      disabled={isAuthenticating}
+                    />
+                  </View>
+                  <TouchableOpacity
+                    style={styles.biometricButton}
+                    onPress={handleBiometricLogin}
+                  >
+                    <Ionicons name="finger-print" size={scale(28)} color={Colors.primary} />
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <NormalButton
+                  title={authMode === 'signin' ? 'Sign In' : 'Create Account'}
+                  onPress={handleSubmit(onSubmit)}
+                  bgColor={Colors.primary}
+                  loading={isAuthenticating}
+                  disabled={isAuthenticating}
+                />
+              )}
 
 
-          </FadeInView>
+            </FadeInView>
 
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </AppBackground>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </AppBackground>
+      {showSuccess && (
+        <SuccessScreen
+          subtitle="Your account created successfully and ready now."
+          onPress={handleBrowseHome}
+        />
+      )}
+    </>
   );
 }
 

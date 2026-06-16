@@ -1,6 +1,15 @@
 import { supabaseClient } from '@/services/supabase';
 import { formatDistanceToNow } from 'date-fns';
 
+const parseTimestamp = (timestampString: any) => {
+  if (!timestampString) return new Date();
+  if (typeof timestampString !== 'string') return new Date(timestampString);
+  if (!timestampString.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(timestampString)) {
+    return new Date(timestampString + 'Z');
+  }
+  return new Date(timestampString);
+};
+
 export const getRepliesByCaseId = async (caseId: number) => {
   const { data } = await supabaseClient.get('/reply', {
     params: {
@@ -13,7 +22,7 @@ export const getRepliesByCaseId = async (caseId: number) => {
       ...reply,
 
       timestamp: formatDistanceToNow(
-        new Date(reply.timestamp),
+        parseTimestamp(reply.timestamp),
         { addSuffix: true }
       ).replace('about ', ''),
     })) ?? [];

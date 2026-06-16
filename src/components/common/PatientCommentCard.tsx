@@ -52,7 +52,6 @@ const styles = StyleSheet.create({
   Title: {
     fontFamily: Family.FG_Bold,
     fontSize: scale(11),
-    fontWeight: "bold",
   },
   Time: {
     fontFamily: Family.HV_Regular,

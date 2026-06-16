@@ -1,5 +1,6 @@
 import axios from "axios";
 import { supabaseClient } from "./supabase";
+import { setRealtimeToken } from "./realtimeClient";
 import {
   saveTokens,
   saveUserMeta,
@@ -98,6 +99,8 @@ export async function signIn(
       verify_status: profileRows[0]?.verify_status as DoctorStatus,
     };
     setSession(authUser, access_token);
+    // Authenticate the Realtime WebSocket with the user's JWT
+    await setRealtimeToken();
   } catch (err: any) {
     const message =
       err?.response?.data?.error_description ??
@@ -189,6 +192,8 @@ export async function signUp(
       verify_status: role === "doctor" ? "pending" : undefined,
     };
     setSession(authUser, access_token);
+    // Authenticate the Realtime WebSocket with the user's JWT
+    await setRealtimeToken();
   } catch (err: any) {
     console.error("Supabase API Error Data:", err?.response?.data);
 
@@ -252,6 +257,8 @@ export async function restoreSession(): Promise<void> {
     };
 
     setSession(authUser, accessToken);
+    // Authenticate the Realtime WebSocket with the user's JWT
+    await setRealtimeToken();
   } catch {
     await clearAllAuthData();
     clearSession();

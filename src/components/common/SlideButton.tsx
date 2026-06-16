@@ -1,14 +1,17 @@
 import React, { useRef, useEffect } from 'react';
 import {
-  View, 
+  View,
   Text,
   StyleSheet,
   Animated,
   PanResponder,
   useWindowDimensions,
   ViewStyle,
+  Easing,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+
+const AnimatedPath = Animated.createAnimatedComponent(Path);
 import { Colors } from '../../utils/colors';
 import { palette } from '../../utils/colors';
 import { Family } from '../../utils/typography';
@@ -18,7 +21,7 @@ import { scale } from '../../utils/responsive';
 const THUMB_SIZE = scale(67);
 const CONTAINER_HEIGHT = scale(83);
 const EDGE_PADDING = scale(8);
-const SLIDE_THRESHOLD = 0.8; 
+const SLIDE_THRESHOLD = 0.8;
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 export interface SlideButtonProps {
@@ -45,6 +48,7 @@ const SlideButton: React.FC<SlideButtonProps> = ({
   const thumbXSnapshot = useRef(0);
   const dragOrigin = useRef(0);
   const isDragging = useRef(false);
+  const arrowAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const id = thumbX.addListener(({ value }) => {
@@ -52,6 +56,19 @@ const SlideButton: React.FC<SlideButtonProps> = ({
     });
     return () => thumbX.removeListener(id);
   }, [thumbX]);
+
+  useEffect(() => {
+    const animation = Animated.loop(
+      Animated.timing(arrowAnim, {
+        toValue: 1,
+        duration: 1600,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      })
+    );
+    animation.start();
+    return () => animation.stop();
+  }, [arrowAnim]);
 
   // ── animation styles ────────────────────────────────────────────────
   const labelOpacity = thumbX.interpolate({
@@ -61,9 +78,19 @@ const SlideButton: React.FC<SlideButtonProps> = ({
   });
 
   const chevronOpacity = thumbX.interpolate({
-    inputRange: [0, trackWidth * 0.25],
-    outputRange: [1, 0],
+    inputRange: [0, trackWidth * 0.5, trackWidth * 0.85],
+    outputRange: [1, 1, 0],
     extrapolate: 'clamp',
+  });
+
+  const arrow1Opacity = arrowAnim.interpolate({
+    inputRange: [0, 0.3, 0.6, 1],
+    outputRange: [0.3, 1, 0.3, 0.3],
+  });
+
+  const arrow2Opacity = arrowAnim.interpolate({
+    inputRange: [0, 0.3, 0.6, 0.9, 1],
+    outputRange: [0.3, 0.3, 1, 0.3, 0.3],
   });
 
   // ── Gesture handler ───────────────────────────────────────────────────────
@@ -135,23 +162,24 @@ const SlideButton: React.FC<SlideButtonProps> = ({
         style,
       ]}
     >
-     
+
       <Animated.View style={[styles.labelWrap, { opacity: labelOpacity }]} pointerEvents="none">
         <Text style={styles.label}>{label}</Text>
       </Animated.View>
 
-   
+
       <Animated.View style={[styles.chevronWrap, { opacity: chevronOpacity }]}>
         <Svg width={scale(30)} height={scale(26)} viewBox="-2 -2 30 26" fill="none">
-          <Path
-            opacity={0.7}
+          <AnimatedPath
+            opacity={arrow1Opacity}
             d="M0 0L11 11L0 22"
             stroke="white"
             strokeWidth={2.5}
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-          <Path
+          <AnimatedPath
+            opacity={arrow2Opacity}
             d="M15 0L26 11L15 22"
             stroke="white"
             strokeWidth={2.5}
@@ -161,7 +189,7 @@ const SlideButton: React.FC<SlideButtonProps> = ({
         </Svg>
       </Animated.View>
 
-     
+
       <Animated.View
         style={[styles.thumb, { transform: [{ translateX: thumbX }] }]}
         {...panResponder.panHandlers}
@@ -199,7 +227,7 @@ const styles = StyleSheet.create({
     fontSize: scale(21),
     fontFamily: Family.FG_Regular,
     textAlign: 'center',
-    marginTop: scale(6), 
+    marginTop: scale(6),
   },
   chevronWrap: {
     position: 'absolute',

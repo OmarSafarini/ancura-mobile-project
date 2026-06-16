@@ -3,9 +3,9 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   ScrollView,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import AppBackground from "@/components/base/AppBackground";
 import { scale } from "@/utils/responsive";
@@ -25,8 +25,9 @@ import {
 import { ILicense } from "@/types/ILicense";
 import { signOut } from "../../../services/authService";
 import { getUserMeta } from "@/services/tokenService";
-import Loading from "@/components/common/Loading";
+import FadeInView from "@/utils/FadeInView";
 import { getDoctorDashboardStats } from "@/services/Doctor/DoctorDashboard";
+import { Feather } from "@expo/vector-icons";
 
 export default function DoctorProfile({ navigation }: any) {
   const [Comments, setComments] = useState(0);
@@ -40,7 +41,6 @@ export default function DoctorProfile({ navigation }: any) {
     queryKey: ["doctor"],
     queryFn: async () => {
       const meta = await getUserMeta();
-      console.log(meta!.id);
       if (!meta?.id) {
         throw new Error("User meta not found");
       }
@@ -76,13 +76,18 @@ export default function DoctorProfile({ navigation }: any) {
     loadStats();
   }, [doctor]);
 
-  if (doctorLoading || LicenseLoading) {
-    return <Loading />;
+  if (doctorError || LicenseError) {
+    return (
+      <AppBackground variant="clean">
+        <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <Text style={{ fontFamily: Family.FG_Medium, fontSize: scale(16), color: Colors.warning }}>
+            Error loading profile details.
+          </Text>
+        </SafeAreaView>
+      </AppBackground>
+    );
   }
 
-  if (doctorError || LicenseError) {
-    return <Text>Error loading cases</Text>;
-  }
   const goBack = () => {
     navigation.goBack();
   };
@@ -91,92 +96,153 @@ export default function DoctorProfile({ navigation }: any) {
     await signOut();
   };
 
+  const doctorName = doctor?.full_name || "Doctor";
+
+  const cleanDrName = () => {
+    if (!doctor?.full_name) return "Dr. Doctor";
+    const nameWithoutDr = doctor.full_name.replace(/^(dr\.|dr)\s+/i, "");
+    const firstName = nameWithoutDr.split(" ")[0];
+    return `Dr. ${firstName}`;
+  };
+
   return (
     <AppBackground variant="clean">
       <SafeAreaView style={{ flex: 1 }}>
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
           <View style={styles.container}>
-            <View style={styles.header}>
-              <Text style={styles.title}>Profile & Settings</Text>
-              <BackButton onPress={goBack} />
-            </View>
-            <View style={styles.AlignCenter}>
+            {/* Header section */}
+            <FadeInView delay={0} translateYStart={15}>
+              <View style={styles.header}>
+                <Text style={styles.title}>Profile & Settings</Text>
+                <BackButton onPress={goBack} />
+              </View>
+            </FadeInView>
+
+            {/* Profile Info Glass Card */}
+            <FadeInView delay={100} translateYStart={15}>
               <View style={styles.profileCard}>
-                <View style={styles.DoctorInfo}>
+                <View style={styles.avatarWrapper}>
                   <Image
-                    source={{ uri: doctor?.profilePic }}
+                    source={doctor?.profilePic ? { uri: doctor.profilePic } : undefined}
                     style={styles.image}
                     transition={150}
                   />
-                  <View style={{ gap: scale(10) }}>
-                    <Text style={styles.name}>{doctor?.full_name}</Text>
-                    <View style={styles.TextWithIcon}>
-                      <LocationIcon />
-                      <Text style={styles.sub}> {doctor?.location}</Text>
-                    </View>
-                    <View style={styles.TextWithIcon}>
-                      <EmailIcon />
-                      <Text style={styles.sub}>{doctor?.email}</Text>
-                    </View>
+                </View>
+                <View style={styles.doctorMeta}>
+                  <Text style={styles.name}>{doctorName}</Text>
+                  
+                  <View style={styles.contactRow}>
+                    <LocationIcon />
+                    <Text style={styles.contactText}>
+                      {doctor?.location || "Not Specified"}
+                    </Text>
+                  </View>
+                  
+                  <View style={styles.contactRow}>
+                    <EmailIcon />
+                    <Text style={styles.contactText} numberOfLines={1}>
+                      {doctor?.email || "..."}
+                    </Text>
                   </View>
                 </View>
-                <View style={styles.statsRow}>
-                  <View style={styles.statItem}>
-                    <Text style={styles.statNumber}>{Comments}</Text>
-                    <Text style={styles.statLabel}>Comments</Text>
-                  </View>
+              </View>
+            </FadeInView>
 
-                  <View style={styles.statItem}>
-                    <Text style={styles.statNumber}>{Score}</Text>
-                    <Text style={styles.statLabel}>Reputation </Text>
-                    <Text style={styles.statLabel}> Score</Text>
+            {/* Statistics Staggered Section */}
+            <FadeInView delay={200} translateYStart={15}>
+              <View style={styles.statsRow}>
+                <View style={styles.statCard}>
+                  <View style={[styles.statIconCircle, { backgroundColor: "rgba(142, 179, 146, 0.15)" }]}>
+                    <Feather name="message-square" size={scale(15)} color={Colors.secondary} />
                   </View>
-
-                  <View style={styles.statItem}>
-                    <Text style={styles.statNumber}>{license?.years_exp}</Text>
-                    <Text style={styles.statLabel}>Years </Text>
-                    <Text style={styles.statLabel}> Experience</Text>
-                  </View>
+                  <Text style={styles.statNumber}>{doctorLoading ? "..." : Comments}</Text>
+                  <Text style={styles.statLabel}>Comments</Text>
                 </View>
-                <View style={styles.card}>
-                  <View style={styles.CardTextContainer}>
-                    <Text style={styles.cardTitle}>License Verification</Text>
 
-                    <View style={styles.TextContainer}>
-                      <Text style={styles.cardText}>License Number : </Text>
-                      <Text style={styles.cardText}>
-                        {license?.license_number}
-                      </Text>
-                    </View>
-
-                    <View style={styles.TextContainer}>
-                      <Text style={styles.cardText}>Licensing Authority :</Text>
-                      <Text style={styles.cardText}>{license?.authority}</Text>
-                    </View>
-
-                    <View style={styles.TextContainer}>
-                      <Text style={styles.cardText}>Issue Date : </Text>
-                      <Text style={styles.cardText}>{license?.issue_date}</Text>
-                    </View>
+                <View style={styles.statCard}>
+                  <View style={[styles.statIconCircle, { backgroundColor: "rgba(142, 179, 146, 0.15)" }]}>
+                    <Feather name="star" size={scale(15)} color={Colors.secondary} />
                   </View>
+                  <Text style={[styles.statNumber, { color: Colors.secondary }]}>{doctorLoading ? "..." : Score}</Text>
+                  <Text style={styles.statLabel}>Reputation</Text>
+                </View>
 
+                <View style={styles.statCard}>
+                  <View style={[styles.statIconCircle, { backgroundColor: "rgba(142, 179, 146, 0.15)" }]}>
+                    <Feather name="award" size={scale(15)} color={Colors.secondary} />
+                  </View>
+                  <Text style={styles.statNumber}>{LicenseLoading ? "..." : (license?.years_exp ?? "0")}</Text>
+                  <Text style={styles.statLabel}>Years Exp</Text>
+                </View>
+              </View>
+            </FadeInView>
+
+            {/* License Verification Card */}
+            <FadeInView delay={300} translateYStart={15}>
+              <View style={styles.glassCard}>
+                <View style={styles.cardHeader}>
+                  <Text style={styles.cardHeaderTitle}>License Verification</Text>
                   {license?.is_verified && (
-                    <View style={styles.VerfiedContainer}>
-                      <TickIcon size={20} />
-                      <Text style={styles.verified}>Verified by Admin</Text>
+                    <View style={styles.verifiedBadge}>
+                      <TickIcon size={12} />
+                      <Text style={styles.verifiedText}>Verified</Text>
                     </View>
                   )}
                 </View>
 
-                <View style={[styles.card, styles.BioCard]}>
-                  <Text style={styles.BioText}>About {doctor?.full_name}</Text>
-                  <Text style={styles.bio}>{doctor?.bio}</Text>
-                </View>
-                <View style={{ paddingTop: scale(20) }}>
-                  <LogoutButton onPress={LogOut} />
+                <View style={styles.divider} />
+
+                <View style={styles.detailList}>
+                  <View style={styles.detailItem}>
+                    <View style={[styles.detailIconContainer, { backgroundColor: "rgba(142, 179, 146, 0.1)" }]}>
+                      <Feather name="hash" size={scale(13)} color={Colors.secondary} />
+                    </View>
+                    <View style={styles.detailContent}>
+                      <Text style={styles.detailLabel}>License Number</Text>
+                      <Text style={styles.detailValue}>{LicenseLoading ? "..." : (license?.license_number || "Pending")}</Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.detailItem}>
+                    <View style={[styles.detailIconContainer, { backgroundColor: "rgba(142, 179, 146, 0.1)" }]}>
+                      <Feather name="shield" size={scale(13)} color={Colors.secondary} />
+                    </View>
+                    <View style={styles.detailContent}>
+                      <Text style={styles.detailLabel}>Licensing Authority</Text>
+                      <Text style={styles.detailValue}>{LicenseLoading ? "..." : (license?.authority || "Pending")}</Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.detailItem}>
+                    <View style={[styles.detailIconContainer, { backgroundColor: "rgba(142, 179, 146, 0.1)" }]}>
+                      <Feather name="calendar" size={scale(13)} color={Colors.secondary} />
+                    </View>
+                    <View style={styles.detailContent}>
+                      <Text style={styles.detailLabel}>Issue Date</Text>
+                      <Text style={styles.detailValue}>{LicenseLoading ? "..." : (license?.issue_date || "Pending")}</Text>
+                    </View>
+                  </View>
                 </View>
               </View>
-            </View>
+            </FadeInView>
+
+            {/* About Doctor Bio Card */}
+            <FadeInView delay={400} translateYStart={15}>
+              <View style={styles.glassCard}>
+                <Text style={styles.cardHeaderTitle}>About {cleanDrName()}</Text>
+                <View style={styles.divider} />
+                <Text style={styles.bioText}>
+                  {doctorLoading ? "..." : (doctor?.bio || "No biography provided yet. Dr. " + doctorName + " is a licensed practitioner dedicated to providing exceptional patient care.")}
+                </Text>
+              </View>
+            </FadeInView>
+
+            {/* Logout button */}
+            <FadeInView delay={500} translateYStart={15}>
+              <View style={styles.logoutWrapper}>
+                <LogoutButton onPress={LogOut} />
+              </View>
+            </FadeInView>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -185,151 +251,203 @@ export default function DoctorProfile({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
+  scrollContent: {
+    paddingBottom: scale(60),
+  },
   container: {
-    paddingHorizontal: scale(51),
-    justifyContent: "space-between",
+    paddingHorizontal: scale(24),
     flex: 1,
-    gap: scale(30),
+    gap: scale(18),
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: scale(56),
     marginTop: scale(10),
-  },
-  AlignCenter: {
-    alignItems: "center",
-    gap: scale(30),
+    marginBottom: scale(8),
   },
   title: {
     fontSize: scale(24),
     fontFamily: Family.FG_Medium,
     color: Colors.textDark,
   },
-
   profileCard: {
-    backgroundColor: "#ffffff4d",
+    backgroundColor: "rgba(255, 255, 255, 0.45)",
     borderRadius: scale(18),
-    padding: scale(25),
-    alignItems: "center",
-    gap: scale(8),
-  },
-  DoctorInfo: {
+    borderWidth: scale(1),
+    borderColor: "rgba(255, 255, 255, 0.6)",
+    padding: scale(18),
     flexDirection: "row",
     alignItems: "center",
-    gap: scale(40),
+    gap: scale(16),
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.04,
+    shadowRadius: 10,
+    elevation: 2,
+  },
+  avatarWrapper: {
+    width: scale(86),
+    height: scale(86),
+    borderRadius: scale(43),
+    borderWidth: scale(3),
+    borderColor: "#FFFFFF",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+    backgroundColor: "#E4E0EB",
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
   },
   image: {
-    width: scale(100),
-    height: scale(100),
-    borderRadius: scale(100),
-    borderWidth: scale(4),
-    borderColor: Colors.primary,
+    width: "100%",
+    height: "100%",
   },
-  TextWithIcon: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: scale(5),
-    marginTop: scale(10),
+  doctorMeta: {
+    flex: 1,
+    gap: scale(6),
   },
   name: {
     fontSize: scale(20),
     fontFamily: Family.FG_Bold,
-    fontWeight: "600",
+    color: Colors.textDark,
   },
-
-  sub: {
-    fontSize: scale(14),
-    color: palette.dark,
+  contactRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: scale(6),
+  },
+  contactText: {
+    fontSize: scale(12.5),
+    color: "#444346",
     fontFamily: Family.FG_Regular,
+    flex: 1,
   },
-
   statsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: scale(12),
-    gap: scale(20),
-  },
-
-  statItem: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: scale(10),
-    backgroundColor: "#6d7eb5ad",
-    borderRadius: scale(16),
-  },
-
-  statNumber: {
-    fontSize: scale(16),
-    color: palette.white,
-    fontFamily: Family.FG_Light,
-  },
-
-  statLabel: {
-    fontSize: scale(12),
-    color: palette.white,
-    fontFamily: Family.FG_Regular,
-  },
-
-  card: {
-    backgroundColor: "#ffffff4d",
-    borderRadius: scale(18),
     gap: scale(8),
   },
-
-  cardTitle: {
-    fontSize: scale(24),
-    fontWeight: "600",
-    marginBottom: scale(4),
-    fontFamily: Family.FG_Regular,
-  },
-
-  CardTextContainer: {
-    padding: scale(18),
-  },
-
-  TextContainer: {
-    flexDirection: "row",
+  statCard: {
+    flex: 1,
+    backgroundColor: "rgba(255, 255, 255, 0.45)",
+    borderRadius: scale(18),
+    borderWidth: scale(1),
+    borderColor: "rgba(255, 255, 255, 0.6)",
+    paddingVertical: scale(14),
+    paddingHorizontal: scale(8),
     alignItems: "center",
-
-    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: scale(4),
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.03,
+    shadowRadius: 8,
+    elevation: 1,
   },
-  cardText: {
+  statIconCircle: {
+    width: scale(32),
+    height: scale(32),
+    borderRadius: scale(16),
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: scale(4),
+  },
+  statNumber: {
+    fontSize: scale(18),
+    fontFamily: Family.FG_Bold,
+    color: Colors.secondary,
+  },
+  statLabel: {
+    fontSize: scale(10.5),
+    fontFamily: Family.FG_Regular,
+    color: "#666666",
+    textAlign: "center",
+  },
+  glassCard: {
+    backgroundColor: "rgba(255, 255, 255, 0.45)",
+    borderRadius: scale(18),
+    borderWidth: scale(1),
+    borderColor: "rgba(255, 255, 255, 0.6)",
+    padding: scale(18),
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.04,
+    shadowRadius: 10,
+    elevation: 2,
+  },
+  cardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  cardHeaderTitle: {
     fontSize: scale(16),
-    color: palette.dark,
-    fontFamily: Family.FG_Regular,
-    flexWrap: "wrap",
-    marginTop: scale(10),
-    marginLeft: scale(3),
+    fontFamily: Family.FG_Bold,
+    color: Colors.textDark,
   },
-
-  VerfiedContainer: {
-    borderTopWidth: scale(2),
-    borderColor: palette.white,
-    padding: scale(18),
+  verifiedBadge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: scale(5),
+    backgroundColor: "rgba(0, 167, 111, 0.12)",
+    borderRadius: scale(12),
+    paddingHorizontal: scale(8),
+    paddingVertical: scale(3.5),
+    gap: scale(4),
   },
-  verified: {
-    color: palette.darkGreen,
+  verifiedText: {
+    color: "#00A76F",
+    fontFamily: Family.FG_Medium,
+    fontSize: scale(9.5),
+  },
+  divider: {
+    height: scale(1),
+    backgroundColor: "rgba(0, 0, 0, 0.05)",
+    marginVertical: scale(12),
+  },
+  detailList: {
+    gap: scale(12),
+  },
+  detailItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: scale(10),
+  },
+  detailIconContainer: {
+    width: scale(28),
+    height: scale(28),
+    borderRadius: scale(14),
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: scale(0.5),
+    borderColor: "rgba(0, 0, 0, 0.05)",
+  },
+  detailContent: {
+    flex: 1,
+  },
+  detailLabel: {
+    fontSize: scale(9.5),
     fontFamily: Family.FG_Regular,
-    fontSize: scale(12),
+    color: "#7E7C84",
+    textTransform: "uppercase",
   },
-
-  BioCard: {
-    padding: scale(18),
+  detailValue: {
+    fontSize: scale(13.5),
+    fontFamily: Family.FG_Medium,
+    color: Colors.textDark,
   },
-  BioText: {
-    fontSize: scale(24),
-    marginBottom: scale(4),
+  bioText: {
+    fontSize: scale(13),
     fontFamily: Family.FG_Regular,
+    color: "#444346",
+    lineHeight: scale(19),
   },
-
-  bio: {
-    fontSize: scale(14),
-    color: palette.dark,
-    lineHeight: scale(20),
+  logoutWrapper: {
+    marginTop: scale(6),
+    width: "100%",
   },
 });

@@ -1,5 +1,6 @@
 import React, { useCallback, useRef } from "react";
-import { View, FlatList, StyleSheet, Text, SafeAreaView, KeyboardAvoidingView, Platform } from "react-native";
+import { View, FlatList, StyleSheet, Text, KeyboardAvoidingView, Platform } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import AppBackground from "@/components/base/AppBackground";
 import BackButton from "@/components/common/BackButton";
 import ReplyText from "@/components/common/ReplyText";
@@ -64,7 +65,7 @@ export default function AllRepliesScreen({ navigation, route }: any) {
     <AppBackground style={{ flex: 1 }}>
       <SafeAreaView style={styles.safeArea} >
         <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
           style={{ flex: 1 }}
         >
           <View style={styles.container}>

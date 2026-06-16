@@ -81,6 +81,13 @@ const styles = StyleSheet.create({
     borderRadius: scale(11),
     alignItems: "center",
     gap: scale(10),
+    borderWidth: 1,
+    borderColor: "rgba(0,0,0,0.06)",
+    shadowColor: palette.dark,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 2,
   },
   title: {
     fontSize: scale(22),

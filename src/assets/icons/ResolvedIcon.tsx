@@ -13,7 +13,7 @@ const ResolvedIcon = (props) => (
     <Path
       d="M8.27692 3.77686L4.64904 7.49025L3 5.80234"
       stroke="white"
-      strokeWidth={0.5}
+      strokeWidth={1.0}
       strokeLinecap="round"
       strokeLinejoin="round"
     />

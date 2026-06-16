@@ -2,8 +2,8 @@ import AppBackground from "@/components/base/AppBackground";
 import { Colors, palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
 import React, { useCallback, useState } from "react";
-import { StyleSheet, View, Text, SafeAreaView } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { StyleSheet, View, Text } from "react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale } from "react-native-size-matters";
 import { useForm } from "react-hook-form";
 import InputField from "@/components/forms/InputFeild";
@@ -122,7 +122,7 @@ export default function DoctorProfileAndSettings({ navigation }: any) {
             control={control as any}
             name="Email"
             label="Email"
-            placeholder="UserName@gmail.com"
+            placeholder="doctor@ancura.com"
             rules={{
               required: "Email is required",
               pattern: {

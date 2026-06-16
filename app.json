@@ -25,7 +25,13 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "package": "com.anonymous.ancura"
+      "package": "com.anonymous.ancura",
+      "softwareKeyboardLayoutMode": "resize"
+    },
+    "androidStatusBar": {
+      "barStyle": "dark-content",
+      "translucent": true,
+      "backgroundColor": "#00000000"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -54,7 +60,8 @@
       ],
       "expo-secure-store",
       "expo-local-authentication",
-      "expo-sqlite"
+      "expo-sqlite",
+      "expo-image"
     ]
   }
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
 import { palette, Colors as colors } from "../../utils/colors";
 import { Family } from "../../utils/typography";
@@ -10,9 +10,10 @@ import FileBar from "./FileBar";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 import IconWrapper from "./IconWrapper";
 import { Status } from "@/types/ICaseStatusProps";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCaseById } from "@/services/Patient/Cases";
 import Loading from "./Loading";
+import { supabaseRealtime } from "@/services/realtimeClient";
 
 // ________________ CONSTANTS ________________
 const AVATAR_SIZE = scale(25);
@@ -25,10 +26,48 @@ type CaseDetailsCardProps = {
 };
 // ________________ COMPONENT ________________
 export default function CaseDetailsCard({caseId}:CaseDetailsCardProps) {
+  const queryClient = useQueryClient();
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["case", caseId],
     queryFn: () => getCaseById(caseId),
   });
+
+  // ─── Realtime Subscription ────────────────────────────────────────
+  // When the case status or data changes (e.g. doctor_replied),
+  // this card refreshes automatically without any manual action.
+  useEffect(() => {
+    if (!caseId) return;
+
+    const channelName = `case:id=eq.${caseId}`;
+
+    // Remove any stale channel before subscribing
+    const existing = supabaseRealtime.getChannels().find(
+      (ch) => ch.topic === `realtime:${channelName}`
+    );
+    if (existing) supabaseRealtime.removeChannel(existing);
+
+    const channel = supabaseRealtime
+      .channel(channelName)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'case',
+          filter: `id=eq.${caseId}`,
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['case', caseId] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabaseRealtime.removeChannel(channel);
+    };
+  }, [caseId, queryClient]);
+  // ─────────────────────────────────────────────────────────────────
 
   if (isLoading) return <Loading/>;
   if (error || !data) return <Text>{error?.message}</Text>;

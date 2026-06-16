@@ -89,7 +89,6 @@ const styles = StyleSheet.create({
   Title: {
     fontFamily: Family.FG_Bold,
     fontSize: scale(11),
-    fontWeight: "bold",
   },
   Sub_Title: {
     fontFamily: Family.FG_Regular,

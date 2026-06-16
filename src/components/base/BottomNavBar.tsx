@@ -136,11 +136,13 @@ const styles = StyleSheet.create({
         backgroundColor: colors.formBackground,
         borderTopLeftRadius: 32.5,
         borderTopRightRadius: 32.5,
+        borderTopWidth: 1,
+        borderTopColor: 'rgba(0, 0, 0, 0.04)',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: -3 },
         shadowOpacity: 0.06,
         shadowRadius: 10,
-        elevation: 12,
+        elevation: 3,
     },
 
     navItem: {

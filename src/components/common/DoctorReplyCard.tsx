@@ -106,7 +106,6 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: scale(16),
-    fontWeight: "600",
     marginRight: scale(6),
     fontFamily: Family.FG_Bold
   },

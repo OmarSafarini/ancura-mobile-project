@@ -18,6 +18,7 @@ import NormalButton from "@/components/common/NormalButton";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 import EmergencyCheckBox from "../components/EmergencyCheckBox";
 import DeleteIconButton from "../components/Buttons/DeleteIconButton";
+import PatientHeader from "../components/PatientHeader";
 
 import { scale } from "@/utils/responsive";
 import { Colors } from "@/utils/colors";
@@ -150,16 +151,14 @@ const EditCaseScreen = ({ navigation, route }: any) => {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <View style={styles.headerTitleRow}>
-            <Text style={styles.headerText}>Hi {patient?.nickname || "USR-XXXXX"}</Text>
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => navigation.goBack()}
-              activeOpacity={0.7}
-            >
-              <ArrowLeftIcon size={18} color={Colors.textDark} />
-            </TouchableOpacity>
-          </View>
+          <PatientHeader 
+            title={`Hi ${patient?.nickname || "USR-XXXXX"}`}
+            rightIcon="back"
+            onRightPress={() => navigation.goBack()}
+            useSafeArea={false}
+            titleStyle={{ fontFamily: Family.FG_Light, fontSize: scale(20) }}
+            containerStyle={{ marginBottom: scale(10) }}
+          />
           <Text style={styles.headerSubtitle}>
             Your identity will remain 100% anonymous, and your name will not be
             shown to the doctors

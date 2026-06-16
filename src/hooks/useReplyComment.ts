@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { getCommentsByReplyId, postComment } from '@/services/common_services/CommentService';
 import { useAuthStore } from '@/store/authStore';
 import { useAddNotification } from './useAddNotification';
 import { useAddActivitylog } from './useAddActivitylog';
+import { supabaseRealtime } from '@/services/realtimeClient';
 
 type UseReplyCommentsProps = {
   replyId: string | number;
@@ -22,7 +23,50 @@ export const useReplyComments = ({ replyId, caseData }: UseReplyCommentsProps) =
     queryKey: ['comments', String(replyId)],
     queryFn: () => getCommentsByReplyId(replyId),
     enabled: !!replyId,
+    refetchInterval: 6000,
+    refetchIntervalInBackground: false,
+    refetchOnMount: 'always',
   });
+
+  // ─── Realtime Subscription ────────────────────────────────────────
+  // No server-side filter — subscribe to all comment changes and check
+  // reply_id client-side to avoid silent event drops from missing indexes.
+  useEffect(() => {
+    if (!replyId) return;
+
+    const channelName = `comments:reply:${replyId}`;
+
+    // Remove any existing channel with this name before creating a fresh one
+    const existing = supabaseRealtime.getChannels().find(
+      (ch) => ch.topic === `realtime:${channelName}`
+    );
+    if (existing) supabaseRealtime.removeChannel(existing);
+
+    const channel = supabaseRealtime
+      .channel(channelName)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'comment',
+        },
+        (payload: any) => {
+          const rowReplyId = payload?.new?.reply_id ?? payload?.old?.reply_id;
+          if (!rowReplyId || String(rowReplyId) === String(replyId)) {
+            queryClient.invalidateQueries({ queryKey: ['comments', String(replyId)] });
+          }
+        }
+      )
+      .subscribe((status: string) => {
+        console.log('[Realtime] comment channel status:', status);
+      });
+
+    return () => {
+      supabaseRealtime.removeChannel(channel);
+    };
+  }, [replyId, queryClient]);
+  // ─────────────────────────────────────────────────────────────────
 
   const { mutate: submitCommentMutate, isPending: isSubmitting } = useMutation({
     mutationFn: postComment,

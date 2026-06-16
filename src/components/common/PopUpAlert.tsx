@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.08,
     shadowRadius: 10,
-    elevation: 6,
+    elevation: 2,
     alignItems: "center",
   },
 
@@ -73,7 +73,6 @@ const styles = StyleSheet.create({
 
   title: {
     fontSize: scale(24),
-    fontWeight: "600",
     fontFamily : Family.FG_Medium,
     color: Colors.textDark,
     marginBottom: scale(6),

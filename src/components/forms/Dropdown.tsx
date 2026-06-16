@@ -116,7 +116,9 @@ const styles = StyleSheet.create({
     borderColor: Colors.formBorder,
     borderTopWidth: 0,
     borderRadius: scale(8),
+    backgroundColor: palette.white,
     overflow: "hidden",
+    elevation: 3,
   },
 
   item: {

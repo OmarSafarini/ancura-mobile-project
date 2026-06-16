@@ -4,8 +4,9 @@ import { scale } from "@/utils/responsive";
 
 import NormalButton from "@/components/common/NormalButton";
 import SelectUserType from "@/components/common/SelectUserType";
-import PersonIcon from "@/assets/icons/PersonIcon";
+import { FontAwesome5 } from "@expo/vector-icons";
 import AppBackground from "@/components/base/AppBackground";
+import FadeInView from "@/utils/FadeInView";
 
 export default function RoleSelectionScreen({ navigation }: any) {
     const [selectedRole, setSelectedRole] = useState<"patient" | "doctor" | null>(null);
@@ -20,42 +21,72 @@ export default function RoleSelectionScreen({ navigation }: any) {
 
     return (
         <View style={styles.container}>
-            <AppBackground  style={{ position: "absolute", width: "100%", height: "100%" }} />
+            <AppBackground style={{ position: "absolute", width: "100%", height: "100%" }} />
 
             <View style={styles.safeArea}>
                 <View style={styles.content}>
-                    <Text style={styles.title}>How would you like to use the app?</Text>
+                    <FadeInView delay={0} translateYStart={30}>
+                        <Text style={styles.title}>How would you like to use the app?</Text>
+                    </FadeInView>
 
                     <View style={styles.optionsContainer}>
-                        <SelectUserType
-                            title="I need help"
-                            userType="(Patient)"
-                            Icon={() => <PersonIcon size={scale(68)} color="#6D7EB5" bgColor="#B6C0F9" />}
-                            onPress={() => setSelectedRole("patient")}
-                            isActive={selectedRole === "patient"}
-                            activeBgColor="#b6c0f95b"
-                            borderColor="#6D7EB5"
-                        />
+                        <FadeInView delay={150} translateYStart={30} style={{ width: "100%", alignItems: "center" }}>
+                            <SelectUserType
+                                title="I need help"
+                                userType="(Patient)"
+                                Icon={() => (
+                                    <View style={{
+                                        width: scale(68),
+                                        height: scale(68),
+                                        borderRadius: scale(34),
+                                        backgroundColor: "#B6C0F9",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}>
+                                        <FontAwesome5 name="hand-holding-heart" size={scale(28)} color="#6D7EB5" />
+                                    </View>
+                                )}
+                                onPress={() => setSelectedRole("patient")}
+                                isActive={selectedRole === "patient"}
+                                activeBgColor="#b6c0f95b"
+                                borderColor="#6D7EB5"
+                            />
+                        </FadeInView>
 
-                        <SelectUserType
-                            title="I want to help"
-                            userType="(Doctor)"
-                            Icon={() => <PersonIcon size={scale(68)} color="#8EB392" bgColor="#C3E3C7" />}
-                            onPress={() => setSelectedRole("doctor")}
-                            isActive={selectedRole === "doctor"}
-                            activeBgColor="#c3e3c75b"
-                            borderColor="#8EB392"
-                        />
+                        <FadeInView delay={300} translateYStart={30} style={{ width: "100%", alignItems: "center" }}>
+                            <SelectUserType
+                                title="I want to help"
+                                userType="(Doctor)"
+                                Icon={() => (
+                                    <View style={{
+                                        width: scale(68),
+                                        height: scale(68),
+                                        borderRadius: scale(34),
+                                        backgroundColor: "#C3E3C7",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}>
+                                        <FontAwesome5 name="user-md" size={scale(30)} color="#8EB392" />
+                                    </View>
+                                )}
+                                onPress={() => setSelectedRole("doctor")}
+                                isActive={selectedRole === "doctor"}
+                                activeBgColor="#c3e3c75b"
+                                borderColor="#8EB392"
+                            />
+                        </FadeInView>
                     </View>
                 </View>
 
                 <View style={styles.footerContainer}>
-                    <NormalButton
-                        title="Continue"
-                        onPress={handleContinue}
-                        bgColor={selectedRole ? "#6D7EB5" : "#6D7EB580"}
-                        textColor="#FFFFFF"
-                    />
+                    <FadeInView delay={450} translateYStart={20} style={{ width: "100%", alignItems: "center" }}>
+                        <NormalButton
+                            title="Continue"
+                            onPress={handleContinue}
+                            bgColor={selectedRole ? "#6D7EB5" : "#6D7EB580"}
+                            textColor="#FFFFFF"
+                        />
+                    </FadeInView>
                 </View>
             </View>
         </View>
@@ -68,7 +99,7 @@ const styles = StyleSheet.create({
     },
     safeArea: {
         flex: 1,
-        zIndex:1,
+        zIndex: 1,
     },
     content: {
         flex: 1,
