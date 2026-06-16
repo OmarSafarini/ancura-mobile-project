@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
     color: Colors.formLabel,
     fontFamily: Family.FG_Light,
     width: "100%",
+    paddingVertical: 0,
   },
 
   multilineInput: {

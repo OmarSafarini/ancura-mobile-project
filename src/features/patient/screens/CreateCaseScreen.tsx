@@ -5,9 +5,9 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
-  SafeAreaView,
   ActivityIndicator,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm } from "react-hook-form";
 import type { DocumentPickerAsset } from "expo-document-picker";
 import AppBackground from "@/components/base/AppBackground";
@@ -15,7 +15,7 @@ import InputField from "@/components/forms/InputFeild";
 import AttachmentsField from "@/components/forms/AttachmentFeild";
 import NormalButton from "@/components/common/NormalButton";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
-import BackButton from "@/components/common/BackButton";
+import PatientHeader from "../components/PatientHeader";
 import DeleteIconButton from "../components/Buttons/DeleteIconButton";
 import FileBar from "@/components/common/FileBar";
 import IconWrapper from "@/components/common/IconWrapper";
@@ -122,10 +122,14 @@ const CreateCase = ({ navigation }: any) => {
           showsVerticalScrollIndicator={false}
         >
         <View style={styles.header}>
-          <View style={styles.headerTitleRow}>
-            <Text style={styles.headerText}>Hi {patient?.nickname || "USR-XXXXX"}</Text>
-            <BackButton onPress={() => navigation.goBack()} />
-          </View>
+          <PatientHeader 
+            title={`Hi ${patient?.nickname || "USR-XXXXX"}`}
+            rightIcon="back"
+            onRightPress={() => navigation.goBack()}
+            useSafeArea={false}
+            titleStyle={{ fontFamily: Family.FG_Light, fontSize: scale(20) }}
+            containerStyle={{ marginBottom: scale(10) }}
+          />
           <Text style={styles.headerSubtitle}>
             Your identity will remain 100% anonymous, and your name will not be
             shown to the doctors

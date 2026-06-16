@@ -17,6 +17,7 @@ import { useDoctorBasicInfo } from "@/hooks/useDoctorBasicInfo";
 import { useUserSession } from "@/hooks/useUserSession";
 import { useAnimatedCounter } from "@/hooks/useAnimatedCounter";
 import Loading from "@/components/common/Loading";
+import { palette } from "@/utils/colors";
 
 
 export default function DoctorDashboard({ navigation }: any) {
@@ -109,7 +110,10 @@ export default function DoctorDashboard({ navigation }: any) {
             showLabels={true}
             barWidth={scale(9)}
             spacing="space-around"
-            noPadding={true}
+            noPadding={false}
+            activeBarColor={palette.darkGreen}
+            inactiveBarColor="#E4E0EB"
+            inactiveBarOpacity={0.6}
           />
         </View>
       </ScrollView>
@@ -129,6 +133,8 @@ const styles = StyleSheet.create({
 
   headerContainer: {
     width: '100%',
+    maxWidth: scale(340),
+    alignSelf: 'center',
     gap: scale(27),
     marginBottom: scale(26),
     alignItems: 'flex-start',
@@ -161,5 +167,7 @@ const styles = StyleSheet.create({
 
   chartContainer: {
     width: '100%',
+    maxWidth: scale(340),
+    alignSelf: 'center',
   },
 });

@@ -11,4 +11,7 @@ export interface StatisticsChartProps {
   barWidth?: number;      
   spacing?: 'space-between' | 'space-around' | 'space-evenly';
   noPadding?: boolean;
+  activeBarColor?: string;
+  inactiveBarColor?: string;
+  inactiveBarOpacity?: number;
 }

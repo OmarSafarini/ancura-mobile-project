@@ -23,10 +23,13 @@ import {
   getPatintProfile,
 } from "@/services/Patient/PatinetService";
 import { Status } from "@/types/ICaseStatusProps";
-import userBase from "../../../../assets/icon.png";
+const userBase = require("../../../../assets/icon.png");
 import { getUserMeta } from "@/services/tokenService";
-import Loading from "@/components/common/Loading";
 import { getLocalCases, saveCasesToLocal } from "@/services/localDb";
+import PatientHeader from "../components/PatientHeader";
+import MagicalGreeting from "../components/MagicalGreeting";
+import FadeInView from "@/utils/FadeInView";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function PatientHomePage() {
   const navigation = useNavigation<any>();
@@ -79,13 +82,7 @@ export default function PatientHomePage() {
     refetchOnMount: true,
   });
 
-  if (patientLoading || patientPstLoading) {
-    return <Loading />;
-  }
-
-  if (patientError || patientPostError) {
-    return <Text>Error loading cases</Text>;
-  }
+  // Removed page loading blocking screen to show cached localCases instantly
 
 const displayCases =
   patientPost && patientPost.length > 0
@@ -96,7 +93,7 @@ const displayCases =
     ? displayCases?.filter((c: any) => c.status === filterStatus)
     : displayCases;
 
-  const STATUS_OPTIONS = [
+  const STATUS_OPTIONS: { label: string; value: Status | null }[] = [
     { label: "All", value: null },
     { label: "Under Review", value: "under_review" },
     { label: "Doctor Replied", value: "doctor_replied" },
@@ -107,24 +104,9 @@ const displayCases =
   return (
     <AppBackground variant="logo">
       <View style={styles.container}>
-        <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
-          <Image style={styles.img} source={profilePic} transition={150} />
-          <Pressable
-            style={styles.iconWrapper}
-            onPress={() => navigation.navigate("PatientNotifyTab")}
-          >
-            <NotificationsIcon size={scale(18)} color={colors.textDark2} />
-          </Pressable>
-        </SafeAreaView>
+        <PatientHeader profilePic={profilePic} rightIcon="notification" useSafeArea={true} />
 
-        <View style={{ marginVertical: scale(20) }}>
-          <Text style={[styles.UserName, styles.Text]}>
-            {patient?.nickname}
-          </Text>
-          <Text style={[styles.SubText, styles.Text]}>
-            How are you feeling today?
-          </Text>
-        </View>
+        <MagicalGreeting nickname={patient?.nickname} />
         <View style={styles.filterRow}>
           {STATUS_OPTIONS.map((status) => (
             <FilterButton
@@ -142,7 +124,7 @@ const displayCases =
           ))}
         </View>
         {filteredCases && filteredCases.length > 0 ? (
-          <View>
+          <View style={styles.listContainer}>
             <FlatList
               data={filteredCases}
               keyExtractor={(item) => item.id.toString()}
@@ -152,22 +134,38 @@ const displayCases =
                 marginBottom: scale(12),
               }}
               showsVerticalScrollIndicator={false}
-              renderItem={({ item }) => (
-                <CaseCard
-                  data={item}
-                  onPress={() =>
-                    navigation.navigate("CaseDetailsAndRepliesScreen", {
-                      caseId: item.id,
-                      caseData: item,
-                    })
-                  }
-                />
+              renderItem={({ item, index }) => (
+                <FadeInView
+                  delay={index * 80}
+                  duration={450}
+                  translateYStart={15}
+                  style={{ width: scale(160) }}
+                >
+                  <CaseCard
+                    data={item}
+                    onPress={() =>
+                      navigation.navigate("CaseDetailsAndRepliesScreen", {
+                        caseId: item.id,
+                        caseData: item,
+                      })
+                    }
+                  />
+                </FadeInView>
               )}
               contentContainerStyle={{
                 paddingBottom: scale(90),
                 paddingHorizontal: scale(6),
                 paddingTop: scale(10),
               }}
+            />
+            <LinearGradient
+              colors={[
+                "rgba(195, 227, 199, 0)",
+                "rgba(195, 227, 199, 0.8)",
+                "rgba(195, 227, 199, 1)",
+              ]}
+              style={styles.bottomBlur}
+              pointerEvents="none"
             />
           </View>
         ) : (
@@ -180,30 +178,12 @@ const displayCases =
             </Text>
           </View>
         )}
-
-        <View style={{ flex: 1 }} />
       </View>
     </AppBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  NavBar: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: scale(10),
-  },
-  iconWrapper: {
-    borderRadius: scale(6),
-    backgroundColor: colors.formBackground,
-    padding: scale(8),
-  },
-  img: {
-    width: scale(54),
-    height: scale(54),
-    borderRadius: scale(16),
-  },
   container: {
     flex: 1,
     padding: scale(40),
@@ -228,12 +208,23 @@ const styles = StyleSheet.create({
   },
   NoCasesSubText: {
     color: palette.darkGreen,
-    fontWeight: "bold",
+    fontFamily: Family.FG_Bold,
   },
   filterRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: scale(15),
+  },
+  listContainer: {
+    flex: 1,
+    position: "relative",
+  },
+  bottomBlur: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: scale(80),
   },
 });

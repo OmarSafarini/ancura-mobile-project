@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useRef } from "react";
-import { View, Text, StyleSheet, ScrollView, Pressable, SafeAreaView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import AppBackground from "@/components/base/AppBackground";
 import DoctorGreeting from "../components/DoctorGreeting";
 import CaseCard from "@/components/common/CaseCard";
@@ -17,7 +18,7 @@ import { useUserSession } from "@/hooks/useUserSession";
 import { useDoctorBasicInfo } from "@/hooks/useDoctorBasicInfo";
 import { useGetDoctorCases } from "@/hooks/useGetDoctorCases";
 import { getDoctorDashboardStats } from "@/services/Doctor/DoctorDashboard";
-import { useQueryClient } from "node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function DoctorDashboardAndCases({ navigation }: any) {
   const scrollRef = useRef<ScrollView>(null);
@@ -27,7 +28,7 @@ export default function DoctorDashboardAndCases({ navigation }: any) {
   const { data: doctorInfo } = useDoctorBasicInfo(doctorId);
   const { previewCases, isPending, isFetching, isError, refetch } = useGetDoctorCases();
 
-  const handleViewAllCases = useCallback(() => {
+  const handleViewAllCases = useCallback(async () => {
     if (!doctorId) return;
 
   await Promise.all([
@@ -50,7 +51,7 @@ export default function DoctorDashboardAndCases({ navigation }: any) {
     }),
   ]);
 
-  navigation.navigate("DashboardScreen");
+  navigation.navigate("DoctorHomeScreen");
 }, [navigation, queryClient, doctorId]);
 
   const handleViewDashboardScreen = useCallback(() => {
@@ -180,16 +181,15 @@ const styles = StyleSheet.create({
   },
 
   chartBox: {
-    width: scale(230),
+    width: scale(252),
     height: scale(215),
-    backgroundColor: "rgba(255,255,255,0.5)",
     borderRadius: scale(24),
     overflow: "hidden",
     padding: 0,
   },
 
   iconsColumn: {
-    width: scale(80),
+    width: scale(65),
     height: scale(217),
     justifyContent: "space-between",
     alignItems: "center",

@@ -15,7 +15,23 @@ import { BarData, StatisticsChartProps } from "../../../types/IStatisticsChartPr
 const DESIGN_MAX_BAR_HEIGHT = scale(160);
 const BAR_WIDTH = scale(12);
 
-const AnimatedBar = ({ targetHeight, active,width, }: { targetHeight: number, active?: boolean, width?: number }) => {
+const AnimatedBar = ({ 
+  targetHeight, 
+  active,
+  width, 
+  maxHeight,
+  activeColor = palette.darkGreen,
+  inactiveColor = '#E4E0EB',
+  inactiveOpacity = 0.6
+}: { 
+  targetHeight: number, 
+  active?: boolean, 
+  width?: number,
+  maxHeight: number,
+  activeColor?: string,
+  inactiveColor?: string,
+  inactiveOpacity?: number
+}) => {
   const animatedHeight = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -26,18 +42,24 @@ const AnimatedBar = ({ targetHeight, active,width, }: { targetHeight: number, ac
     }).start();
   }, [targetHeight]);
 
+  // Use a beautifully translucent grey color as the background track
+  const trackColor = inactiveColor.startsWith('#') ? `${inactiveColor}33` : 'rgba(228, 224, 235, 0.4)';
+
   return (
-    <Animated.View
-      style={[
-        styles.bar,
-        {
-          width,
-          height: animatedHeight,
-          backgroundColor: active ? palette.darkGreen : '#E4E0EB',
-          opacity: active ? 1 : 0.6,
-        },
-      ]}
-    />
+    <View style={{ height: maxHeight, width, justifyContent: 'flex-end', alignItems: 'center' }}>
+      {/* Actual Bar */}
+      <Animated.View
+        style={[
+          styles.bar,
+          {
+            width,
+            height: animatedHeight,
+            backgroundColor: active ? activeColor : inactiveColor,
+            opacity: active ? 1 : inactiveOpacity,
+          },
+        ]}
+      />
+    </View>
   );
 };
 
@@ -47,7 +69,10 @@ export default function StatisticsChart({
   showLabels = true,
   barWidth = BAR_WIDTH,   
   spacing = "space-between",
-
+  noPadding = false,
+  activeBarColor,
+  inactiveBarColor,
+  inactiveBarOpacity,
 }: StatisticsChartProps) {
   const maxValue = Math.max(...data.map(d => d.value), 1);
 
@@ -55,7 +80,18 @@ export default function StatisticsChart({
     (value / maxValue) * height;
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        noPadding && {
+          backgroundColor: 'transparent',
+          borderRadius: 0,
+          paddingVertical: 0,
+          paddingHorizontal: scale(16), // inset columns and labels so they are never cut off at the edges
+          marginHorizontal: 0,
+        },
+      ]}
+    >
       <View style={[styles.barsRow, { height, justifyContent: spacing }]}>
         {data.map((item, index) => (
           <View key={index} style={styles.barColumn}>
@@ -63,6 +99,10 @@ export default function StatisticsChart({
               targetHeight={getBarHeight(item.value)} 
               active={item.active} 
               width={barWidth}
+              maxHeight={height}
+              activeColor={activeBarColor}
+              inactiveColor={inactiveBarColor}
+              inactiveOpacity={inactiveBarOpacity}
             />
           </View>
         ))}
@@ -87,7 +127,7 @@ const styles = StyleSheet.create({
     borderRadius: scale(24),
     paddingVertical: scale(24),
     paddingHorizontal: scale(20),
-    marginHorizontal: scale(16),
+    marginHorizontal: 0,
   },
   barsRow: {
     flexDirection: 'row',
@@ -110,8 +150,9 @@ const styles = StyleSheet.create({
   label: {
     flex: 1,
     textAlign: 'center',
-    fontFamily: Family.FG_Regular,
+    fontFamily: Family.FG_Medium,
     fontSize: scale(12),
-    color: '#303030',
+    color: '#08070E',
+    opacity: 0.9,
   },
 });

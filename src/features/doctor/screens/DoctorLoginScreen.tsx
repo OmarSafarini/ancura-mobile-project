@@ -131,7 +131,7 @@ export default function DoctorLoginScreen({ navigation }: any) {
               control={control}
               name="email"
               label="Email"
-              placeholder="USR-978896"
+              placeholder="doctor@ancura.com"
               rules={{ 
                 required: "Email is required",
                 pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email format" }

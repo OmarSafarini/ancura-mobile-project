@@ -1,7 +1,7 @@
 import AppBackground from "@/components/base/AppBackground";
-import { StyleSheet, View, Text, SafeAreaView, FlatList } from "react-native";
+import { StyleSheet, View, Text, FlatList } from "react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale } from "@/utils/responsive";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CaseCard from "@/components/common/CaseCard";
 import { CaseData } from "@/types/ICaseData";
 import { IDoctor } from "@/types/IDoctor";
@@ -11,6 +11,8 @@ import { getAllCases } from "@/services/common_services/Case";
 import { getUserMeta } from "@/services/tokenService";
 import DoctorGreeting from "../components/DoctorGreeting";
 import Loading from "@/components/common/Loading";
+import FadeInView from "@/utils/FadeInView";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function DoctorHomeScreen({ navigation }: any) {
   const insets = useSafeAreaInsets();
@@ -37,20 +39,16 @@ export default function DoctorHomeScreen({ navigation }: any) {
     refetchOnMount: true,
   });
 
-  if (doctorLoading || casesLoading) {
-    return <Loading />;
-  }
-
   if (casesError || doctorError) {
     return <Text>Error loading cases</Text>;
   }
 
-  const doctorCases = cases.filter((c) => c.status !== "Resolved");
+  const doctorCases = cases ? cases.filter((c) => c.status !== "Resolved") : [];
 
   return (
     <AppBackground variant="clean">
       <View style={styles.container}>
-        <SafeAreaView style={[styles.NavBar, { paddingTop: insets.top }]}>
+        <SafeAreaView style={styles.NavBar}>
           <View style={styles.ImgContainer}>
             <DoctorGreeting
               name={doctor?.full_name}
@@ -59,33 +57,51 @@ export default function DoctorHomeScreen({ navigation }: any) {
           </View>
         </SafeAreaView>
 
-        <FlatList
-          data={doctorCases}
-          keyExtractor={(item) => item.id.toString()}
-          numColumns={2}
-          columnWrapperStyle={{
-            justifyContent: "space-between",
-            marginBottom: scale(12),
-          }}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <CaseCard
-              data={{ ...item, status: undefined } as any}
-              onPress={() =>
-                navigation.navigate("CaseDetailsAndRepliesScreen", {
-                  caseId: item.id,
-                  caseData: item,
-                  role: "doctor",
-                })
-              }
-            />
-          )}
-          contentContainerStyle={{
-            paddingBottom: scale(90),
-            paddingTop: scale(10),
-            paddingHorizontal: scale(16),
-          }}
-        />
+        <View style={styles.listContainer}>
+          <FlatList
+            data={doctorCases}
+            keyExtractor={(item) => item.id.toString()}
+            numColumns={2}
+            columnWrapperStyle={{
+              justifyContent: "space-between",
+              marginBottom: scale(12),
+            }}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item, index }) => (
+              <FadeInView
+                delay={index * 80}
+                duration={450}
+                translateYStart={15}
+                style={{ width: scale(160) }}
+              >
+                <CaseCard
+                  data={{ ...item, status: undefined } as any}
+                  onPress={() =>
+                    navigation.navigate("CaseDetailsAndRepliesScreen", {
+                      caseId: item.id,
+                      caseData: item,
+                      role: "doctor",
+                    })
+                  }
+                />
+              </FadeInView>
+            )}
+            contentContainerStyle={{
+              paddingBottom: scale(110),
+              paddingTop: scale(10),
+              paddingHorizontal: scale(2),
+            }}
+          />
+          <LinearGradient
+            colors={[
+              "rgba(195, 227, 199, 0)",
+              "rgba(195, 227, 199, 0.8)",
+              "rgba(195, 227, 199, 1)",
+            ]}
+            style={styles.bottomBlur}
+            pointerEvents="none"
+          />
+        </View>
       </View>
     </AppBackground>
   );
@@ -108,5 +124,16 @@ const styles = StyleSheet.create({
   },
   ImgContainer:{
     marginBottom:scale(10)
-  }
+  },
+  listContainer: {
+    flex: 1,
+    position: "relative",
+  },
+  bottomBlur: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: scale(80),
+  },
 });

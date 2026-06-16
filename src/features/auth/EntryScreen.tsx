@@ -16,7 +16,7 @@ export default function EntryScreen({ navigation }: any) {
   return (
     <AppBackground variant="texture" style={{ width: scale(430), height: scale(932) }}>
       <View style={styles.container}>
-        <AnimatedLogoScreen size={scale(200)} />
+        <AnimatedLogoScreen size={scale(160)} />
 
         <View style={styles.buttonContainer}>
           <SlideButton

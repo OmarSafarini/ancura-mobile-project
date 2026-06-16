@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Text, View, StyleSheet, FlatList, Animated, Modal, SafeAreaView, Pressable } from "react-native";
+import { Text, View, StyleSheet, FlatList, Animated, Modal, Pressable } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { WebView } from "react-native-webview";
+import { LinearGradient } from "expo-linear-gradient";
 import DocumentIcon from "@/assets/icons/DoucmentIcon";
 import AppBackground from "@/components/base/AppBackground";
 import Article from "@/features/patient/components/Article";
@@ -11,46 +13,31 @@ import { Family } from "@/utils/typography";
 import YoutubeIcon from "@/assets/icons/YoutubeIcon";
 import { useNavigation } from "@react-navigation/native";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
+import PatientHeader from "../components/PatientHeader";
+import FadeInView from "@/utils/FadeInView";
 import { useQuery } from "@tanstack/react-query";
 
 const ARTICLE_CATEGORIES = ["Articles", "Exercises"];
 
 const RESOURCES = [
     { id: "1", title: "Breathing Exercises (UC Berkeley)", tag: "Static Reading", tagColor: Colors.primary, bgTagColor: `${Colors.primaryLight}50`, Icon: DocumentIcon, url: "https://uhs.berkeley.edu/sites/default/files/breathing_exercises_0.pdf" },
-    { id: "2", title: "Deep Breathing Exercises (Mercy Medical)", tag: "Static Reading", tagColor: Colors.primary, bgTagColor: `${Colors.primaryLight}50`, Icon: DocumentIcon, url: "https://www.mercycare.org/app/files/public/59045330-91c8-4b49-b72e-636e726f75dc/5Deep%20breathing%20exercises.pdf" },
-    { id: "3", title: "Two Breathing Techniques (USU Extension)", tag: "Static Reading", tagColor: Colors.primary, bgTagColor: `${Colors.primaryLight}50`, Icon: DocumentIcon, url: "https://extension.usu.edu/mentalhealth/articles/two-breathing-techniques.pdf" },
-    { id: "4", title: "Breathing and Health (UW Integrative)", tag: "Static Reading", tagColor: Colors.primary, bgTagColor: `${Colors.primaryLight}50`, Icon: DocumentIcon, url: "https://www.fammed.wisc.edu/files/webfm-uploads/documents/outreach/im/handout-BreathingAndHealth-Final.pdf" },
-    { id: "5", title: "Stress-Busting Breathing (APTA)", tag: "Static Reading", tagColor: Colors.primary, bgTagColor: `${Colors.primaryLight}50`, Icon: DocumentIcon, url: "https://www.apta.org/contentassets/e7601c54ab3e42ba9acf2ad1ee3b9279/aptahyperice_take-a-breather-with-these-stress-busting-exercises.pdf" },
-
     { id: "6", title: "Cleveland Clinic: Five-Finger Breathing", tag: "Youtube video", tagColor: Colors.darkPink, bgTagColor: `${Colors.pink}50`, Icon: YoutubeIcon, url: "https://www.youtube.com/watch?v=oeeWEtiAseA" },
+    { id: "2", title: "Deep Breathing Exercises (Mercy Medical)", tag: "Static Reading", tagColor: Colors.primary, bgTagColor: `${Colors.primaryLight}50`, Icon: DocumentIcon, url: "https://www.mercycare.org/app/files/public/59045330-91c8-4b49-b72e-636e726f75dc/5Deep%20breathing%20exercises.pdf" },
     { id: "7", title: "Cleveland Clinic: Breathwork for Beginners", tag: "Youtube video", tagColor: Colors.darkPink, bgTagColor: `${Colors.pink}50`, Icon: YoutubeIcon, url: "https://www.youtube.com/watch?v=J7JKQA-F2dg" },
+    { id: "3", title: "Two Breathing Techniques (USU Extension)", tag: "Static Reading", tagColor: Colors.primary, bgTagColor: `${Colors.primaryLight}50`, Icon: DocumentIcon, url: "https://extension.usu.edu/mentalhealth/articles/two-breathing-techniques.pdf" },
     { id: "8", title: "City of Hope: 15-Minute Deep Breathing", tag: "Youtube video", tagColor: Colors.darkPink, bgTagColor: `${Colors.pink}50`, Icon: YoutubeIcon, url: "https://www.youtube.com/watch?v=F28MGLlpP90" },
+    { id: "4", title: "Breathing and Health (UW Integrative)", tag: "Static Reading", tagColor: Colors.primary, bgTagColor: `${Colors.primaryLight}50`, Icon: DocumentIcon, url: "https://www.fammed.wisc.edu/files/webfm-uploads/documents/outreach/im/handout-BreathingAndHealth-Final.pdf" },
     { id: "9", title: "Nicklaus Children’s: 5-Min Mindful Breathing", tag: "Youtube video", tagColor: Colors.darkPink, bgTagColor: `${Colors.pink}50`, Icon: YoutubeIcon, url: "https://www.youtube.com/watch?v=he-tQOnDCWw" },
+    { id: "5", title: "Stress-Busting Breathing (APTA)", tag: "Static Reading", tagColor: Colors.primary, bgTagColor: `${Colors.primaryLight}50`, Icon: DocumentIcon, url: "https://www.apta.org/contentassets/e7601c54ab3e42ba9acf2ad1ee3b9279/aptahyperice_take-a-breather-with-these-stress-busting-exercises.pdf" },
     { id: "10", title: "UW Medicine: Guided Breathing for Stress", tag: "Youtube video", tagColor: Colors.darkPink, bgTagColor: `${Colors.pink}50`, Icon: YoutubeIcon, url: "https://www.youtube.com/watch?v=Mn4kUw5uXQU" },
 ];
 
 export function BaseKnowledge() {
-    const fadeAnim = useRef(new Animated.Value(0)).current;
-    const translateY = useRef(new Animated.Value(20)).current;
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [activeUrl, setActiveUrl] = useState<string | null>(null);
     const [canGoBack, setCanGoBack] = useState(false);
     const webViewRef = useRef<WebView>(null);
     const navigation = useNavigation();
-
-    useEffect(() => {
-        Animated.timing(fadeAnim, {
-            toValue: 1,
-            duration: 500,
-            useNativeDriver: true,
-        }).start();
-
-        Animated.timing(translateY, {
-            toValue: 0,
-            duration: 500,
-            useNativeDriver: true,
-        }).start();
-    }, [fadeAnim, translateY]);
 
     const { data: resources = RESOURCES } = useQuery({
         queryKey: ['baseKnowledgeResources'],
@@ -87,15 +74,13 @@ export function BaseKnowledge() {
 
     const renderHeader = () => (
         <View style={styles.headerWrapper}>
-            <View style={styles.header}>
-                <Text style={styles.title}>Self-Help & Resources</Text>
-                <Pressable style={styles.iconWrapper} onPress={handleBackPress}>
-                    <ArrowLeftIcon 
-                        color={Colors.textDark2} 
-                        size={scale(18)} 
-                        onPress={handleBackPress}
-                    />
-                </Pressable>
+            <View style={{ paddingHorizontal: scale(51) }}>
+                <PatientHeader 
+                    title="Self-Help & Resources" 
+                    rightIcon="back" 
+                    onRightPress={handleBackPress}
+                    useSafeArea={false}
+                />
             </View>
             <View style={styles.articleContainer}>
                 {ARTICLE_CATEGORIES.map((title) => (
@@ -111,30 +96,46 @@ export function BaseKnowledge() {
     return (
         <AppBackground variant="clean" style={styles.background}>
             <SafeAreaView style={styles.safeArea}>
-                <FlatList
-                    data={filteredResources}
-                    keyExtractor={(item) => item.id}
-                    ListHeaderComponent={renderHeader}
-                    contentContainerStyle={styles.listContent}
-                    ItemSeparatorComponent={() => <View style={styles.separator} />}
-                    renderItem={({ item }) => (
-                        <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY }] }}>
-                            <SelfHelpResource 
-                                title={item.title} 
-                                tag={item.tag} 
-                                tagColor={item.tagColor}
-                                bgTagColor={item.bgTagColor} 
-                                Icon={item.Icon}
-                                onPress={() => handleResourcePress(item)}
-                            />
-                        </Animated.View>
-                    )}
-                />
+                {renderHeader()}
+                <View style={styles.listWrapper}>
+                    <FlatList
+                        data={filteredResources}
+                        keyExtractor={(item) => item.id}
+                        contentContainerStyle={styles.listContent}
+                        ItemSeparatorComponent={() => <View style={styles.separator} />}
+                        renderItem={({ item, index }) => (
+                            <FadeInView
+                                delay={index * 80}
+                                duration={450}
+                                translateYStart={15}
+                            >
+                                <SelfHelpResource 
+                                    title={item.title} 
+                                    tag={item.tag} 
+                                    tagColor={item.tagColor}
+                                    bgTagColor={item.bgTagColor} 
+                                    Icon={item.Icon}
+                                    onPress={() => handleResourcePress(item)}
+                                />
+                            </FadeInView>
+                        )}
+                    />
+                    <LinearGradient
+                        colors={[
+                            "rgba(195, 227, 199, 0)",
+                            "rgba(195, 227, 199, 0.8)",
+                            "rgba(195, 227, 199, 1)",
+                        ]}
+                        style={styles.bottomBlur}
+                        pointerEvents="none"
+                    />
+                </View>
             </SafeAreaView>
 
             <Modal
                 visible={activeUrl !== null}
                 animationType="slide"
+                statusBarTranslucent
                 onRequestClose={() => setActiveUrl(null)}
             >
                 <SafeAreaView style={styles.webViewSafeArea}>
@@ -172,19 +173,23 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     listContent: {
-        paddingBottom: scale(40),
+        paddingBottom: scale(90),
         paddingHorizontal: scale(51),
+    },
+    listWrapper: {
+        flex: 1,
+        position: "relative",
+    },
+    bottomBlur: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: scale(80),
     },
     headerWrapper: {
-        marginHorizontal: -scale(51),
-        marginBottom: scale(25),
+        marginBottom: scale(12),
         marginTop: scale(10),
-    },
-    header: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingHorizontal: scale(51),
     },
     iconWrapper: {
         borderRadius: scale(6),
@@ -198,13 +203,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#F0F0F0",
     },
-    title: {
-        fontSize: scale(24),
-        fontFamily: Family.FG_Medium,
-        color: Colors.textDark,
-    },
     articleContainer: {
-        marginTop: scale(38),
+        marginTop: scale(15),
         paddingHorizontal: scale(51),
         flexDirection: "row",
         gap: scale(9),

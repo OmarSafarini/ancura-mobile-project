@@ -23,14 +23,14 @@ export default function AppBackground({
   return (
     <LinearGradient
       colors={[
-        palette.lightBlue,
-        palette.offWhite,
-        palette.offWhite,
         palette.lightGreen,
+        palette.offWhite,
+        palette.offWhite,
+        palette.lightBlue,
       ]}
       locations={[0.12, 0.3413, 0.7019, 1]}
-      start={{ x: 0.6, y: 0 }}
-      end={{ x: 0.4, y: 1 }}
+      start={{ x: 0, y: 1 }}
+      end={{ x: 1, y: 0 }}
       style={[styles.container, style]}
     >
       {variant === 'texture' && (

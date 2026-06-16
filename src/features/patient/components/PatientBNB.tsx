@@ -35,7 +35,11 @@ export default function PatientBNB(props: any) {
             props.navigation.navigate('CreateCaseScreen');
         };
 
-        if (currentTab === 'PatientProfileTab') {
+        if (
+            currentTab === 'PatientProfileTab' ||
+            currentTab === 'PatientNotifyTab' ||
+            currentTab === 'PatientKnowledgeTab'
+        ) {
             return null;
         }
 

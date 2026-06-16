@@ -20,10 +20,18 @@ export default function BackButton({ onPress }: Props) {
 
 const styles = StyleSheet.create({
   btn: {
-    borderRadius: scale(6),
-    backgroundColor: Colors.formBackground,
-    padding: scale(8),
+    width: scale(34),
+    height: scale(34),
     justifyContent: "center",
     alignItems: "center",
+    borderRadius: scale(6),
+    backgroundColor: Colors.formBackground,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: "#F0F0F0",
   },
 });

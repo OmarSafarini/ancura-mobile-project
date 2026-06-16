@@ -43,7 +43,7 @@ export default function ResolvedSuccessScreen({ onBackToCases }: ResolvedSuccess
         <View style={styles.buttonWrapper}>
           <NormalButton
             title="Back to Cases"
-            onPress={onBackToCases}
+            onPress={onBackToCases || (() => {})}
             bgColor={Colors.secondary}
           />
         </View>

@@ -9,6 +9,7 @@ interface NormalButtonProps {
   textColor?: string;
   loading?: boolean;
   disabled?: boolean;
+  textStyle?: any;
 }
 
 export default function NormalButton({
@@ -18,6 +19,7 @@ export default function NormalButton({
   textColor,
   loading = false,
   disabled = false,
+  textStyle,
 }: NormalButtonProps) {
   const isDisabled = disabled || loading;
 
@@ -34,7 +36,7 @@ export default function NormalButton({
       {loading ? (
         <ActivityIndicator color={textColor ?? "#FFFFFF"} size="small" />
       ) : (
-        <Text style={[styles.title, textColor ? { color: textColor } : { color: "#FFFFFF" }]}>
+        <Text style={[styles.title, textColor ? { color: textColor } : { color: "#FFFFFF" }, textStyle]}>
           {title ?? "There is no title"}
         </Text>
       )}

@@ -1,12 +1,13 @@
 import AppBackground from "@/components/base/AppBackground";
 import IconWrapper from "@/components/common/IconWrapper";
-import { StyleSheet, View, Text, SafeAreaView, Pressable } from "react-native";
+import { StyleSheet, View, Text, Pressable } from "react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Colors as colors, palette } from "@/utils/colors";
 import { scale } from "@/utils/responsive";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Family } from "@/utils/typography";
 import LogoutButton from "@/components/common/LogoutButton";
-import ArrowLeftIcon from "./../../../assets/icons/ArrowLeftIcon";
+import PatientHeader from "../components/PatientHeader";
+import FadeInView from "@/utils/FadeInView";
 import CopyIcon from "../../../assets/icons/CopyIcon";
 import FlashMessage, { showMessage } from "react-native-flash-message";
 import * as Clipboard from "expo-clipboard";
@@ -53,43 +54,44 @@ export default function PaitentSettings() {
       <AppBackground variant="logo">
         <View style={styles.container}>
           <View>
-          <SafeAreaView style={{ paddingTop: insets.top }}>
-            <View style={styles.header}>
-              <Text style={styles.title}>Profile & Settings</Text>
-              <View style={styles.iconWrapper}>
-                <ArrowLeftIcon
-                  color={colors.textDark2}
-                  size={scale(18)}
-                  onPress={() => navigation.navigate("PatientHomeTab" as never)}
-                />
-              </View>
-            </View>
-          </SafeAreaView>
-            <View style={styles.Card}>
-            <Text style={[styles.CardHeader, styles.CardText]}>
-              Email
-            </Text>
-            <Text style={[styles.CardSubtitle, styles.CardText]}>
-              {email}
-            </Text>
-            <View style={styles.icon}>
-              <IconWrapper shape="circle" bgColor={palette.white} size={33}>
-                <CopyIcon
-                  size={16}
-                  color={palette.black}
-                  onPress={() => CopyId(email ?? "")}
-                />
-              </IconWrapper>
-            </View>
-          </View>
-        </View>
+            <FadeInView delay={0} translateYStart={15}>
+              <PatientHeader
+                title="Profile & Settings"
+                rightIcon="back"
+                onRightPress={() => navigation.navigate("PatientHomeTab" as never)}
+                useSafeArea={true}
+              />
+            </FadeInView>
 
-        <SafeAreaView
-          style={[styles.BottomBar, { paddingBottom: insets.bottom }]}
-        >
-            <FlashMessage position="bottom" style={{ marginBottom: scale(40) }} />
-            <LogoutButton onPress={LogOut} />
-        </SafeAreaView>
+            <FadeInView delay={150} translateYStart={20}>
+              <View style={styles.Card}>
+                <Text style={[styles.CardHeader, styles.CardText]}>
+                  Email
+                </Text>
+                <Text style={[styles.CardSubtitle, styles.CardText]}>
+                  {email}
+                </Text>
+                <View style={styles.icon}>
+                  <IconWrapper shape="circle" bgColor={palette.white} size={33}>
+                    <CopyIcon
+                      size={16}
+                      color={palette.black}
+                      onPress={() => CopyId(email ?? "")}
+                    />
+                  </IconWrapper>
+                </View>
+              </View>
+            </FadeInView>
+          </View>
+
+          <FadeInView delay={300} translateYStart={20}>
+            <SafeAreaView
+              style={[styles.BottomBar, { paddingBottom: insets.bottom }]}
+            >
+              <FlashMessage position="bottom" style={{ marginBottom: scale(40) }} />
+              <LogoutButton onPress={LogOut} />
+            </SafeAreaView>
+          </FadeInView>
         </View>
       </AppBackground>
   );
@@ -99,23 +101,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(51),
     justifyContent: "space-between",
     flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: scale(56),
-    marginTop: scale(10),
-  },
-  iconWrapper: {
-    borderRadius: scale(6),
-    backgroundColor: colors.formBackground,
-    padding: scale(8),
-  },
-  title: {
-    fontSize: scale(24),
-    fontFamily: Family.FG_Medium,
-    color: colors.textDark,
   },
   Card: {
     borderRadius: scale(11),
@@ -128,7 +113,7 @@ const styles = StyleSheet.create({
   },
   CardSubtitle: {
     color: palette.dark,
-    fontWeight: "bold",
+    fontFamily: Family.FG_Bold,
   },
   CardText: {
     fontFamily: Family.FG_Regular,

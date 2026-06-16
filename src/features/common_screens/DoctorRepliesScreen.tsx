@@ -1,5 +1,6 @@
 import React, { useCallback, useRef } from "react";
-import { View, FlatList, StyleSheet, Text, SafeAreaView, KeyboardAvoidingView, Platform } from "react-native";
+import { View, FlatList, StyleSheet, Text, KeyboardAvoidingView, Platform } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Control, useForm } from "react-hook-form";
 import AppBackground from "@/components/base/AppBackground";
@@ -84,7 +85,7 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
     <AppBackground style={{ flex: 1 }}>
       <SafeAreaView style={[styles.safeArea, { backgroundColor: 'transparent' }]}>
         <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
           style={{ flex: 1 }}
         >
           <View style={styles.fixedHeader}>

@@ -3,6 +3,7 @@ import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { getAccessToken, getRefreshToken, saveTokens, clearAllAuthData } from './tokenService';
 import { useAuthStore } from '../store/authStore';
 import { SupabaseAuthResponse } from '../types/auth.types';
+import { setRealtimeToken } from './realtimeClient';
 
 export const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL!;
 export const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
@@ -109,6 +110,9 @@ supabaseClient.interceptors.response.use(
 
         useAuthStore.getState().setToken(data.access_token);
         processQueue(null, data.access_token);
+
+        // Keep the Realtime WebSocket authenticated after a token refresh
+        setRealtimeToken().catch(() => {});
 
         originalRequest.headers.Authorization = `Bearer ${data.access_token}`;
         return supabaseClient(originalRequest);

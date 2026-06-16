@@ -1,6 +1,7 @@
 import React, { useCallback, useRef, useState } from "react";
 import { Control, useForm } from "react-hook-form";
-import { View, FlatList, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform } from "react-native";
+import { View, FlatList, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getRepliesByCaseId, postReply } from '@/services/common_services/ReplyService';
 import { deleteCase, updateCaseStatus } from '@/services/common_services/Case';
@@ -139,7 +140,7 @@ export default function CaseDetailScreen({ navigation, route }: any) {
     <AppBackground style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }}>
         <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
           style={{ flex: 1 }}
         >
           <View style={styles.container}>

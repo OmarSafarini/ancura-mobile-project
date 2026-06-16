@@ -1,6 +1,8 @@
 import React from "react";
-import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
-import { Text, View, StyleSheet, FlatList, Pressable, SafeAreaView } from "react-native";
+import PatientHeader from "../components/PatientHeader";
+import { Text, View, StyleSheet, FlatList, Pressable } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "@/utils/colors";
 import { scale } from "@/utils/responsive";
 import { Family } from "@/utils/typography";
@@ -20,20 +22,11 @@ export default function Notification() {
 
     const user = useAuthStore((state) => state.user);
 
-    const { data: notifications, isLoading, refetch } = useQuery({
+    const { data: notifications } = useQuery({
         queryKey: ["notifications", user?.id], 
         queryFn: () => getPatientNotification(user?.id as string), 
         enabled: !!user?.id 
     }); 
-
-    const renderHeader = () => (
-        <View style={styles.header}>
-            <Text style={styles.title}>Notifications</Text>
-            <Pressable style={styles.iconWrapper} onPress={() => navigation.goBack()}>
-                <ArrowLeftIcon color={Colors.textDark2} size={scale(18)} />
-            </Pressable>
-        </View>
-    );
 
     const renderItem = ({ item, index }: { item: any; index: number }) => (
         <FadeInView delay={index * 50} duration={400}>
@@ -50,16 +43,32 @@ export default function Notification() {
     return (    
         <AppBackground variant="clean" style={styles.background}>
             <SafeAreaView style={styles.safeArea}>
-                <FlatList
-                    data={notifications}
-                    keyExtractor={(item, index) => item.id || index.toString()}
-                    renderItem={renderItem}
-                    ListHeaderComponent={renderHeader}
-                    contentContainerStyle={styles.listContainer}
-                    showsVerticalScrollIndicator={false}
-                    refreshing={isLoading}
-                    onRefresh={refetch}
-                />
+                <View style={{ paddingHorizontal: scale(51) }}>
+                    <PatientHeader 
+                        title="Notifications" 
+                        rightIcon="back" 
+                        useSafeArea={false} 
+                        containerStyle={{ marginBottom: scale(10) }}
+                    />
+                </View>
+                <View style={styles.listWrapper}>
+                    <FlatList
+                        data={notifications}
+                        keyExtractor={(item, index) => item.id || index.toString()}
+                        renderItem={renderItem}
+                        contentContainerStyle={styles.listContainer}
+                        showsVerticalScrollIndicator={false}
+                    />
+                    <LinearGradient
+                        colors={[
+                            "rgba(195, 227, 199, 0)",
+                            "rgba(195, 227, 199, 0.8)",
+                            "rgba(195, 227, 199, 1)",
+                        ]}
+                        style={styles.bottomBlur}
+                        pointerEvents="none"
+                    />
+                </View>
             </SafeAreaView>
         </AppBackground>
     );
@@ -72,36 +81,20 @@ const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
     },
-    header: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: scale(56),
-        marginTop: scale(10), 
-    },
-    iconWrapper: {
-        width: scale(34),
-        height: scale(34),
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: scale(6),
-        backgroundColor: Colors.formBackground,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 2,
-        borderWidth: 1,
-        borderColor: "#F0F0F0",
-    },
-    title: {
-        fontSize: scale(24),
-        fontFamily: Family.FG_Medium,
-        color: Colors.textDark,
-    },
     listContainer: {
         paddingHorizontal: scale(51),
-        paddingBottom: scale(30),
+        paddingBottom: scale(90),
         gap: scale(19),
+    },
+    listWrapper: {
+        flex: 1,
+        position: "relative",
+    },
+    bottomBlur: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: scale(80),
     },
 });
