@@ -13,7 +13,15 @@ const ActivityLogCard = ({ title, description, time, isResolved }: ActivityLogCa
       <View style={styles.header}>
         <Text style={styles.title}>{title}</Text>
         <View style={styles.timeContainer}>
-          <Text style={styles.time}>{time}</Text>
+          <Text style={styles.time}>
+            {new Date(time).toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </Text>
         </View>
       </View>
 
@@ -41,8 +49,9 @@ const styles = StyleSheet.create({
     backgroundColor: palette.white,
     borderRadius: scale(30),
    
-    width: scale(327),
-    height: scale(100.75),
+    width: "100%",
+    minHeight: scale(100.75),
+    paddingBottom: scale(10),
     marginBottom: scale(12),
 
     shadowColor: Colors.shadow,
@@ -77,6 +86,7 @@ const styles = StyleSheet.create({
 
   descriptionContainer: {
     marginLeft:scale(30),
+    marginRight: scale(30),
     marginTop: scale(8)
   },
 

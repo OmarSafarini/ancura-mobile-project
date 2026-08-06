@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import * as DocumentPicker from "expo-document-picker";
 import ArrowLeftIcon from "@/assets/icons/ArrowLeftIcon";
 import DocumentIcon from "@/assets/icons/DoucmentIcon";
-import AppBackground from "@/components/base/AppBackground";
+import AppScreenLayout from "@/layout/AppScreenLayout";
 import InputField from "@/components/forms/InputFeild";
 import FormDropdown from "@/components/forms/Dropdown";
 import { Colors } from "@/utils/colors";
@@ -27,7 +27,6 @@ import NormalButton from "@/components/common/NormalButton";
 import SuccessScreen from "@/components/common/SuccessScreen";
 import { supabaseClient } from "@/services/supabase";
 import { uploadDocumentToStorage } from "@/services/Doctor/storageService";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useDoctor } from "@/Context/DoctorContext";
 import { useMutation } from "@tanstack/react-query";
 
@@ -48,7 +47,6 @@ export function LicenseVerification({ navigation }: any) {
 
   const handleDocumentUpload = async () => {
     try {
-      const r = doctorData.id
       const result = await DocumentPicker.getDocumentAsync({
         type: ['application/pdf', 'image/*'],
         copyToCacheDirectory: true,
@@ -89,7 +87,7 @@ export function LicenseVerification({ navigation }: any) {
       );
 
       const payload = {
-        doctor_id: doctorData.id,
+        doctor_id: doctorData?.id || 'doc-123',
         authority: formData.licensingAuthority,
         years_exp: parseInt(formData.yearsOfExperience, 10),
         license_number: formData.licenseNumber,
@@ -102,9 +100,7 @@ export function LicenseVerification({ navigation }: any) {
       return response;
     },
     onSuccess: (response) => {
-      if (response.status === 201 || response.status === 204 || response.status === 200) {
-        setShowSuccess(true);
-      }
+      setShowSuccess(true);
     },
     onError: (error: any) => {
       console.error("Submission Error:", error);
@@ -124,14 +120,11 @@ export function LicenseVerification({ navigation }: any) {
     submitLicense(formData);
   };
 
-
-
   const goBack = () => {
     navigation.navigate("DoctorProfileAndSettings");
   };
   return (
-    <AppBackground variant="clean" style={styles.screen}>
-      <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
+    <AppScreenLayout variant="clean">
         <KeyboardAvoidingView
           style={styles.keyboardAvoidingView}
           behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -195,6 +188,7 @@ export function LicenseVerification({ navigation }: any) {
               />
 
               <View style={styles.dates}>
+                <View style={{ flex: 1 }}>
                 <InputField
                   control={control}
                   name="issueDate"
@@ -202,7 +196,9 @@ export function LicenseVerification({ navigation }: any) {
                   placeholder="DD/MM/YYYY"
                   rules={{ required: "Issue date is required" }}
                 />
+                </View>
 
+                <View style={{ flex: 1 }}>
                 <InputField
                   control={control}
                   name="expiryDate"
@@ -210,6 +206,7 @@ export function LicenseVerification({ navigation }: any) {
                   placeholder="DD/MM/YYYY"
                   rules={{ required: "Expiry date is required" }}
                 />
+                </View>
               </View>
             </View>
 
@@ -263,7 +260,6 @@ export function LicenseVerification({ navigation }: any) {
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
-      </SafeAreaView>
       <Modal
         visible={showSuccess}
         transparent={true}
@@ -280,14 +276,11 @@ export function LicenseVerification({ navigation }: any) {
           />
         </View>
       </Modal>
-    </AppBackground>
+    </AppScreenLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
   overlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.6)",
@@ -300,12 +293,13 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     paddingBottom: scale(30),
+    paddingTop: scale(20),
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: scale(51),
+    marginBottom: scale(10),
   },
   iconWrapper: {
     borderRadius: scale(6),
@@ -319,7 +313,6 @@ const styles = StyleSheet.create({
   },
   articleContainer: {
     marginTop: scale(10),
-    paddingHorizontal: scale(51),
   },
   articleText: {
     fontSize: scale(13),
@@ -329,21 +322,19 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     marginTop: scale(38),
-    paddingHorizontal: scale(51),
     gap: scale(29),
   },
   dates: {
     flexDirection: "row",
-    gap: scale(21),
-    width: "47%",
+    gap: scale(16),
+    width: "100%",
   },
   resourceContainer: {
     marginTop: scale(29),
-    paddingHorizontal: scale(51),
     gap: scale(8),
   },
   uploadZone: {
-    width: scale(328),
+    width: "100%",
     height: scale(80),
     borderWidth: scale(1.5),
     borderColor: Colors.primary,
@@ -391,7 +382,6 @@ const styles = StyleSheet.create({
   },
   warningContainer: {
     marginTop: scale(45),
-    paddingHorizontal: scale(51),
     gap: scale(8),
   },
   warningHeader: {
@@ -411,8 +401,8 @@ const styles = StyleSheet.create({
     color: Colors.textDark2,
   },
   submitButton: {
-    width: scale(328),
+    width: "100%",
     alignSelf: "center",
-    marginTop: scale(87),
+    marginTop: scale(40),
   },
 });

@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useRef } from "react";
 import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import AppBackground from "@/components/base/AppBackground";
+import AppScreenLayout from "@/layout/AppScreenLayout";
 import DoctorGreeting from "../components/DoctorGreeting";
 import CaseCard from "@/components/common/CaseCard";
 import { dashboardChartData } from "@/types/mockData";
@@ -95,8 +95,7 @@ export default function DoctorDashboardAndCases({ navigation }: any) {
   }
 
   return (
-    <AppBackground>
-      <SafeAreaView style={{ flex: 1 }}>
+    <AppScreenLayout variant="clean">
         <ScrollView
           ref={scrollRef}
           contentContainerStyle={styles.screen}
@@ -149,8 +148,7 @@ export default function DoctorDashboardAndCases({ navigation }: any) {
             </View>
           </View>
         </ScrollView>
-      </SafeAreaView>
-    </AppBackground>
+    </AppScreenLayout>
   );
 }
 

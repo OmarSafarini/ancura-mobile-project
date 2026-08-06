@@ -1,6 +1,5 @@
-import { supabaseClient } from "../supabase";
 import type { CaseData } from "@/types/ICaseData";
-
+import { addMockCase, updateMockCase, mockCases, delay, MOCK_PATIENT } from '../mockData';
 
 export type CaseInput = {
   patient_id: string;
@@ -16,13 +15,11 @@ export const createCase = async (payload: CaseInput): Promise<CaseData> => {
   }
 
   try {
-    const { data } = await supabaseClient.post("/case", payload, {
-      headers: {
-        Prefer: "return=representation",
-      },
+    const newCase = await addMockCase({
+      ...payload,
+      status: 'under_review',
     });
-
-    return Array.isArray(data) ? data[0] : data;
+    return newCase;
   } catch (error) {
     throw new Error(error instanceof Error ? error.message : "Failed to create case");
   }
@@ -33,9 +30,8 @@ export const editCase = async (
   payload: Partial<CaseInput>
 ): Promise<CaseData> => {
   try {
-    const { data } = await supabaseClient.patch(`/case?id=eq.${caseId}`, payload);
-
-    return Array.isArray(data) ? data[0] : data;
+    const updated = await updateMockCase(caseId, payload);
+    return updated as CaseData;
   } catch (error) {
     throw new Error(error instanceof Error ? error.message : "Failed to update case");
   }
@@ -45,10 +41,12 @@ export const getCaseById = async (
   caseId: number
 ): Promise<CaseData> => {
   try {
-  const { data } = await supabaseClient.get(
-    `/case?id=eq.${caseId}&select=*,patient:patient_id(*)`
-  );
-    return data;
+    await delay();
+    const caseData = mockCases.find(c => c.id === caseId);
+    if (caseData) {
+      return { ...caseData, patient: MOCK_PATIENT } as CaseData;
+    }
+    throw new Error("Case not found");
   } catch (error) {
     throw new Error(
       error instanceof Error ? error.message : "Failed to fetch case files"

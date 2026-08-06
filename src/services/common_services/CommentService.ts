@@ -1,36 +1,13 @@
-import { supabaseClient } from '@/services/supabase';
-import { formatDistanceToNow } from 'date-fns';
+import { delay, MOCK_DOCTOR, MOCK_PATIENT } from '../mockData';
 
-
-const parseTimestamp = (timestampString: any) => {
-  if (!timestampString) return new Date();
-  if (typeof timestampString !== 'string') return new Date(timestampString);
-  if (!timestampString.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(timestampString)) {
-    return new Date(timestampString + 'Z');
-  }
-  return new Date(timestampString);
-};
+let mockComments: any[] = [];
 
 export const getCommentsByReplyId = async (replyId: number) => {
-  const { data } = await supabaseClient.get('/comment', {
-    params: {
-      reply_id: `eq.${replyId}`,
-      select: '*,doctor(full_name,profilePic),patient(nickname,profilePic)',
-      order: 'timestamp',
-    },
-  });
-
-  return (data ?? []).map((item: any) => ({
-    ...item,
-
-    timestamp: formatDistanceToNow(
-      parseTimestamp(item.timestamp),
-      { addSuffix: true }
-    ).replace('about ', ''),
-    author_name: item.doctor?.full_name || item.patient?.nickname,
-    author_role: item.doctor ? 'Doctor' : 'Patient',
-  }));
+  await delay();
+  const comments = mockComments.filter(c => c.reply_id === replyId);
+  return comments;
 };
+
 export const postComment = async ({
   replyId,
   body,
@@ -42,19 +19,17 @@ export const postComment = async ({
   userId: string;
   role: 'doctor' | 'patient';
 }) => {
-
-  const payload: any = {
+  await delay();
+  const newComment = {
+    id: Math.floor(Math.random() * 10000),
     reply_id: replyId,
     body,
+    timestamp: "Just now",
+    author_name: role === 'doctor' ? MOCK_DOCTOR.full_name : MOCK_PATIENT.nickname,
+    author_role: role === 'doctor' ? 'Doctor' : 'Patient',
+    doctor: role === 'doctor' ? MOCK_DOCTOR : null,
+    patient: role === 'patient' ? MOCK_PATIENT : null,
   };
-
-  if (role === 'doctor') {
-    payload.doctor_id = userId;
-  } else {
-    payload.patient_id = userId;
-  }
-
-  const { data } = await supabaseClient.post('/comment', payload);
-
-  return data?.[0];
+  mockComments.push(newComment);
+  return newComment;
 };

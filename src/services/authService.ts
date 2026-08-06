@@ -16,8 +16,8 @@ import {
   UserRole,
 } from "../types/auth.types";
 
-const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL!;
-const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
+const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://dummy.supabase.co';
+const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'dummy-key';
 
 /**
    @param email    
@@ -37,77 +37,23 @@ export async function signIn(
   setError(null);
 
   try {
-    const { data: authData } = await supabaseClient.post<SupabaseAuthResponse>(
-      `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
-      { email, password },
-      {
-        headers: {
-          apikey: SUPABASE_ANON_KEY,
-          "Content-Type": "application/json",
-        },
-      },
-    );
-
-    const { access_token, refresh_token, user } = authData;
-
-    await saveTokens({
-      accessToken: access_token,
-      refreshToken: refresh_token,
-    });
-
-    const table = role === "patient" ? "patient" : "doctor";
-    let selectQuery = "id";
-    if (role === "doctor") {
-      selectQuery = "id,verify_status";
-    }
-
-    const { data: profileRows } = await axios.get(
-      `${SUPABASE_URL}/rest/v1/${table}?id=eq.${user.id}&select=${selectQuery}`,
-      {
-        headers: {
-          apikey: SUPABASE_ANON_KEY,
-          Authorization: `Bearer ${access_token}`,
-        },
-      },
-    );
-
-    if (!profileRows || profileRows.length === 0) {
-      await clearAllAuthData();
-      await axios.post(
-        `${SUPABASE_URL}/auth/v1/logout`,
-        {},
-        {
-          headers: {
-            apikey: SUPABASE_ANON_KEY,
-            Authorization: `Bearer ${access_token}`,
-          },
-        },
-      );
-      throw new Error(
-        role === "patient"
-          ? "This account is not registered as a patient. Try logging in as a doctor."
-          : "This account is not registered as a doctor. Try logging in as a patient.",
-      );
-    }
-
-    await saveUserMeta({ id: user.id, email: user.email, role });
-
+    // Web Mock: Bypass real authentication
+    await new Promise(resolve => setTimeout(resolve, 800));
     const authUser: AuthUser = {
-      id: user.id,
-      email: user.email,
+      id: role === 'patient' ? 'patient_1' : 'doctor_1',
+      email: email,
       role,
-      verify_status: profileRows[0]?.verify_status as DoctorStatus,
+      verify_status: 'approved',
     };
-    setSession(authUser, access_token);
-    // Authenticate the Realtime WebSocket with the user's JWT
-    await setRealtimeToken();
+    
+    await saveTokens({ accessToken: "fake-jwt-token-123", refreshToken: "fake-refresh-token" });
+    await saveUserMeta({ id: authUser.id, email: authUser.email, role: authUser.role, verify_status: authUser.verify_status } as any);
+
+    // Set a fake access token
+    setSession(authUser, "fake-jwt-token-123");
   } catch (err: any) {
-    const message =
-      err?.response?.data?.error_description ??
-      err?.message ??
-      "An unexpected error occurred. Please try again.";
     clearSession();
-    setError(message);
+    setError("Mock login failed");
     throw err;
   }
 }
@@ -132,68 +78,22 @@ export async function signUp(
   setError(null);
 
   try {
-    const { data: authData } = await axios.post<SupabaseAuthResponse>(
-      `${SUPABASE_URL}/auth/v1/signup`,
-      { email, password },
-      {
-        headers: {
-          apikey: SUPABASE_ANON_KEY,
-          "Content-Type": "application/json",
-        },
-      },
-    );
-
-    const { access_token, refresh_token, user } = authData;
-
-    if (!user || (!access_token && !refresh_token)) {
-      throw new Error("account created successfully, please verify your email");
-    }
-
-    await saveTokens({
-      accessToken: access_token,
-      refreshToken: refresh_token,
-    });
-
-    if (role === "patient") {
-      const generatedNickname = `USR-${Math.floor(100000 + Math.random() * 900000)}`;
-
-      await supabaseClient.post(
-        "/patient",
-        {
-          id: user.id,
-          nickname: generatedNickname,
-          age: meta.age,
-          gender: meta.gender,
-        },
-        { headers: { Prefer: "return=minimal" } },
-      );
-    } else {
-      await supabaseClient.post(
-        "/doctor",
-        {
-          id: user.id,
-          email: user.email,
-          full_name: meta.full_name || "Dr. New User",
-          bio: meta.bio || "",
-          location: meta.location || "",
-          profilePic: meta.profilePic || "",
-          points: 0,
-        },
-        { headers: { Prefer: "return=minimal" } },
-      );
-    }
-
-    await saveUserMeta({ id: user.id, email: user.email, role });
-
+    // Web Mock: Bypass real authentication
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Set a fake session and user for mock purposes
     const authUser: AuthUser = {
-      id: user.id,
-      email: user.email,
+      id: role === 'patient' ? 'patient_1' : 'doctor_1',
+      email: email,
       role,
-      verify_status: role === "doctor" ? "pending" : undefined,
+      verify_status: 'approved',
     };
-    setSession(authUser, access_token);
-    // Authenticate the Realtime WebSocket with the user's JWT
-    await setRealtimeToken();
+    
+    await saveTokens({ accessToken: "fake-jwt-token-new", refreshToken: "fake-refresh-token" });
+    await saveUserMeta({ id: authUser.id, email: authUser.email, role: authUser.role, verify_status: authUser.verify_status } as any);
+
+    setSession(authUser, "fake-jwt-token-new");
+    return;
   } catch (err: any) {
     console.error("Supabase API Error Data:", err?.response?.data);
 
@@ -213,19 +113,8 @@ export async function signOut(): Promise<void> {
   setAuthenticating(true);
 
   try {
-    const token = await getAccessToken();
-    if (token) {
-      await axios.post(
-        `${SUPABASE_URL}/auth/v1/logout`,
-        {},
-        {
-          headers: {
-            apikey: SUPABASE_ANON_KEY,
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-    }
+    // Web Mock: Bypass real authentication
+    await new Promise(resolve => setTimeout(resolve, 1000));
   } catch {
   } finally {
     await clearAllAuthData();
@@ -270,16 +159,8 @@ export async function resetPasswordForEmail(email: string): Promise<void> {
   const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
 
   try {
-    await axios.post(
-      `${SUPABASE_URL}/auth/v1/recover`,
-      { email },
-      {
-        headers: {
-          apikey: SUPABASE_ANON_KEY,
-          "Content-Type": "application/json",
-        },
-      },
-    );
+    // Web Mock: Bypass real authentication
+    await new Promise(resolve => setTimeout(resolve, 1500));
   } catch (error: any) {
     throw error;
   }
@@ -290,18 +171,9 @@ export async function verifyOTP(email: string, token: string): Promise<string> {
   const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
 
   try {
-    const { data } = await axios.post<SupabaseAuthResponse>(
-      `${SUPABASE_URL}/auth/v1/verify`,
-      { type: "recovery", email, token },
-      {
-        headers: {
-          apikey: SUPABASE_ANON_KEY,
-          "Content-Type": "application/json",
-        },
-      },
-    );
-
-    return data.access_token;
+    // Web Mock: Bypass real authentication
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    return "fake-recovery-token";
   } catch (error: any) {
     throw error;
   }
@@ -316,18 +188,8 @@ export async function updatePassword(
   const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
 
   try {
-    await axios.put(
-      `${SUPABASE_URL}/auth/v1/user`,
-      { password: newPassword },
-      {
-        headers: {
-          apikey: SUPABASE_ANON_KEY,
-          Authorization: `Bearer ${tempAccessToken}`,
-          "Content-Type": "application/json",
-        },
-      },
-    );
-
+    // Web Mock: Bypass real authentication
+    await new Promise(resolve => setTimeout(resolve, 1500));
     await signIn(email, newPassword, "doctor");
   } catch (error: any) {
     throw error;

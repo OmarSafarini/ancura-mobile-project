@@ -10,7 +10,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm } from "react-hook-form";
 import type { DocumentPickerAsset } from "expo-document-picker";
-import AppBackground from "@/components/base/AppBackground";
+import AppScreenLayout from "@/layout/AppScreenLayout";
 import InputField from "@/components/forms/InputFeild";
 import AttachmentsField from "@/components/forms/AttachmentFeild";
 import NormalButton from "@/components/common/NormalButton";
@@ -115,8 +115,7 @@ const CreateCase = ({ navigation }: any) => {
   };
 
   return (
-    <AppBackground variant="clean">
-      <SafeAreaView style={{ flex: 1 }}>
+    <AppScreenLayout variant="clean">
         <ScrollView
           contentContainerStyle={styles.container}
           showsVerticalScrollIndicator={false}
@@ -229,14 +228,12 @@ const CreateCase = ({ navigation }: any) => {
           )}
         </View>
       </ScrollView>
-      </SafeAreaView>
-    </AppBackground>
+    </AppScreenLayout>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: scale(52),
     paddingTop: scale(10),
     paddingBottom: scale(40),
     gap: scale(30),

@@ -10,8 +10,7 @@ import {
 } from "react-native";
 import { useForm } from "react-hook-form";
 import type { DocumentPickerAsset } from "expo-document-picker";
-
-import AppBackground from "@/components/base/AppBackground";
+import AppScreenLayout from "@/layout/AppScreenLayout";
 import InputField from "@/components/forms/InputFeild";
 import AttachmentsField from "@/components/forms/AttachmentFeild";
 import NormalButton from "@/components/common/NormalButton";
@@ -145,7 +144,7 @@ const EditCaseScreen = ({ navigation, route }: any) => {
   }, [route?.params?.caseData, setValue]);
 
   return (
-    <AppBackground variant="clean">
+    <AppScreenLayout variant="clean">
       <ScrollView
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
@@ -258,14 +257,12 @@ const EditCaseScreen = ({ navigation, route }: any) => {
           )}
         </View>
       </ScrollView>
-    </AppBackground>
+    </AppScreenLayout>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: scale(52),
-    paddingTop: scale(60),
     paddingBottom: scale(40),
     gap: scale(30),
   },

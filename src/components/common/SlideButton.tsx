@@ -8,6 +8,7 @@ import {
   useWindowDimensions,
   ViewStyle,
   Easing,
+  Platform,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
@@ -40,7 +41,8 @@ const SlideButton: React.FC<SlideButtonProps> = ({
   width,
   style,
 }) => {
-  const { width: screenWidth } = useWindowDimensions();
+  const { width: windowWidth } = useWindowDimensions();
+  const screenWidth = Platform.OS === 'web' && windowWidth > 768 ? 390 : windowWidth;
   const buttonWidth = width ?? Math.min(screenWidth - scale(48), scale(335));
   const trackWidth = buttonWidth - THUMB_SIZE - EDGE_PADDING * 2;
 
@@ -63,7 +65,7 @@ const SlideButton: React.FC<SlideButtonProps> = ({
         toValue: 1,
         duration: 1600,
         easing: Easing.linear,
-        useNativeDriver: true,
+        useNativeDriver: false,
       })
     );
     animation.start();
@@ -118,13 +120,13 @@ const SlideButton: React.FC<SlideButtonProps> = ({
           Animated.timing(thumbX, {
             toValue: trackWidth,
             duration: 130,
-            useNativeDriver: true,
+            useNativeDriver: false,
           }).start(() => {
             onSlideComplete();
             setTimeout(() => {
               Animated.spring(thumbX, {
                 toValue: 0,
-                useNativeDriver: true,
+                useNativeDriver: false,
                 bounciness: 7,
               }).start(() => {
                 isDragging.current = false;
@@ -135,7 +137,7 @@ const SlideButton: React.FC<SlideButtonProps> = ({
           // ── Snap back ───────────────────────────────────────────────────
           Animated.spring(thumbX, {
             toValue: 0,
-            useNativeDriver: true,
+            useNativeDriver: false,
             bounciness: 7,
           }).start(() => {
             isDragging.current = false;
@@ -147,7 +149,7 @@ const SlideButton: React.FC<SlideButtonProps> = ({
         isDragging.current = false;
         Animated.spring(thumbX, {
           toValue: 0,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }).start();
       },
     })
@@ -248,7 +250,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 10,
-  },
+    cursor: Platform.OS === 'web' ? 'pointer' : undefined,
+    touchAction: Platform.OS === 'web' ? 'none' : undefined,
+  } as ViewStyle,
 });
 
 export default SlideButton;

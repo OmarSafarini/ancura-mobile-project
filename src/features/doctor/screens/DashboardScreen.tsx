@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback, useMemo } from "react"
 import { View, ScrollView, StyleSheet, Animated } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 
-import AppBackground from "@/components/base/AppBackground";
+import AppScreenLayout from "@/layout/AppScreenLayout";
 import DoctorGreeting from "../components/DoctorGreeting";
 import TimePeriodSelector from "../components/TimePeriodSelector";
 import StatsCard from "../components/StatisticCard";
@@ -59,16 +59,16 @@ export default function DoctorDashboard({ navigation }: any) {
     navigation.navigate('ActivityTab');
   };
 
-    if (isPending) {
-  return (
-    <AppBackground>
-      <Loading text="Loading dashboard..." />
-    </AppBackground>
-  );
-}
+  if (isPending) {
+    return (
+      <AppScreenLayout variant="clean">
+        <Loading text="Loading dashboard..." />
+      </AppScreenLayout>
+    );
+  }
 
   return (
-    <AppBackground>
+    <AppScreenLayout variant="clean">
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
@@ -117,7 +117,7 @@ export default function DoctorDashboard({ navigation }: any) {
           />
         </View>
       </ScrollView>
-    </AppBackground>
+    </AppScreenLayout>
   );
 }
 
@@ -125,7 +125,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingTop: scale(45),
     paddingBottom: scale(100),
-    paddingHorizontal: scale(16),
     flexGrow: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -133,7 +132,6 @@ const styles = StyleSheet.create({
 
   headerContainer: {
     width: '100%',
-    maxWidth: scale(340),
     alignSelf: 'center',
     gap: scale(27),
     marginBottom: scale(26),
@@ -144,20 +142,20 @@ const styles = StyleSheet.create({
 
   statisticsGrid: {
     flexDirection: 'row',
+    width: '100%',
+    alignSelf: 'center',
     gap: scale(12),
     marginBottom: scale(34),
-    justifyContent: 'center',
+    justifyContent: 'space-between',
   },
 
   leftColumn: {
     flex: 1,
-    maxWidth: scale(168),
     gap: scale(16),
   },
 
   rightColumn: {
     flex: 1,
-    maxWidth: scale(168),
     gap: scale(16),
   },
 
@@ -167,7 +165,6 @@ const styles = StyleSheet.create({
 
   chartContainer: {
     width: '100%',
-    maxWidth: scale(340),
     alignSelf: 'center',
   },
 });

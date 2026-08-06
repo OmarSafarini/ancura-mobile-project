@@ -51,8 +51,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.50)',
     borderRadius: 15,
     padding: 6,
-    marginHorizontal: 16,
     marginVertical: 10,
+    width: '100%',
   },
   segment: {
     flex: 1,

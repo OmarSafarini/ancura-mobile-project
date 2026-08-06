@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "ancura",
+    "name": "Ancura",
     "slug": "ancura",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -34,7 +34,9 @@
       "backgroundColor": "#00000000"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/icon.png",
+      "bundler": "metro",
+      "output": "single"
     },
     "plugins": [
       [

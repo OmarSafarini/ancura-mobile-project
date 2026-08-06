@@ -6,6 +6,7 @@ import {
   StyleSheet,
   useWindowDimensions,
   Animated,
+  Platform,
 } from 'react-native';
 import Svg, { Path, Defs, ClipPath, G, Rect, Circle } from 'react-native-svg';
 import { palette } from '../../utils/colors';
@@ -50,7 +51,9 @@ interface SuccessScreenProps {
 }
 
 export default function SuccessScreen({ subtitle, onPress }: SuccessScreenProps) {
-  const { width, height } = useWindowDimensions();
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+  const width = Platform.OS === 'web' && windowWidth > 768 ? 390 : windowWidth;
+  const height = Platform.OS === 'web' && windowWidth > 768 ? 844 : windowHeight;
   const archHeight = scale(45);
 
   const boxHeight = Math.max(scale(355), 335);
@@ -67,14 +70,14 @@ export default function SuccessScreen({ subtitle, onPress }: SuccessScreenProps)
   useEffect(() => {
     Animated.spring(bgTranslateY, {
       toValue: 0,
-      useNativeDriver: true,
+      useNativeDriver: false,
       bounciness: 4,
       speed: 12,
     }).start();
 
     Animated.spring(contentTranslateY, {
       toValue: 0,
-      useNativeDriver: true,
+      useNativeDriver: false,
       bounciness: 4,
       speed: 12,
     }).start();
@@ -82,7 +85,7 @@ export default function SuccessScreen({ subtitle, onPress }: SuccessScreenProps)
     Animated.timing(contentOpacity, {
       toValue: 1,
       duration: 300,
-      useNativeDriver: true,
+      useNativeDriver: false,
     }).start();
 
     Animated.sequence([
@@ -91,11 +94,11 @@ export default function SuccessScreen({ subtitle, onPress }: SuccessScreenProps)
         Animated.timing(confettiOpacity, {
           toValue: 1,
           duration: 300,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
         Animated.spring(confettiTranslateY, {
           toValue: 0,
-          useNativeDriver: true,
+          useNativeDriver: false,
           bounciness: 14,
           speed: 8,
         }),

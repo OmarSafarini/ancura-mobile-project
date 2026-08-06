@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { scale } from "@/utils/responsive";
+import { Family } from "@/utils/typography";
 
 import NormalButton from "@/components/common/NormalButton";
 import SelectUserType from "@/components/common/SelectUserType";
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: scale(30),
     },
     title: {
-        fontFamily: 'Founders Grotesk',
+        fontFamily: Family.FG_Regular,
         fontWeight: "400",
         fontSize: scale(32),
         color: "#6D7EB5",

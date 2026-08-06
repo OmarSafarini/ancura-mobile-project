@@ -17,6 +17,14 @@ const queryClient = new QueryClient({
   },
 });
 
+import { WebMockupWrapper } from "./src/layout/WebMockupWrapper";
+import { Platform } from 'react-native';
+import { enableMocks } from './src/mocks/browser';
+
+if (Platform.OS === 'web') {
+  enableMocks();
+}
+
 export default function App() {
   const { fontsLoaded } = useAppFonts();
 
@@ -25,20 +33,17 @@ export default function App() {
   }
 
   return (
-    <SafeAreaProvider>
-      <QueryClientProvider client={queryClient}>
-
-
+    <WebMockupWrapper>
+      <SafeAreaProvider>
+        <QueryClientProvider client={queryClient}>
           <NavigationContainer>
-
             <RootNavigator />
-            
           </NavigationContainer>
 
-
-        <FlashMessage position="top" />
-      </QueryClientProvider>
-    </SafeAreaProvider>
+          <FlashMessage position="top" />
+        </QueryClientProvider>
+      </SafeAreaProvider>
+    </WebMockupWrapper>
   );
 }
 

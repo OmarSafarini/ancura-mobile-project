@@ -2,8 +2,8 @@ import { createClient } from '@supabase/supabase-js';
 import { getAccessToken } from './tokenService';
 
 // Read directly from env to avoid a circular dependency with supabase.ts
-const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL!;
-const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
+const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://dummy.supabase.co';
+const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'dummy-key';
 
 /**
  * Supabase JS client — used ONLY for Realtime subscriptions.

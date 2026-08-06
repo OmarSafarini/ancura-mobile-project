@@ -5,8 +5,8 @@ import { useAuthStore } from '../store/authStore';
 import { SupabaseAuthResponse } from '../types/auth.types';
 import { setRealtimeToken } from './realtimeClient';
 
-export const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL!;
-export const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
+export const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://dummy.supabase.co';
+export const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'dummy-key';
 
 // ─── Axios Instance ───────────────────────────────────────────────
 

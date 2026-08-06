@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { scale } from '@/utils/responsive';
 import ExitIcon from '@/assets/icons/ExitIcon';
+import { Family } from '@/utils/typography';
 
 interface LogoutButtonProps {
   onPress?: () => void;
@@ -29,12 +30,8 @@ const styles = StyleSheet.create({
     gap: scale(18),
   },
   text: {
-    fontFamily: 'Founders Grotesk',
-    fontStyle: 'normal',
-    fontWeight: '500',
+    fontFamily: Family.FG_Medium,
     fontSize: scale(16),
-    lineHeight: scale(16),
-    textAlign: 'center',
     color: '#FF0000',
   },
 });

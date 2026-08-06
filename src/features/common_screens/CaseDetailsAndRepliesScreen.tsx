@@ -7,7 +7,7 @@ import { getRepliesByCaseId, postReply } from '@/services/common_services/ReplyS
 import { deleteCase, updateCaseStatus } from '@/services/common_services/Case';
 import { deleteLocalCase } from "@/services/localDb";
 import { useAuthStore } from '@/store/authStore';
-import AppBackground from "@/components/base/AppBackground";
+import AppScreenLayout from "@/layout/AppScreenLayout";
 import BackButton from "@/components/common/BackButton";
 import ToggleButton from "@/components/common/ToggleButton";
 import CaseDetailsCard from "@/components/common/CaseDetailsCard";
@@ -137,8 +137,7 @@ export default function CaseDetailScreen({ navigation, route }: any) {
   };
 
   return (
-    <AppBackground style={{ flex: 1 }}>
-      <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }}>
+    <AppScreenLayout variant="clean">
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
           style={{ flex: 1 }}
@@ -191,18 +190,25 @@ export default function CaseDetailScreen({ navigation, route }: any) {
                 style={styles.list}
                 contentContainerStyle={styles.listContent}
                 ItemSeparatorComponent={() => ( <View style={{ height: scale(16) }} />)}
-                renderItem={({ item }) => (
-                  <DoctorReplyCard
-                    id={item.id}
-                    title={item.doctor?.full_name}
-                    major={item.doctor_major}
-                    message={item.body}
-                    time={item.timestamp}
-                    avatar={item.doctor?.profilePic}
-                    CardOnPress={handleViewDoctorReplies}
-                    ChatOnPress={() => handleViewAllReplies(item)}
-                  />
-                )}
+                renderItem={({ item }) => {
+                  const doctorName = item.doctor?.full_name || item.doctor_info?.[0]?.full_name || (item.user_type === 'doctor' ? "Doctor" : "Patient");
+                  const message = item.body || item.content || "";
+                  const time = item.timestamp || item.time_ago || "Just now";
+                  const avatar = item.doctor?.profilePic || item.doctor_info?.[0]?.profilePic;
+                  
+                  return (
+                    <DoctorReplyCard
+                      id={item.id}
+                      title={doctorName}
+                      major={item.doctor_major || "General"}
+                      message={message}
+                      time={time}
+                      avatar={avatar}
+                      CardOnPress={handleViewDoctorReplies}
+                      ChatOnPress={() => handleViewAllReplies(item)}
+                    />
+                  );
+                }}
               />
             </View>
           </View>
@@ -236,8 +242,7 @@ export default function CaseDetailScreen({ navigation, route }: any) {
           </View>
         </View>
         </KeyboardAvoidingView>
-      </SafeAreaView>
-    </AppBackground>
+    </AppScreenLayout>
   );
 }
 const styles = StyleSheet.create({
@@ -252,7 +257,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: scale(56),
     marginTop: scale(10),
-    marginHorizontal: scale(24),
   },
 
   toggleContainer: {
@@ -262,7 +266,6 @@ const styles = StyleSheet.create({
 
   mainContent: {
     flex: 1,
-    paddingHorizontal: scale(24),
     gap: scale(20),
   },
 
@@ -282,7 +285,6 @@ const styles = StyleSheet.create({
   bottomContainer: {
     width: "100%",
     paddingBottom: scale(30),
-    paddingHorizontal: scale(24),
     // position: "absolute",
     // bottom: scale(30),
 

@@ -3,7 +3,7 @@ import { View, FlatList, StyleSheet, Text, KeyboardAvoidingView, Platform } from
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Control, useForm } from "react-hook-form";
-import AppBackground from "@/components/base/AppBackground";
+import AppScreenLayout from "@/layout/AppScreenLayout";
 import BackButton from "@/components/common/BackButton";
 import ReplyText from "@/components/common/ReplyText";
 import DoctorReplyCard from "@/components/common/DoctorReplyCard";
@@ -82,8 +82,7 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
 
 
   return (
-    <AppBackground style={{ flex: 1 }}>
-      <SafeAreaView style={[styles.safeArea, { backgroundColor: 'transparent' }]}>
+    <AppScreenLayout variant="clean">
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
           style={{ flex: 1 }}
@@ -105,18 +104,25 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.scrollContent}
             ItemSeparatorComponent={() => ( <View style={{ height: scale(14) }} />)}
-            renderItem={({ item }) => (
-              <DoctorReplyCard
-                id={item.id}
-                title={item.doctor?.full_name}
-                avatar={item.doctor?.profilePic}
-                major={item.doctor_major}
-                message={item.body}
-                time={item.timestamp}
-                CardOnPress={() => handleViewAllReplies(item)}
-                ChatOnPress={() => handleViewAllReplies(item)}
-              />
-            )}
+            renderItem={({ item }) => {
+              const doctorName = item.doctor?.full_name || item.doctor_info?.[0]?.full_name || (item.user_type === 'doctor' ? "Doctor" : "Patient");
+              const message = item.body || item.content || "";
+              const time = item.timestamp || item.time_ago || "Just now";
+              const avatar = item.doctor?.profilePic || item.doctor_info?.[0]?.profilePic;
+                  
+              return (
+                <DoctorReplyCard
+                  id={item.id}
+                  title={doctorName}
+                  avatar={avatar}
+                  major={item.doctor_major || "General"}
+                  message={message}
+                  time={time}
+                  CardOnPress={() => handleViewAllReplies(item)}
+                  ChatOnPress={() => handleViewAllReplies(item)}
+                />
+              );
+            }}
           />
         </View>
 
@@ -142,8 +148,7 @@ export default function DoctorRepliesScreen({ navigation, route }: any) {
           )}
         </View>
         </KeyboardAvoidingView>
-      </SafeAreaView>
-    </AppBackground>
+    </AppScreenLayout>
   );
 }
 
@@ -152,7 +157,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   fixedHeader: {
-    paddingHorizontal: scale(24),
     paddingBottom: scale(16),
     zIndex: 10,
   },
@@ -177,7 +181,6 @@ const styles = StyleSheet.create({
   },
 
   scrollContent: {
-    paddingHorizontal: scale(24),
     paddingTop: scale(10),
     paddingBottom: scale(20),
   },
@@ -185,7 +188,6 @@ const styles = StyleSheet.create({
   bottomContainer: {
     width: "100%",
     paddingBottom: scale(30),
-    paddingHorizontal: scale(24),
   },
 
   patientBottom: {

@@ -6,7 +6,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "@/utils/colors";
 import { scale } from "@/utils/responsive";
 import { Family } from "@/utils/typography";
-import AppBackground from "@/components/base/AppBackground";
+import AppScreenLayout from "@/layout/AppScreenLayout";
 import NotificationCard from "@/components/common/NotificationCard";
 import { useNavigation } from "@react-navigation/native";
 import { getPatientNotification } from "@/services/Patient/Notification";
@@ -41,17 +41,16 @@ export default function Notification() {
     );
 
     return (    
-        <AppBackground variant="clean" style={styles.background}>
-            <SafeAreaView style={styles.safeArea}>
-                <View style={{ paddingHorizontal: scale(51) }}>
-                    <PatientHeader 
-                        title="Notifications" 
-                        rightIcon="back" 
-                        useSafeArea={false} 
-                        containerStyle={{ marginBottom: scale(10) }}
-                    />
-                </View>
-                <View style={styles.listWrapper}>
+        <AppScreenLayout variant="clean" style={styles.background}>
+            <View>
+                <PatientHeader 
+                    title="Notifications" 
+                    rightIcon="back" 
+                    useSafeArea={false} 
+                    containerStyle={{ marginBottom: scale(10) }}
+                />
+            </View>
+            <View style={styles.listWrapper}>
                     <FlatList
                         data={notifications}
                         keyExtractor={(item, index) => item.id || index.toString()}
@@ -69,8 +68,7 @@ export default function Notification() {
                         pointerEvents="none"
                     />
                 </View>
-            </SafeAreaView>
-        </AppBackground>
+        </AppScreenLayout>
     );
 }
 
@@ -82,7 +80,6 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     listContainer: {
-        paddingHorizontal: scale(51),
         paddingBottom: scale(90),
         gap: scale(19),
     },

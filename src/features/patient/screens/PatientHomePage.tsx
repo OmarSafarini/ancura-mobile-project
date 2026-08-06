@@ -1,5 +1,5 @@
-import AppBackground from "@/components/base/AppBackground";
 import { useNavigation } from "@react-navigation/native";
+import AppScreenLayout from "@/layout/AppScreenLayout";
 import {
   StyleSheet,
   View,
@@ -102,9 +102,8 @@ const displayCases =
 
   const profilePic = patient?.profilePic ?? userBase;
   return (
-    <AppBackground variant="logo">
-      <View style={styles.container}>
-        <PatientHeader profilePic={profilePic} rightIcon="notification" useSafeArea={true} />
+    <AppScreenLayout variant="logo">
+      <PatientHeader profilePic={profilePic} rightIcon="notification" useSafeArea={false} />
 
         <MagicalGreeting nickname={patient?.nickname} />
         <View style={styles.filterRow}>
@@ -177,17 +176,12 @@ const displayCases =
               Post your first case
             </Text>
           </View>
-        )}
-      </View>
-    </AppBackground>
+      )}
+    </AppScreenLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: scale(40),
-  },
   Text: {
     fontFamily: Family.FG_Regular,
     fontSize: scale(20),
@@ -212,8 +206,8 @@ const styles = StyleSheet.create({
   },
   filterRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexWrap: "wrap",
+    gap: scale(8),
     marginBottom: scale(15),
   },
   listContainer: {

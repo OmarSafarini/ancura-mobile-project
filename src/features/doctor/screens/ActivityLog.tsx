@@ -8,7 +8,7 @@ import BackButton from "@/components/common/BackButton";
 import { Colors } from "@/utils/colors";
 import { scale } from "@/utils/responsive";
 import { Family } from "@/utils/typography";
-import AppBackground from "@/components/base/AppBackground";
+import AppScreenLayout from "@/layout/AppScreenLayout";
 import ChatIcon from "@/assets/icons/ChatIcon";
 import ActivityLogCard from "@/features/doctor/components/ActivityLogCard";
 import StartwithTickIcon from "@/assets/icons/StartwithTickIcon";
@@ -28,6 +28,8 @@ const ACTIVITY_UI_MAP = {
     'default': { Icon: ChatIcon, color: Colors.primary }, 
 };
 
+import { getActivitylog } from "@/services/Doctor/ActivityLog";
+
 export default function ActivityLog() {
     const navigation = useNavigation();
     const user = useAuthStore((state) => state.user);
@@ -36,15 +38,14 @@ export default function ActivityLog() {
         queryKey: ["activitylog", user?.id],
         queryFn: async () => {
             if (!user?.id) return [];
-            const response = await supabaseClient.get(`/activity_log?doctor_id=eq.${user.id}&select=*&order=date.desc`);
-            return response.data;
+            return getActivitylog(user.id);
         },
         enabled: !!user?.id,
+        refetchOnMount: true,
     });
 
     return (
-        <AppBackground variant="clean" style={styles.screen}>
-            <SafeAreaView style={{ flex: 1 }}>
+        <AppScreenLayout variant="clean">
                 <View style={styles.header}>
                     <Text style={styles.title}>Activity Log</Text>
                     <BackButton onPress={() => navigation.goBack()} />
@@ -90,8 +91,7 @@ export default function ActivityLog() {
                     }}
                 />
             </View>
-            </SafeAreaView>
-        </AppBackground>
+        </AppScreenLayout>
     );
 }
 
@@ -104,9 +104,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: scale(56),
+        marginBottom: scale(36),
         marginTop: scale(10),
-        paddingHorizontal: scale(51),
     },
 
     title: {
@@ -124,7 +123,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         top: 0,
         bottom: 0,
-        left: scale(43) + scale(35) / 2 - scale(1),
+        left: scale(20) + scale(35) / 2 - scale(1),
         width: scale(3),
         borderRadius: scale(30),
         backgroundColor: "#FFFFFF",
@@ -145,12 +144,12 @@ const styles = StyleSheet.create({
         borderRadius: scale(18),
         justifyContent: "center",
         alignItems: "center",
-        marginLeft: scale(43),
+        marginLeft: scale(20),
     },
 
     cardContainer: {
-        marginLeft: scale(78),
-        width: scale(120),
+        marginLeft: scale(65),
+        marginRight: scale(20),
         marginTop: -scale(30),
     }
 });

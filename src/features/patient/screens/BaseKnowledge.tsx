@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Text, View, StyleSheet, FlatList, Animated, Modal, Pressable } from "react-native";
+import { Text, View, StyleSheet, FlatList, Animated, Modal, Pressable, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { WebView } from "react-native-webview";
 import { LinearGradient } from "expo-linear-gradient";
 import DocumentIcon from "@/assets/icons/DoucmentIcon";
-import AppBackground from "@/components/base/AppBackground";
+import AppScreenLayout from "@/layout/AppScreenLayout";
 import Article from "@/features/patient/components/Article";
 import SelfHelpResource from "@/components/common/SelfHelpResource";
 import { Colors } from "@/utils/colors";
@@ -74,7 +74,7 @@ export function BaseKnowledge() {
 
     const renderHeader = () => (
         <View style={styles.headerWrapper}>
-            <View style={{ paddingHorizontal: scale(51) }}>
+            <View>
                 <PatientHeader 
                     title="Self-Help & Resources" 
                     rightIcon="back" 
@@ -94,8 +94,8 @@ export function BaseKnowledge() {
     );
 
     return (
-        <AppBackground variant="clean" style={styles.background}>
-            <SafeAreaView style={styles.safeArea}>
+        <AppScreenLayout variant="clean" style={styles.background}>
+            <View style={styles.safeArea}>
                 {renderHeader()}
                 <View style={styles.listWrapper}>
                     <FlatList
@@ -130,7 +130,7 @@ export function BaseKnowledge() {
                         pointerEvents="none"
                     />
                 </View>
-            </SafeAreaView>
+            </View>
 
             <Modal
                 visible={activeUrl !== null}
@@ -151,17 +151,25 @@ export function BaseKnowledge() {
                         <View style={{ width: scale(34) }} />
                     </View>
                     {activeUrl && (
-                        <WebView
-                            ref={webViewRef}
-                            source={{ uri: activeUrl }}
-                            style={styles.webView}
-                            startInLoadingState={true}
-                            onNavigationStateChange={(navState) => setCanGoBack(navState.canGoBack)}
-                        />
+                        Platform.OS === 'web' ? (
+                            <iframe 
+                                src={activeUrl.includes("youtube.com/watch?v=") ? activeUrl.replace("watch?v=", "embed/") : activeUrl}
+                                style={{ flex: 1, width: '100%', height: '100%', border: 'none' }}
+                                allowFullScreen
+                            />
+                        ) : (
+                            <WebView
+                                ref={webViewRef}
+                                source={{ uri: activeUrl }}
+                                style={styles.webView}
+                                startInLoadingState={true}
+                                onNavigationStateChange={(navState) => setCanGoBack(navState.canGoBack)}
+                            />
+                        )
                     )}
                 </SafeAreaView>
             </Modal>
-        </AppBackground>
+        </AppScreenLayout>
     );
 }
 
@@ -174,11 +182,9 @@ const styles = StyleSheet.create({
     },
     listContent: {
         paddingBottom: scale(90),
-        paddingHorizontal: scale(51),
     },
     listWrapper: {
         flex: 1,
-        position: "relative",
     },
     bottomBlur: {
         position: "absolute",
@@ -205,14 +211,15 @@ const styles = StyleSheet.create({
     },
     articleContainer: {
         marginTop: scale(15),
-        paddingHorizontal: scale(51),
+        paddingHorizontal: scale(20),
         flexDirection: "row",
-        gap: scale(9),
+        flexWrap: "wrap",
+        gap: scale(10),
     },
     articleItem: {
-        width: "30%",
         marginTop: scale(6),
         paddingVertical: scale(8),
+        paddingHorizontal: scale(4),
         borderRadius: scale(8),
         alignItems: "center",
         justifyContent: "center",

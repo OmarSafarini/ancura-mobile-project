@@ -1,6 +1,5 @@
-import AppBackground from "@/components/base/AppBackground";
+import AppScreenLayout from "@/layout/AppScreenLayout";
 import { StyleSheet, View, Text, FlatList } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale } from "@/utils/responsive";
 import CaseCard from "@/components/common/CaseCard";
 import { CaseData } from "@/types/ICaseData";
@@ -15,8 +14,6 @@ import FadeInView from "@/utils/FadeInView";
 import { LinearGradient } from "expo-linear-gradient";
 
 export default function DoctorHomeScreen({ navigation }: any) {
-  const insets = useSafeAreaInsets();
-
   const {
     data: doctor,
     isLoading: doctorLoading,
@@ -46,16 +43,16 @@ export default function DoctorHomeScreen({ navigation }: any) {
   const doctorCases = cases ? cases.filter((c) => c.status !== "Resolved") : [];
 
   return (
-    <AppBackground variant="clean">
+    <AppScreenLayout variant="clean">
       <View style={styles.container}>
-        <SafeAreaView style={styles.NavBar}>
+        <View style={styles.NavBar}>
           <View style={styles.ImgContainer}>
             <DoctorGreeting
               name={doctor?.full_name}
               image={doctor?.profilePic ? { uri: doctor.profilePic } : undefined} 
             />
           </View>
-        </SafeAreaView>
+        </View>
 
         <View style={styles.listContainer}>
           <FlatList
@@ -103,7 +100,7 @@ export default function DoctorHomeScreen({ navigation }: any) {
           />
         </View>
       </View>
-    </AppBackground>
+    </AppScreenLayout>
   );
 }
 
@@ -120,7 +117,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingHorizontal: scale(16),
   },
   ImgContainer:{
     marginBottom:scale(10)

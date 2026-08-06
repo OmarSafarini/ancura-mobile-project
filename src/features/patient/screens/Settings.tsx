@@ -1,4 +1,4 @@
-import AppBackground from "@/components/base/AppBackground";
+import AppScreenLayout from "@/layout/AppScreenLayout";
 import IconWrapper from "@/components/common/IconWrapper";
 import { StyleSheet, View, Text, Pressable } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
@@ -51,7 +51,7 @@ export default function PaitentSettings() {
   }
 
   return (
-      <AppBackground variant="logo">
+      <AppScreenLayout variant="logo">
         <View style={styles.container}>
           <View>
             <FadeInView delay={0} translateYStart={15}>
@@ -59,7 +59,7 @@ export default function PaitentSettings() {
                 title="Profile & Settings"
                 rightIcon="back"
                 onRightPress={() => navigation.navigate("PatientHomeTab" as never)}
-                useSafeArea={true}
+                useSafeArea={false}
               />
             </FadeInView>
 
@@ -85,22 +85,20 @@ export default function PaitentSettings() {
           </View>
 
           <FadeInView delay={300} translateYStart={20}>
-            <SafeAreaView
-              style={[styles.BottomBar, { paddingBottom: insets.bottom }]}
-            >
+            <View style={styles.BottomBar}>
               <FlashMessage position="bottom" style={{ marginBottom: scale(40) }} />
               <LogoutButton onPress={LogOut} />
-            </SafeAreaView>
+            </View>
           </FadeInView>
         </View>
-      </AppBackground>
+      </AppScreenLayout>
   );
 }
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: scale(51),
     justifyContent: "space-between",
     flex: 1,
+    paddingBottom: scale(40),
   },
   Card: {
     borderRadius: scale(11),

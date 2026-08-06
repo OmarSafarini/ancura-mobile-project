@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondaryLight,
     borderRadius: scale(15),
     height: scale(130),
-    width: scale(160),
+    width: "100%",
     padding: scale(16),
     justifyContent: "space-between",
   },

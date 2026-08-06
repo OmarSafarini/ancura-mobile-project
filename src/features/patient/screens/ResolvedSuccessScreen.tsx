@@ -6,7 +6,7 @@ import {
   Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import AppBackground from '../../../components/base/AppBackground';
+import AppScreenLayout from '@/layout/AppScreenLayout';
 import TickIcon from '../../../assets/icons/TickIcon';
 import NormalButton from '../../../components/common/NormalButton';
 import ArrowLeftIcon from '../../../assets/icons/ArrowLeftIcon';
@@ -20,8 +20,8 @@ interface ResolvedSuccessScreenProps {
 
 export default function ResolvedSuccessScreen({ onBackToCases }: ResolvedSuccessScreenProps) {
   return (
-    <AppBackground variant="logo">
-      <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+    <AppScreenLayout variant="logo">
+      <View style={styles.safeArea}>
 
         <Pressable style={styles.exitButton} onPress={onBackToCases}>
           <ArrowLeftIcon size={scale(20)} color={palette.dark} />
@@ -48,15 +48,14 @@ export default function ResolvedSuccessScreen({ onBackToCases }: ResolvedSuccess
           />
         </View>
 
-      </SafeAreaView>
-    </AppBackground>
+      </View>
+    </AppScreenLayout>
   );
 }
 
 const styles = StyleSheet.create({
   safeArea: {
-    flex: 1,
-    paddingHorizontal: scale(24),
+        flex: 1,
   },
   exitButton: {
     alignSelf: 'flex-end',

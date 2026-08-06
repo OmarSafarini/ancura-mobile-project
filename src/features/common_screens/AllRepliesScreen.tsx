@@ -1,7 +1,7 @@
 import React, { useCallback, useRef } from "react";
 import { View, FlatList, StyleSheet, Text, KeyboardAvoidingView, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import AppBackground from "@/components/base/AppBackground";
+import AppScreenLayout from "@/layout/AppScreenLayout";
 import BackButton from "@/components/common/BackButton";
 import ReplyText from "@/components/common/ReplyText";
 import DoctorReplyCard from "@/components/common/DoctorReplyCard";
@@ -62,8 +62,7 @@ export default function AllRepliesScreen({ navigation, route }: any) {
 
 
   return (
-    <AppBackground style={{ flex: 1 }}>
-      <SafeAreaView style={styles.safeArea} >
+    <AppScreenLayout variant="clean">
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
           style={{ flex: 1 }}
@@ -78,11 +77,11 @@ export default function AllRepliesScreen({ navigation, route }: any) {
           <View style={styles.staticContent}>
             <DoctorReplyCard
               id={replyData?.id}
-              title={replyData?.doctor?.full_name || "Dr. Sarah Ahmed"}
-              major={replyData?.doctor_major || "Clinical Psychologist"}
-              avatar={replyData?.doctor?.profilePic}
-              message={replyData?.body || "Reply details."}
-              time={replyData?.timestamp || "Just now"}
+              title={replyData?.doctor?.full_name || replyData?.doctor_info?.[0]?.full_name || "Dr. Sarah Ahmed"}
+              major={replyData?.doctor_major || "General"}
+              avatar={replyData?.doctor?.profilePic || replyData?.doctor_info?.[0]?.profilePic}
+              message={replyData?.body || replyData?.content || "Reply details."}
+              time={replyData?.timestamp || replyData?.time_ago || "Just now"}
               CardOnPress={() => { }}
               ChatOnPress={() => { }}
             />
@@ -101,18 +100,18 @@ export default function AllRepliesScreen({ navigation, route }: any) {
               )}
               ListFooterComponent={<View style={{ height: scale(120) }} />}
               renderItem={({ item }) => {
-                const isDoctor = !!item.doctor;
+                const isDoctor = !!item.doctor || item.user_type === 'doctor';
 
                 const authorName = isDoctor
-                  ? item.doctor?.full_name
-                  : item.patient?.nickname;
+                  ? item.doctor?.full_name || item.doctor_info?.[0]?.full_name || "Doctor"
+                  : item.patient?.nickname || item.patient_info?.[0]?.nickname || "Patient";
 
                 return (
                   <DoctorCommentCard
                     title={authorName || "Unknown"}
-                    discreption={item.body}
-                    time={item.timestamp}
-                    avatar={item.doctor?.profilePic}
+                    discreption={item.body || item.content || ""}
+                    time={item.timestamp || item.time_ago || "Just now"}
+                    avatar={item.doctor?.profilePic || item.doctor_info?.[0]?.profilePic}
                     major={isDoctor ? "Doctor" : "Patient"}
                   />
                 );
@@ -145,8 +144,7 @@ export default function AllRepliesScreen({ navigation, route }: any) {
 
         </View>
         </KeyboardAvoidingView>
-      </SafeAreaView>
-    </AppBackground>
+    </AppScreenLayout>
   );
 }
 
@@ -157,7 +155,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingHorizontal: scale(24),
     paddingBottom: scale(20),
   },
 

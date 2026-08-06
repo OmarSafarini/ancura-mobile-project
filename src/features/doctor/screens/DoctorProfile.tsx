@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
-import AppBackground from "@/components/base/AppBackground";
+import AppScreenLayout from "@/layout/AppScreenLayout";
 import { scale } from "@/utils/responsive";
 import { Colors, palette } from "@/utils/colors";
 import { Family } from "@/utils/typography";
@@ -78,13 +78,13 @@ export default function DoctorProfile({ navigation }: any) {
 
   if (doctorError || LicenseError) {
     return (
-      <AppBackground variant="clean">
-        <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <AppScreenLayout variant="clean">
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
           <Text style={{ fontFamily: Family.FG_Medium, fontSize: scale(16), color: Colors.warning }}>
             Error loading profile details.
           </Text>
-        </SafeAreaView>
-      </AppBackground>
+        </View>
+      </AppScreenLayout>
     );
   }
 
@@ -106,8 +106,7 @@ export default function DoctorProfile({ navigation }: any) {
   };
 
   return (
-    <AppBackground variant="clean">
-      <SafeAreaView style={{ flex: 1 }}>
+    <AppScreenLayout variant="clean">
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
           <View style={styles.container}>
             {/* Header section */}
@@ -245,8 +244,7 @@ export default function DoctorProfile({ navigation }: any) {
             </FadeInView>
           </View>
         </ScrollView>
-      </SafeAreaView>
-    </AppBackground>
+    </AppScreenLayout>
   );
 }
 
@@ -255,7 +253,6 @@ const styles = StyleSheet.create({
     paddingBottom: scale(60),
   },
   container: {
-    paddingHorizontal: scale(24),
     flex: 1,
     gap: scale(18),
   },
