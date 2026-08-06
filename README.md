@@ -1,112 +1,97 @@
-<img src="./assets/ancura.gif" alt="Ancura Animated Logo" width="200" style="border-radius: 20px; margin-bottom: 10px;" />
+<div align="center">
+  <img src="./assets/ancura.gif" alt="Ancura Animated Logo" width="220" style="border-radius: 25px; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);" />
 
+  # Ancura Mobile App
+  **Your Safe Space for Mental Well-being**
 
-# Ancura
+  [![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactnative.dev/)
+  [![Expo](https://img.shields.io/badge/Expo-1B1F23?style=for-the-badge&logo=expo&logoColor=white)](https://expo.dev/)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+  [![Platform](https://img.shields.io/badge/Platform-iOS%20%7C%20Android%20%7C%20Web-brightgreen?style=for-the-badge)](#)
 
-A platform where users can anonymously seek mental health advice from licensed professionals. It also offers articles, self-help tools, and supportive resources to help users improve their mental health.
+  <br />
+
+  **[View Live Web Prototype / Demo](https://ancura-mobile-project.pages.dev/)**
+
+</div>
+
+<br />
+
+> **Ancura** is a comprehensive, stigma-free platform designed to bridge the gap between individuals seeking mental health support and licensed professionals. By prioritizing anonymity and ease of access, Ancura empowers users to take control of their mental well-being in a safe environment.
+
+## Core Features
+
+* **Anonymous Consultations:** Seek professional advice without revealing your identity, ensuring complete privacy and comfort.
+* **Licensed Professionals:** Connect directly with verified psychologists, therapists, and counselors.
+* **Knowledge Base:** Access a rich library of curated articles, self-help tools, and videos to improve your daily mental health.
+* **Activity Dashboard (For Doctors):** A dedicated interface for professionals to track cases, manage replies, and view their impact statistics.
+* **Cross-Platform:** Beautifully designed and fully responsive across iOS, Android, and Web platforms.
 
 ---
 
-## Tech Stack
+## Technology Stack
 
-- **Framework:** React Native + Expo (SDK 55)
-- **Language:** TypeScript
-- **Forms:** react-hook-form
-- **UI:** react-native-element-dropdown, react-native-svg, @expo/vector-icons
-- **Utilities:** react-native-size-matters, expo-document-picker
+Ancura is built with modern, scalable, and highly performant technologies:
 
----
-
-## Requirements
-
-- Node.js >= 18
-- Expo CLI: `npm install -g expo-cli`
-- Expo Go app on your phone (iOS / Android)
+| Category | Technology |
+| :--- | :--- |
+| **Framework** | React Native, Expo (SDK 55) |
+| **Language** | TypeScript |
+| **State Management** | Zustand, React Query (@tanstack/react-query) |
+| **Routing** | React Navigation (Native Stack, Bottom Tabs) |
+| **Forms & Validation** | React Hook Form |
+| **Backend & Auth** | Supabase (@supabase/supabase-js) |
+| **Styling & UI** | Custom Design System, React Native SVG, Vector Icons |
 
 ---
 
-## Getting Started
+## Quick Start
 
-### 1. Clone the repo
+Follow these steps to get a local copy up and running in minutes.
 
+### Prerequisites
+* **Node.js** (v18 or higher)
+* **npm** or **yarn**
+* **Expo Go** app installed on your physical device (iOS/Android), or a running simulator.
+
+### Installation
+
+**1. Clone the repository**
 ```bash
 git clone https://github.com/OmarSafarini/ancura-mobile-project.git
 cd ancura-mobile-project
 ```
 
-### 2. Install dependencies or install packages
-
+**2. Install dependencies**
+*(No need to install packages individually; everything is pre-configured in `package.json`)*
 ```bash
 npm install
 ```
-or install packages:
 
-### 3. Install all packages
-
-```bash
-npx expo install expo
-npx expo install expo-status-bar
-npx expo install expo-font
-npx expo install expo-document-picker
-npx expo install expo-image-picker
-npx expo install expo-linear-gradient
-npx expo install expo-secure-store
-npm install react react-native
-npx expo install react-dom react-native-web
-npx expo install react-native-safe-area-context
-npx expo install react-native-screens
-npm install @react-navigation/native
-npm install @react-navigation/native-stack
-npm install @react-navigation/bottom-tabs
-npm install @supabase/supabase-js
-npm install @supabase/ssr
-npm install @react-native-async-storage/async-storage
-npm install @tanstack/react-query
-npm install @tanstack/react-query-devtools
-npm install axios
-npx expo install @expo/vector-icons
-npx expo install react-native-svg
-npm install react-native-element-dropdown
-npm install react-native-flash-message
-npm install react-hook-form
-npm install react-native-size-matters
-npm install lodash
-npm install -D typescript
-npm install -D @types/react @types/react-native
-npm install -D babel-plugin-module-resolver
-npm install -D eslint eslint-config-expo
-npm install -D babel-preset-expo
-npm install date-fns
-npx expo install expo-sqlite
-```
-
-### 4. Start the dev server
-
+**3. Start the development server**
 ```bash
 npx expo start
 ```
 
-Scan the QR code with **Expo Go** on your phone.
+**4. Run the app**
+* **Mobile:** Scan the QR code generated in your terminal using the **Expo Go** app or your phone's camera (iOS).
+* **Web:** Press `w` in the terminal to open the web prototype.
 
 ---
 
-## Scripts
+## Expo Terminal Shortcuts
 
-| Command | Description |
-|---|---|
-| `Shift + /` | Show all commands |
-| `a` | Open Android |
-| `i` | Open iOS simulator |
-| `m` | Open Metro Bundler |
-| `r` | Reload the app |
-| `d` | Open debugger |
-| `h` | Open help menu |
-| `w` | Open web browser |
-| `s` | Open settings |
-| `p` | Open performance monitor |
-| `t` | Open terminal |
-| `l` | Open logs |
-| `c` | Clear cache |
-| `b` | Open build menu |
-| `e` | Open dev menu |
+While the server is running (`npx expo start`), you can use the following quick commands:
 
+* `a` - Open Android emulator
+* `i` - Open iOS simulator
+* `w` - Open in web browser
+* `r` - Reload the app
+* `d` - Open developer menu & debugger
+* `c` - Clear bundler cache
+
+---
+
+<div align="center">
+  <sub>Built with care for a better mental health future.</sub>
+</div>
